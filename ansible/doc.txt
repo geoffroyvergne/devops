@@ -8,3 +8,8 @@ ansible all -a "/bin/echo hello"
 # Playbook
 ansible-playbook ./playbooks/nginx-install.yaml -v
 ansible-playbook ./playbooks/nginx-install.yaml -v --check
+
+ansible-playbook ./playbooks/docker-from-role.yaml -v --check
+
+# Roles
+ansible-galaxy install docker.ubuntu
