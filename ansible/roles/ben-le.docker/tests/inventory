@@ -1,5 +1,0 @@
-[docker]
-test01.lxc
-
-[docker_compose]
-test02.lxc
