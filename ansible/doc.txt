@@ -1,0 +1,10 @@
+
+# Ping
+ansible all -m ping
+
+# Echo
+ansible all -a "/bin/echo hello"
+
+# Playbook
+ansible-playbook ./playbooks/nginx-install.yaml -v
+ansible-playbook ./playbooks/nginx-install.yaml -v --check
