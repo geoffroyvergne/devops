@@ -1,0 +1,5 @@
+---
+- hosts: docker,docker_compose
+  any_errors_fatal: true
+  roles:
+    - ansible-role-docker

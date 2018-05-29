@@ -1,0 +1,3 @@
+---
+ansible_ssh_user: root
+docker_python_install: yes

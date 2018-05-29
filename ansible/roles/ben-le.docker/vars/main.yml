@@ -1,0 +1,3 @@
+---
+# vars file for lae.docker
+docker_rpm_key_path: /etc/rpm/docker_packaging_key.asc

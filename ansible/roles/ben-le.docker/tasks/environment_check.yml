@@ -1,0 +1,8 @@
+---
+# Tasks to ensure that prerequisites for the role have been satisfied
+- assert:
+    that:
+      - "ansible_architecture == 'x86_64'"
+    msg: "Docker CE is only supported on 64-bit systems. Install a 64-bit OS in order to use this role."
+
+# vim:ft=ansible

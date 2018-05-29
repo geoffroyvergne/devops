@@ -1,0 +1,43 @@
+---
+language: python
+sudo: required
+dist: trusty
+cache:
+  directories: [ '$HOME/lxc' ]
+  pip: true
+env:
+# The following default to Debian Stretch
+- ANSIBLE_VERSION='git+https://github.com/ansible/ansible.git@devel' # 2.6 DEVEL
+- ANSIBLE_VERSION='ansible>=2.5.0,<2.6.0' # 2.5.x
+- ANSIBLE_VERSION='ansible>=2.4.0,<2.5.0' # 2.4.x
+- ANSIBLE_VERSION='ansible>=2.3.0,<2.4.0' # 2.3.x
+- LXC_DISTRO=debian LXC_RELEASE=jessie
+- LXC_DISTRO=ubuntu LXC_RELEASE=xenial
+- LXC_DISTRO=centos LXC_RELEASE=7
+matrix:
+  fast_finish: true
+before_cache:
+- 'sudo mkdir $HOME/lxc && sudo tar cf $HOME/lxc/cache.tar /var/cache/lxc/ &&
+  sudo chown $USER: $HOME/lxc/cache.tar'
+install:
+- sudo tar xf $HOME/lxc/cache.tar -C / || true
+- sudo apt-get install -y expect-dev
+- pip install ansible
+- ansible --version
+- printf '[defaults]\nroles_path=../\ncallback_whitelist=profile_tasks' >ansible.cfg
+- ansible-galaxy install lae.travis-lxc azavea.pip
+- ansible-playbook -vvv tests/install.yml -i tests/inventory
+script:
+- ansible-playbook tests/deploy.yml -i tests/inventory --syntax-check
+- ansible-playbook tests/deploy.yml -i tests/inventory
+- 'ANSIBLE_STDOUT_CALLBACK=debug unbuffer ansible-playbook -vv tests/deploy.yml
+  -i tests/inventory >/tmp/idempotency.log 2>&1 ||
+  (e=$?; cat /tmp/idempotency.log; exit $e)'
+- 'grep -A1 "PLAY RECAP" /tmp/idempotency.log | grep -qP "changed=0.*failed=0" &&
+  (echo "Idempotence: PASS"; exit 0) ||
+  (echo "Idempotence: FAIL"; cat /tmp/idempotency.log; exit 1)'
+- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -v tests/test.yml -i tests/inventory
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  slack:
+    secure: W2c6+HnytML6zmXYQamBhE0FuZ7HlvXxSrr5X+96/0wD5NQCnjXSWrckNKYMpEwd869BCrVPwXl0bWgm6NSZ0SyocYn66X6K8Hddj6RPJVfQaYSw9iVhvW9VpOl7IrLmSYoJ3YVqORzHac2pbQTCThPUj2mBAhPZPcGHSf8NQDH3NRsj/dIXywlLDF4oIEDwCwvOlrSgUXykXH/QTs67HgyQGSln0Sq6Xu1zxNdQyJAQcc8nhnSnPSmUfoxS8sb46ljE5gUwTR0u1ooPPxr8idoLo7doUdfjNmNxNkGhDCxct4GNlxlj+BCtqrVhG8/7xUm9NfuFTTWTtNG6j1lncHK3Tth3Vn6FqFP7yd57CBa4Nh4Er5PPBAtYEyuAMWbOTrOwSeWx0Ogxctp8Usvc6/qnSZiEjxExyNNuQ793LBllZ9JJ8AQcSdnam8m62Ddz1kIq1q/THPEPzsQxz9v4A3wcmBwU7LitFob/Xv9iyAKR7/Em/bCh8Agzkp6wcbnaXlVNLlCxYtpt5RTV+o/+7vG8umU+Ieix6wqFG641HpzaZSm+7CgiCwnxcwG7akBpzfPvm0GFxqvGw4Zz0L562wi7KFllSieCSbQjuXMGNGA35vs8EwUDLw6ZBhQ3WcSstxrxNjDB3bNAQ4dPaekFy/UHc8ve49DGG4eF/s4Cw7Y=

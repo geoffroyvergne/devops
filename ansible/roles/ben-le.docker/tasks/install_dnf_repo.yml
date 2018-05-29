@@ -1,0 +1,25 @@
+---
+# Configures Docker CE repository for yum-based systems
+- name: Upload Docker CE's rpm packaging key
+  copy:
+    src: rpm_packaging_key.asc
+    dest: "{{ docker_rpm_key_path }}"
+    mode: 0644
+
+- name: Trust Docker CE's rpm packaging key
+  rpm_key:
+    key: "{{ docker_rpm_key_path }}"
+    state: present
+
+- name: Add Docker CE Stable repository
+  yum_repository:
+    name: docker-ce-stable
+    file: docker
+    description: "Docker CE Stable - $basearch"
+    baseurl: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/{{ ansible_distribution_major_version }}/$basearch/stable"
+    gpgkey: "file://{{ docker_rpm_key_path }}"
+    gpgcheck: yes
+    enabled: yes
+    state: present
+
+# vim:ft=ansible

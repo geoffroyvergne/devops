@@ -1,0 +1,44 @@
+---
+- hosts: docker
+  tasks:
+    - name: Pull an Alpine-based Nginx image
+      docker_image:
+        name: nginx:alpine
+    - name: Create an Nginx container
+      docker_container:
+        image: nginx:alpine
+        name: docker_test
+        state: started
+        ports:
+          - "8080:80"
+
+- hosts: docker_compose
+  tasks:
+    - name: Create an Nginx container
+      docker_service:
+        project_name: nginx_test
+        definition:
+          version: '2'
+          services:
+            web:
+              image: nginx:alpine
+              ports:
+                - "8080:80"
+    - name: Test that docker-compose is functional
+      shell: "docker-compose version"
+
+- hosts: docker,docker_compose
+  tasks:
+    - name: Test that the Nginx container is functional
+      uri:
+        url: "http://{{ inventory_hostname }}:8080"
+    - block:
+      - name: Docker daemon status (systemd)
+        shell: systemctl status docker.service
+        when: "ansible_service_mgr == 'systemd'"
+      - name: Docker daemon logs (systemd)
+        shell: journalctl --no-pager -xu docker.service
+        when: "ansible_service_mgr == 'systemd'"
+      - name: Other Docker daemon logs
+        shell: "cat /var/log/daemon.log || grep docker /var/log/messages || true"
+      ignore_errors: yes

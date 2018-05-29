@@ -1,0 +1,16 @@
+---
+# Configures Docker CE repository for apt-based systems
+- name: Trust Docker CE's apt packaging key
+  apt_key:
+    data: "{{ lookup('file', 'apt_packaging_key.asc') }}"
+    id: 0EBFCD88
+    state: present
+
+- name: Add Docker CE Stable repository
+  apt_repository:
+    filename: docker
+    repo: "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    update_cache: yes
+    state: present
+
+# vim:ft=ansible

@@ -1,0 +1,7 @@
+---
+custom_facts_dir: /etc/ansible/facts.d
+custom_facts_name: ""
+custom_facts_file: ""
+
+custom_facts_owner: root
+custom_facts_group: root

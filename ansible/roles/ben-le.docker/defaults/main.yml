@@ -1,0 +1,12 @@
+---
+# defaults file for lae.docker
+docker_config:
+  live-restore: true
+  log-level: 'info'
+docker_restart_on_upgrade: yes
+
+docker_compose_install: no
+docker_compose_version: '1.20.*'
+
+docker_python_install: false
+docker_python_version: "3.1.*"
