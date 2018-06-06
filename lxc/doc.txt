@@ -1,0 +1,45 @@
+https://wiki.debian.org/LXC
+
+# Host
+/etc/default/lxc-net
+USE_LXC_BRIDGE="true"
+
+/etc/lxc/default.conf
+#lxc.network.type = empty
+lxc.network.type = veth
+lxc.network.link = lxcbr0
+lxc.network.flags = up
+lxc.network.hwaddr = 00:16:3e:xx:xx:xx
+lxc.network.ipv4.gateway = 10.0.3.1
+
+service lxc-net restart
+
+sudo lxc-create -n debian-stretch-container -t debian -- -r stretch --packages "vim,curl,iputils-*,ssh"
+
+/var/lib/lxc/debian-stretch-container/config
+lxc.network.ipv4 = 10.0.3.100/24
+
+/var/lib/lxc/debian-stretch-container/rootfs/etc/network/interfaces
+auto eth0
+iface eth0 inet manual
+
+# ssh
+
+ssh -p 2200 -i .vagrant/machines/default/virtualbox/private_key vagrant@127.0.0.1
+vagrant scp .vagrant/machines/default/virtualbox/private_key default:/home/vagrant
+cp /home/vagrant/.ssh/authorized_keys /var/lib/lxc/debian-stretch-container/rootfs/root/.ssh
+
+ssh root@10.0.3.100
+ssh -p 2000 root@192.168.33.10
+ssh -p 2223 root@localhost
+
+lxc-attach -n debian-stretch-container -- service sshd start
+
+sudo lxc-start -n debian-stretch-container
+
+# Copy
+vagrant scp ../../lxc/conf/http_forward default:/home/vagrant
+vagrant scp ../../lxc/conf/ssh_forward default:/home/vagrant
+
+vagrant scp ../../lxc/authorized_keys default:/home/vagrant
+vagrant scp ~/.ssh/id_rsa default:/home/vagrant

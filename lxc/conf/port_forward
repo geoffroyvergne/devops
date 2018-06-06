@@ -1,0 +1,23 @@
+service ssh_forward
+{
+        disable         = no
+        type            = UNLISTED
+        socket_type     = stream
+        protocol        = tcp
+        user            = nobody
+        wait            = no
+        redirect        = 10.0.3.100 22
+        port            = 2000
+}
+
+service http_forward
+{
+        disable         = no
+        type            = UNLISTED
+        socket_type     = stream
+        protocol        = tcp
+        user            = nobody
+        wait            = no
+        redirect        = 10.0.3.100 80
+        port            = 8000
+}

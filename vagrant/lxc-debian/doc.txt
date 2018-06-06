@@ -1,0 +1,19 @@
+
+sudo apt-get install lxc
+sudo apt-get install bridge-utils libvirt-bin debootstrap
+
+sudo su
+echo "cgroup  /sys/fs/cgroup  cgroup  defaults  0   0" >> /etc/fstab
+mount /sys/fs/cgroup
+
+lxc-checkconfig
+
+lxc-create -n debian-container -t debian -- -r jessie
+lxc-create -n debian-container -f debian-container.conf -t debian -- -r jessie
+
+lxc-start -d -n debian-container
+
+lxc-create --name debian-container --template=download -- --dist=debian --release=stretch --arch=amd64
+lxc-start -d -n debian-container
+
+

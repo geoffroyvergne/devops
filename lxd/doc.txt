@@ -1,0 +1,17 @@
+apt-get install snapd
+snap install lxd
+
+. /etc/profile.d/apps-bin-path.sh
+
+lxd init
+lxd init --auto --network-address 0.0.0.0
+
+lxc launch images:debian/stretch debian-stretch-container
+
+lxc list
+
+lxc exec debian bash
+
+# ssh
+ssh-keygen
+ssh-copy-id -i ~/.ssh/id_rsa.pub 10.2.165.5
