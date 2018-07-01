@@ -1,0 +1,39 @@
+
+Install :
+
+sudo su
+
+LC_ALL="en_US.UTF-8"
+LC_CTYPE="en_US.UTF-8"
+echo en_US.UTF-8 UTF-8 > /etc/locale.gen
+
+apt install curl openssh-server ca-certificates postfix
+curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | bash
+apt install gitlab-ce
+gitlab-ctl reconfigure
+
+curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | bash
+apt-get install gitlab-runner
+usermod -aG docker gitlab-runner
+
+---
+Runner :
+gitlab-runner verify --delete
+
+gitlab-runner unregister -n \
+  --name "runner-shell" \
+  --url http://gitlab.example.com/ \
+  --token j36dSBQt1pVnkx8yVuD_
+
+gitlab-runner register -n \
+  --url http://gitlab.example.com/ \
+  --registration-token j36dSBQt1pVnkx8yVuD_ \
+  --executor shell \
+  --name "runner-shell"
+
+gitlab-runner register -n \
+  --url http://gitlab.example.com/ \
+  --registration-token j36dSBQt1pVnkx8yVuD_ \
+  --executor docker \
+  --docker-image docker:latest \
+  --name "runner-docker"
