@@ -17,6 +17,13 @@ apt-get install gitlab-runner
 usermod -aG docker gitlab-runner
 
 ---
+Registry :
+docker run -d \
+-p 5000:5000 --restart always --name registry \
+-v /srv/registry:/var/lib/registry \
+registry:2
+
+---
 Runner :
 gitlab-runner verify --delete
 

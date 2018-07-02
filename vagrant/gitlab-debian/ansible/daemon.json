@@ -1,3 +1,5 @@
 {
-  "insecure-registries" : ["myregistrydomain.com:5000"]
+  "insecure-registries" : ["registry.example.com:5000"],
+  "insecure-registries" : ["registry.gitlab.example.com:5000"],
+  "insecure-registries" : ["127.0.0.1:5005"]
 }
