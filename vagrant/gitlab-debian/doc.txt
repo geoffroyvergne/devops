@@ -27,20 +27,33 @@ registry:2
 Runner :
 gitlab-runner verify --delete
 
-gitlab-runner unregister -n \
-  --name "runner-shell" \
+gitlab-runner unregister \
   --url http://gitlab.example.com/ \
   --token j36dSBQt1pVnkx8yVuD_
 
-gitlab-runner register -n \
+gitlab-runner register -n --locked=false \
   --url http://gitlab.example.com/ \
   --registration-token j36dSBQt1pVnkx8yVuD_ \
   --executor shell \
   --name "runner-shell"
 
-gitlab-runner register -n \
+gitlab-runner register -n --locked=false \
   --url http://gitlab.example.com/ \
   --registration-token j36dSBQt1pVnkx8yVuD_ \
   --executor docker \
   --docker-image docker:latest \
+  --docker-privileged true \
   --name "runner-docker"
+
+# List runners
+gitlab-runner list
+
+# Unit Run
+gitlab-runner run
+gitlab-runner --debug run
+
+# Launch as service
+gitlab-runner install root
+
+
+
