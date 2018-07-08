@@ -10,7 +10,7 @@
 ##! URL on which GitLab will be reachable.
 ##! For more details on configuring external_url see:
 ##! https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
-external_url 'http://gitlab.example.com'
+external_url 'http://gitlab.192.168.33.10.nip.io'
 
 ## Roles for multi-instance GitLab
 ##! The default is to have no roles enabled, which results in GitLab running as an all-in-one instance.
@@ -45,14 +45,14 @@ external_url 'http://gitlab.example.com'
 ## gitlab.yml configuration
 ##! Docs: https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/settings/gitlab.yml.md
 ################################################################################
-# gitlab_rails['gitlab_ssh_host'] = 'ssh.host_example.com'
+# gitlab_rails['gitlab_ssh_host'] = 'ssh.host_192.168.33.10.nip.io'
 # gitlab_rails['time_zone'] = 'UTC'
 
 ### Email Settings
 # gitlab_rails['gitlab_email_enabled'] = true
-# gitlab_rails['gitlab_email_from'] = 'example@example.com'
+# gitlab_rails['gitlab_email_from'] = 'example@192.168.33.10.nip.io'
 # gitlab_rails['gitlab_email_display_name'] = 'Example'
-# gitlab_rails['gitlab_email_reply_to'] = 'noreply@example.com'
+# gitlab_rails['gitlab_email_reply_to'] = 'noreply@192.168.33.10.nip.io'
 # gitlab_rails['gitlab_email_subject_suffix'] = ''
 
 ### GitLab user privileges
@@ -216,7 +216,7 @@ gitlab_rails['gitlab_default_projects_features_container_registry'] = true
 ### GitLab Mattermost
 ###! These settings are void if Mattermost is installed on the same omnibus
 ###! install
-# gitlab_rails['mattermost_host'] = "https://mattermost.example.com"
+# gitlab_rails['mattermost_host'] = "https://mattermost.192.168.33.10.nip.io"
 
 ### LDAP Settings
 ###! Docs: https://docs.gitlab.com/omnibus/settings/ldap.html
@@ -458,7 +458,7 @@ gitlab_rails['gitlab_default_projects_features_container_registry'] = true
 # gitlab_rails['smtp_port'] = 465
 # gitlab_rails['smtp_user_name'] = "smtp user"
 # gitlab_rails['smtp_password'] = "smtp password"
-# gitlab_rails['smtp_domain'] = "example.com"
+# gitlab_rails['smtp_domain'] = "192.168.33.10.nip.io"
 # gitlab_rails['smtp_authentication'] = "login"
 # gitlab_rails['smtp_enable_starttls_auto'] = true
 # gitlab_rails['smtp_tls'] = false
@@ -475,12 +475,12 @@ gitlab_rails['gitlab_default_projects_features_container_registry'] = true
 ##! Docs: https://docs.gitlab.com/ce/administration/container_registry.html
 ################################################################################
 
-registry_external_url 'http://registry.gitlab.example.com'
+registry_external_url 'http://registry.192.168.33.10.nip.io'
 
 ### Settings used by GitLab application
 gitlab_rails['registry_enabled'] = true
 #gitlab_rails['registry_username'] = "registry"
-gitlab_rails['registry_host'] = "registry.gitlab.example.com"
+gitlab_rails['registry_host'] = "registry.192.168.33.10.nip.io"
 gitlab_rails['registry_port'] = "5000"
 gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
 
@@ -497,7 +497,7 @@ gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
 #registry['uid'] = nil
 #registry['gid'] = nil
 #registry['dir'] = "/var/opt/gitlab/registry"
-#registry['registry_http_addr'] = "localhost:5000"
+registry['registry_http_addr'] = "registry.192.168.33.10.nip.io:5000"
 #registry['debug_addr'] = "localhost:5001"
 #registry['log_directory'] = "/var/log/gitlab/registry"
 #registry['env_directory'] = "/opt/gitlab/etc/registry/env"
@@ -521,7 +521,7 @@ gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
 # registry['notifications'] = [
 #   {
 #     'name' => 'test_endpoint',
-#     'url' => 'https://gitlab.example.com/notify2',
+#     'url' => 'https://gitlab.192.168.33.10.nip.io/notify2',
 #     'timeout' => '500ms',
 #     'threshold' => 5,
 #     'backoff' => '1s',
@@ -980,7 +980,7 @@ gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
 # nginx['status'] = {
 #  "enable" => true,
 #  "listen_addresses" => ["127.0.0.1"],
-#  "fqdn" => "dev.example.com",
+#  "fqdn" => "dev.192.168.33.10.nip.io",
 #  "port" => 9999,
 #  "options" => {
 #    "stub_status" => "on", # Turn on stats
@@ -1079,7 +1079,7 @@ gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
 ################################################################################
 
 ##! Define to enable GitLab Pages
-# pages_external_url "http://pages.example.com/"
+# pages_external_url "http://pages.192.168.33.10.nip.io/"
 # gitlab_pages['enable'] = false
 
 ##! Configure to expose GitLab Pages on external IP address, serving the HTTP
@@ -1118,7 +1118,7 @@ gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
 # gitlab_pages['admin_https_key'] = '/etc/gitlab/pages-admin.key'
 
 ##! Client side configuration for gitlab-pages admin API, in case pages runs on a different host
-# gitlab_rails['pages_admin_address'] = 'pages.gitlab.example.com:5678'
+# gitlab_rails['pages_admin_address'] = 'pages.gitlab.192.168.33.10.nip.io:5678'
 # gitlab_rails['pages_admin_certificate'] = '/etc/gitlab/pages-admin.crt'
 
 ################################################################################
@@ -1147,7 +1147,7 @@ gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
 ##! Docs: https://docs.gitlab.com/omnibus/gitlab-mattermost
 ################################################################################
 
-# mattermost_external_url 'http://mattermost.example.com'
+# mattermost_external_url 'http://mattermost.192.168.33.10.nip.io'
 
 # mattermost['enable'] = false
 # mattermost['username'] = 'mattermost'
@@ -1170,9 +1170,9 @@ gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
 # mattermost['gitlab_id'] = "12345656"
 # mattermost['gitlab_secret'] = "123456789"
 # mattermost['gitlab_scope'] = ""
-# mattermost['gitlab_auth_endpoint'] = "http://gitlab.example.com/oauth/authorize"
-# mattermost['gitlab_token_endpoint'] = "http://gitlab.example.com/oauth/token"
-# mattermost['gitlab_user_api_endpoint'] = "http://gitlab.example.com/api/v4/user"
+# mattermost['gitlab_auth_endpoint'] = "http://gitlab.192.168.33.10.nip.io/oauth/authorize"
+# mattermost['gitlab_token_endpoint'] = "http://gitlab.192.168.33.10.nip.io/oauth/token"
+# mattermost['gitlab_user_api_endpoint'] = "http://gitlab.192.168.33.10.nip.io/api/v4/user"
 # mattermost['file_directory'] = "/var/opt/gitlab/mattermost/data"
 
 ################################################################################
@@ -1282,7 +1282,7 @@ registry_nginx['proxy_set_headers'] = {
 # alertmanager['enable'] = true
 # alertmanager['home'] = '/var/opt/gitlab/alertmanager'
 # alertmanager['log_directory'] = '/var/log/gitlab/alertmanager'
-# alertmanager['admin_email'] = 'admin@example.com'
+# alertmanager['admin_email'] = 'admin@192.168.33.10.nip.io'
 # alertmanager['flags'] = {
 #   'web.listen-address' => "#{node['gitlab']['alertmanager']['listen_address']}"
 #   'storage.path' => "#{node['gitlab']['alertmanager']['home']}/data"
@@ -1456,7 +1456,7 @@ registry_nginx['proxy_set_headers'] = {
 
 # gitlab_rails['kerberos_enabled'] = true
 # gitlab_rails['kerberos_keytab'] = /etc/http.keytab
-# gitlab_rails['kerberos_service_principal_name'] = HTTP/gitlab.example.com@EXAMPLE.COM
+# gitlab_rails['kerberos_service_principal_name'] = HTTP/gitlab.192.168.33.10.nip.io@192.168.33.10.nip.io
 # gitlab_rails['kerberos_use_dedicated_port'] = true
 # gitlab_rails['kerberos_port'] = 8443
 # gitlab_rails['kerberos_https'] = true
@@ -1561,7 +1561,7 @@ registry_nginx['proxy_set_headers'] = {
 ## Additional Database Settings (EE only)
 ##! Docs: https://docs.gitlab.com/ee/administration/database_load_balancing.html
 ################################################################################
-# gitlab_rails['db_load_balancing'] = { 'hosts' => ['secondary1.example.com'] }
+# gitlab_rails['db_load_balancing'] = { 'hosts' => ['secondary1.192.168.33.10.nip.io'] }
 
 ################################################################################
 ## GitLab Geo

@@ -1,3 +1,7 @@
+http://192.168.33.10.nip.io/
+
+gitlab.192.168.33.10.nip.io
+registry.192.168.33.10.nip.io
 
 Install :
 
@@ -27,27 +31,22 @@ registry:2
 Runner :
 gitlab-runner verify --delete
 
-gitlab-runner unregister \
-  --url http://gitlab.example.com/ \
-  --token j36dSBQt1pVnkx8yVuD_
-
 gitlab-runner register -n --locked=false \
-  --url http://gitlab.example.com/ \
+  --url http://gitlab.192.168.33.10.nip.io/ \
   --registration-token j36dSBQt1pVnkx8yVuD_ \
-  --tag-list [shell] \
+  --tag-list shell \
   --executor shell \
   --name "runner-shell"
 
 gitlab-runner register -n --locked=false \
   --name "runner-docker" \
-  --url http://gitlab.example.com/ \
+  --url http://gitlab.192.168.33.10.nip.io/ \
   --registration-token j36dSBQt1pVnkx8yVuD_ \
-  --tag-list [docker] \
+  --tag-list docker \
   --executor docker \
   --docker-image docker:latest \
   --docker-privileged true \
-  --docker-network-mode gitlab_default \
-  --docker-extra-hosts ["gitlab.example.com:192.168.33.10", "registry.gitlab.example.com:192.168.33.10"]
+  --docker-network-mode gitlab_default
 
 # List runners
 gitlab-runner list
