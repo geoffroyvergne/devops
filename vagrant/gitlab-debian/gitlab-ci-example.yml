@@ -1,0 +1,43 @@
+#image: docker:stable
+
+#services:
+#  - name: docker:dind
+#    command: ["--insecure-registry=registry.gitlab.example.com:5000"]
+
+stages:
+  - build
+  - package
+  - deploy
+
+#before_script:
+#  - "source /etc/profile"
+#  - docker info
+#  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.example.com:5000
+
+maven-build:
+  image: maven:3-jdk-8-slim
+  stage: build
+  script:
+  - "mvn -v"
+  tags: [docker]
+
+ng-build:
+  image: johnpapa/angular-cli
+  stage: build
+  script:
+  - "ng -v"
+  tags: [docker]
+
+docker-build:
+  stage: package
+  script:
+  - docker build -t app .
+  - docker tag app registry.gitlab.example.com:5000/root/app:latest
+  tags: [shell]
+
+deploy:
+  stage: deploy
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.example.com:5000
+  - docker push registry.gitlab.example.com:5000/root/app:latest
+  tags: [shell]
