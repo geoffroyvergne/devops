@@ -1,0 +1,3 @@
+{
+  "insecure-registries" : ["registry.example.com:5000", "registry.gitlab.example.com:5000", "127.0.0.1:5005", "registry.192.168.33.10.nip.io", "registry.192.168.33.10.nip.io:5000"]
+}

@@ -1,0 +1,13 @@
+---
+
+- name: echo
+  shell: echo 'Ansible vagrant common'
+- name: Install Common
+  apt: name={{item}} update_cache=yes
+  with_items:
+    - vim
+    - git
+    - curl
+    - wget
+    - net-tools
+  become: yes

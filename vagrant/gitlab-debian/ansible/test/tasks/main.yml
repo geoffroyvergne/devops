@@ -1,0 +1,4 @@
+---
+
+- name: echo
+  shell: echo 'Ansible vagrant'
