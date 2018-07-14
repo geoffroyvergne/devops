@@ -2,8 +2,15 @@
 ---
 - hosts: all
   remote_user: root
+  vars:
+    docker_insecure_registries:
+      - "registry.example.com:5000"
+      - "registry.gitlab.example.com:5000"
+      - "127.0.0.1:5005"
+      - "registry.192.168.33.10.nip.io"
+      - "registry.192.168.33.10.nip.io:5000"
   roles:
-    - ../roles/test
-    - ../roles/common
-    - ../roles/docker
-    - ../roles/docker-config
+    - test
+    - common
+    - docker
+    - docker-config
