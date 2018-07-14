@@ -6,12 +6,10 @@ ansible all -m ping
 ansible all -a "/bin/echo hello"
 
 # Playbook
-ansible-playbook ./playbooks/nginx-install.yaml -v
-ansible-playbook ./playbooks/nginx-install.yaml -v --check
 
-ansible-playbook ./playbooks/docker.yaml -v --check
-
-ansible-playbook ./playbooks/docker-from-role.yaml -v --check
+ansible-playbook -i inventories/inventory playbooks/docker.yml
+ansible-playbook --limit stretch64 playbooks/docker.yml
+ansible-playbook playbooks/docker.yml --list-hosts
 
 # Roles
-ansible-galaxy install ben-le.docker
+ansible-galaxy init docker

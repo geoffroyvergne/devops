@@ -1,0 +1,9 @@
+
+---
+- hosts: all
+  remote_user: root
+  roles:
+    - ../roles/test
+    - ../roles/common
+    - ../roles/docker
+    - ../roles/docker-config
