@@ -1,0 +1,5 @@
+---
+db_user: "user"
+db_password: "user"
+db_database: "user"
+db_priv: "ALL"

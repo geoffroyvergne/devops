@@ -1,0 +1,23 @@
+---
+
+- name: echo
+  shell: echo 'Ansible vagrant common'
+- name: Add locale gen file
+  template:
+    src: locale.gen
+    dest: /etc/locale.gen
+  become: yes
+- name: Update locales
+  shell: |
+    locale-gen
+    dpkg-reconfigure locales -f noninteractive
+  become: yes
+- name: Install Common
+  apt: name={{ item }} update_cache=yes
+  with_items:
+    - vim
+    - git
+    - curl
+    - wget
+    - net-tools
+  become: yes

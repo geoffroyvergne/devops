@@ -1,0 +1,69 @@
+---
+- name: echo
+  shell: echo 'Ansible vagrant mariadb'
+- name: Install Mariadb dependencies
+  apt: name={{item}} update_cache=yes
+  with_items:
+    - mariadb-client
+    - mariadb-server
+    - python-mysqldb
+  become: yes
+- name: Configuration file
+  template:
+    src: "{{ item }}"
+    dest: "/etc/mysql/mariadb.conf.d/{{ item }}"
+  with_items:
+    - 50-server.conf
+    - 50-server.cnf
+  become: yes
+
+- name: Ensure the Mariadb service is running
+  service: name=mariadb state=started enabled=yes
+
+#- name: Set root user password
+#  shell: |
+#    mysql -u root -e "SET PASSWORD FOR 'root'@'{{ item }}' = PASSWORD('{{ root_db_password }}');"
+#    mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{ item }}' IDENTIFIED BY '{{ root_db_password }}' WITH GRANT OPTION;"
+#    mysql -u root -e "FLUSH PRIVILEGES;"
+#  with_items: "{{ hosts_to_protect }}"
+#  become: yes
+
+#- name: Add user
+#  shell: |
+#    mysql -u root -e "CREATE DATABASE IF NOT EXISTS {{ user_db_name }};"
+#    mysql -u root -e "CREATE USER '{{ user_name }}' IDENTIFIED BY '{{ user_password }}';"
+#    mysql -u root -e "GRANT USAGE ON *.* TO '{{ user_name }}'@'{{ item }}' IDENTIFIED BY '{{ user_password }}';"
+#    mysql -u root -e "GRANT ALL privileges ON {{ user_db_name }}.* TO '{{ user_name }}'@'{{ item }}';"
+#    mysql -u root -e "FLUSH PRIVILEGES;"
+#  with_items: "{{ hosts_to_protect }}"
+#  become: yes
+#- name: Restart mariadb
+#  service:
+#    name: mysql
+#    state: restarted
+#  become: yes
+
+- name: Root user
+  mysql_user:
+    name: root
+    password: "{{ root_db_password }}"
+    priv: '{{ user_db_name }}.*:ALL'
+    #host_all: yes
+    host: "%"
+    state: present
+  become: yes
+
+- name: Create datababse
+  mysql_db:
+    name: "{{ user_db_name }}"
+    state: present
+  become: yes
+
+- name: Create user
+  mysql_user:
+    name: "{{ user_name }}"
+    password: "{{ user_password }}"
+    priv: '{{ user_db_name }}.*:ALL'
+    #host_all: yes
+    state: present
+  become: yes

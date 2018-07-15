@@ -1,0 +1,11 @@
+---
+skip_external_locking:
+mariadb_bind_address: 0.0.0.0
+root_db_password: root
+hosts_to_protect:
+  - "%"
+
+# Create user
+user_name: user
+user_password: user
+user_db_name: user

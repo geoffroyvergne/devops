@@ -1,0 +1,35 @@
+---
+- name: echo
+  shell: echo 'Ansible vagrant postgres'
+- name: Install Postgres dependencies
+  apt: name={{item}} update_cache=yes
+  with_items:
+    - postgresql
+    - postgresql-client
+    - libpq-dev
+    - python-psycopg2
+  become: yes
+
+- name: Ensure the PostgreSQL service is running
+  service: name=postgresql state=started enabled=yes
+
+- name: Create user
+  postgresql_user:
+    db: "{{ db_database }}"
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "{{ db_priv }}"
+  become: yes
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+
+- name: Create database
+  postgresql_db: name={{ db_database }}
+             encoding='UTF-8'
+             state=present
+  become: yes
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+
