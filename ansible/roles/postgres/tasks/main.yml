@@ -10,26 +10,50 @@
     - python-psycopg2
   become: yes
 
+- name: Configuration file
+  template:
+    src: "{{ item }}"
+    dest: "/etc/postgresql/9.6/main/{{ item }}"
+  with_items:
+    - pg_hba.conf
+    - postgresql.conf
+  become: yes
+
 - name: Ensure the PostgreSQL service is running
   service: name=postgresql state=started enabled=yes
 
 - name: Create database
-  postgresql_db: name={{ db_database }}
-             encoding='UTF-8'
-             state=present
+  postgresql_db:
+    name: "{{ db_database }}"
+    encoding: 'UTF-8'
+    state: present
   become: yes
   become_user: postgres
   vars:
     ansible_ssh_pipelining: true
 
 - name: Create user
-  postgresql_user: db="{{ db_database }}"
-    name="{{ db_user }}"
-    password="user"
-    priv="ALL"
+  postgresql_user:
+    db: "{{ db_database }}"
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "ALL"
   become: yes
   become_user: postgres
   vars:
     ansible_ssh_pipelining: true
 
+- name: Restart service
+  service:
+    name: postgresql
+    state: restarted
+  become: yes
 
+#- name: Create user
+#  shell |
+#  psql -c "CREATE USER userTest WITH PASSWORD 'userTest';"
+#  psql -c "CREATE DATABASE userTest OWNER userTest;"
+
+
+#CREATE USER test WITH PASSWORD 'test';
+#CREATE DATABASE test OWNER test;

@@ -1,4 +1,6 @@
 ---
+listen_addresses: "*"
+allow_hosts: "0.0.0.0/0"
 db_user: "user"
 db_password: "user"
 db_database: "user"

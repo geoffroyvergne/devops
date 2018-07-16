@@ -43,3 +43,9 @@
     priv: '{{ user_db_name }}.*:ALL'
     state: present
   become: yes
+
+- name: Restart service
+  service:
+    name: mariadb
+    state: restarted
+  become: yes
