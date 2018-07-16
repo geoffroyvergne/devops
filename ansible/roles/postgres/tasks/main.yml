@@ -13,17 +13,6 @@
 - name: Ensure the PostgreSQL service is running
   service: name=postgresql state=started enabled=yes
 
-- name: Create user
-  postgresql_user:
-    db: "{{ db_database }}"
-    name: "{{ db_user }}"
-    password: "{{ db_password }}"
-    priv: "{{ db_priv }}"
-  become: yes
-  become_user: postgres
-  vars:
-    ansible_ssh_pipelining: true
-
 - name: Create database
   postgresql_db: name={{ db_database }}
              encoding='UTF-8'
@@ -32,4 +21,15 @@
   become_user: postgres
   vars:
     ansible_ssh_pipelining: true
+
+- name: Create user
+  postgresql_user: db="{{ db_database }}"
+    name="{{ db_user }}"
+    password="user"
+    priv="ALL"
+  become: yes
+  become_user: postgres
+  vars:
+    ansible_ssh_pipelining: true
+
 
