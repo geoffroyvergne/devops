@@ -1,0 +1,11 @@
+
+---
+- hosts: all
+  remote_user: root
+  vars:
+    containers:
+      - { name: 'debian-stretch-container', ip: '10.0.3.100/24' }
+  roles:
+    - test
+    - common
+    - lxc

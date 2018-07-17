@@ -20,4 +20,12 @@
     - curl
     - wget
     - net-tools
+    - xinetd
+    - htop
   become: yes
+
+#- name: Copy key
+#  - name: put pubkey
+#    lineinfile:
+#      path: "/home/<username>/.ssh/authorized_keys"
+#      line: "{{ pubkey }}"

@@ -1,0 +1,52 @@
+---
+- name: echo
+  shell: echo 'LXC vagrant docker'
+- name: Install LXC dependencies
+  apt: name={{ item }} update_cache=yes
+  with_items:
+    - lxc
+    - lxctl
+    - python-lxc
+  become: yes
+
+- name: Copy config files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  become: yes
+  loop:
+    - { src: 'lxc-net', dest: '/etc/default/lxc-net' }
+    - { src: 'default.conf', dest: '/etc/lxc/default.conf' }
+
+- name: Restart service
+  service:
+    name: lxc-net
+    state: restarted
+  become: yes
+
+# Start container
+- name: Create a container
+  lxc_container:
+    name: "{{ item.name }}"
+    container_log: true
+    container_log_level: INFO
+    template: debian
+    template_options: --release stretch --arch=amd64
+    container_config:
+      - "lxc.start.auto = 1"
+      - "lxc.start.delay = 5"
+      - "lxc.network.ipv4 = {{ item.ip }}"
+      - "lxc.network.ipv4.gateway = 10.0.3.1"
+    container_command: |
+      apt-get update
+      apt-get install -y vim lxc-dev curl iputils-* ssh
+    state: started
+  register: create_vm
+  become: yes
+  loop: "{{ containers }}"
+
+#- name: Copy key
+#  - name: put pubkey
+#    lineinfile:
+#      path: "/home/<username>/.ssh/authorized_keys"
+#      line: "{{ pubkey }}"

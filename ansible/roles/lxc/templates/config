@@ -1,0 +1,2 @@
+lxc.network.ipv4 = 10.0.3.100/24
+lxc.network.ipv4.gateway = 10.0.3.1
