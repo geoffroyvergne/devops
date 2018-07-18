@@ -13,11 +13,11 @@
     line: 'DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock"'
     create: no
   become: yes
-- name: use docker as regular user
-  shell: |
-    groupadd docker
-    usermod -aG docker vagrant
-  become: yes
+#- name: use docker as regular user
+#  shell: |
+#    groupadd docker
+#    usermod -aG docker "{{ docker_regular_user }}"
+#  become: yes
 - name: Restart docker
   service:
     name: docker

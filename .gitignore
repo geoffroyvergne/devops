@@ -2,3 +2,4 @@
 **/.vagrant
 **/*.retry
 **/authorized_keys
+**/keys

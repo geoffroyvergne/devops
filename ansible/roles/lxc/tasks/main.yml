@@ -30,8 +30,8 @@
     name: "{{ item.name }}"
     container_log: true
     container_log_level: INFO
-    template: debian
-    template_options: --release stretch --arch=amd64
+    template: "{{ item.template }}"
+    template_options: --release "{{ item.release}}" --arch=amd64
     container_config:
       - "lxc.start.auto = 1"
       - "lxc.start.delay = 5"
@@ -39,14 +39,37 @@
       - "lxc.network.ipv4.gateway = 10.0.3.1"
     container_command: |
       apt-get update
-      apt-get install -y vim lxc-dev curl iputils-* ssh
+      apt-get install -y vim lxc-dev curl iputils-* ssh python
+      mkdir /root/.ssh
+      touch /root/.ssh/authorized_keys
     state: started
   register: create_vm
   become: yes
   loop: "{{ containers }}"
 
+- name: Add ssh port forward
+  template:
+    src: ssh_forward
+    dest: /etc/xinetd.d/ssh_forward
+  become: yes
+
+- name: Restart xinetd
+  service:
+    name: xinetd
+    state: restarted
+  become: yes
+
+- name: Copy key
+  copy:
+    src: keys/authorized_keys
+    dest: /var/lib/lxc/{{ item.name }}/rootfs/root/.ssh/authorized_keys
+  become: yes
+  loop: "{{ containers }}"
+
 #- name: Copy key
-#  - name: put pubkey
-#    lineinfile:
-#      path: "/home/<username>/.ssh/authorized_keys"
-#      line: "{{ pubkey }}"
+#  lineinfile:
+#    path: "/var/lib/lxc/{{ item.name }}/rootfs/root/.ssh/authorized_keys"
+#    state: present
+#    line: "{{ pubkey }}"
+#  become: yes
+#  loop: "{{ containers }}"

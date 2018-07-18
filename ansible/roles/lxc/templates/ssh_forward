@@ -1,0 +1,13 @@
+{% for item in containers %}
+service ssh_forward
+{
+        disable         = no
+        type            = UNLISTED
+        socket_type     = stream
+        protocol        = tcp
+        user            = nobody
+        wait            = no
+        redirect        = {{ item.ipv4 }} 22
+        port            = {{ item.sshPort }}
+}
+{% endfor %}

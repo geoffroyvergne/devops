@@ -11,5 +11,18 @@ ansible-playbook -i inventories/inventory playbooks/docker.yml
 ansible-playbook --limit stretch64 playbooks/docker.yml
 ansible-playbook playbooks/docker.yml --list-hosts
 
+ansible-playbook -i inventories/lxc --limit debian-stretch-container playbooks/docker.yml
+ansible-playbook -i inventories/inventory --limit stretch64 playbooks/lxc.yml
+
 # Roles
 ansible-galaxy init docker
+
+# SSH
+
+Generate keys : ssh-keygen -f ./id_rsa
+
+Vagrant host :
+ssh vagrant@192.168.33.12 -i vagrant/stretch64/.vagrant/machines/default/virtualbox/private_key
+
+LXC host :
+ssh root@192.168.33.12 -p 2000 -i ansible/roles/lxc/files/keys/id_rsa
