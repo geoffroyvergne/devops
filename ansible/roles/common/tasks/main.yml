@@ -23,5 +23,12 @@
     - xinetd
     - htop
     - psmisc
+    - iputils-*
+    - ssh
+    - python
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
   become: yes
 

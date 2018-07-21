@@ -13,10 +13,10 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-  become: yes
   loop:
     - { src: 'lxc-net', dest: '/etc/default/lxc-net' }
     - { src: 'default.conf', dest: '/etc/lxc/default.conf' }
+  become: yes
 
 - name: Restart service
   service:
@@ -34,14 +34,20 @@
     template_options: --release "{{ item.release}}" --arch=amd64
     container_config:
       - "lxc.start.auto = 1"
-      - "lxc.start.delay = 5"
       - "lxc.network.ipv4 = {{ item.ip }}"
       - "lxc.network.ipv4.gateway = 10.0.3.1"
     container_command: |
       apt-get update
-      apt-get install -y vim lxc-dev curl iputils-* ssh python
+      apt-get install -y python
+
       mkdir /root/.ssh
-      touch /root/.ssh/authorized_keys
+      cat > /etc/network/interfaces << EOL
+      auto lo
+      iface lo inet loopback
+
+      auto eth0
+      iface eth0 inet manual
+      EOL
     state: started
   register: create_vm
   become: yes
@@ -63,8 +69,15 @@
   copy:
     src: keys/authorized_keys
     dest: /var/lib/lxc/{{ item.name }}/rootfs/root/.ssh/authorized_keys
-  become: yes
   loop: "{{ containers }}"
+  become: yes
+
+#- name: Copy network config
+#  copy:
+#    src: interfaces
+#    dest: "/var/lib/lxc/{{ item.name }}/rootfs/etc/network/interfaces"
+#  loop: "{{ containers }}"
+#  become: yes
 
 #- name: Copy key
 #  lineinfile:
