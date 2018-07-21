@@ -37,3 +37,5 @@ kubectl proxy --accept-hosts='.*' --address='0.0.0.0'
 http://192.168.33.13:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
 
 https://stackoverflow.com/questions/46664104/how-to-sign-in-kubernetes-dashboard
+
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
