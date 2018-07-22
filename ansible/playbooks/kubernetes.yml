@@ -10,3 +10,4 @@
     - docker
     - docker-config
     - kubernetes
+    - kubernetes-config
