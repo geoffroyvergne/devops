@@ -1,0 +1,50 @@
+#cd /etc/kubernetes/pki
+
+openssl genrsa -out janwillies.key 2048
+openssl req -new -key janwillies.key -out janwillies.csr -subj "/CN=janwillies/O=testing/O=preprod"
+sudo openssl x509 -req -in janwillies.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out janwillies.crt -days 10000
+
+base64 -w0 janwillies.crt && echo
+base64 -w0 janwillies.key && echo
+
+kubectl create namespace testing
+
+cat <<EOF > k8s/janwillies.conf
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: $(cat /etc/kubernetes/pki/ca.crt | base64 --wrap=0)
+    server: https://192.168.33.13:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    namespace: testing
+    user: janwillies
+  name: janwillies@kubernetes
+current-context: janwillies@kubernetes
+kind: Config
+preferences: {}
+users:
+- name: janwillies
+  user:
+    client-certificate-data: $(cat pki/janwillies.crt | base64 --wrap=0)
+    client-key-data: $(cat pki/janwillies.key | base64 --wrap=0)
+EOF
+
+cat <<EOF | kubectl create -f -
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: testing-edit
+  namespace: testing # This binding only applies in the "testing" namespace
+subjects:
+  - kind: Group # May be "User", "Group" or "ServiceAccount"
+    name: testing
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+EOF
+
+export KUBECONFIG=k8s/janwillies.conf

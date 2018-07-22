@@ -1,0 +1,86 @@
+https://github.com/janwillies/kubernetes-rbac-howto
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+
+
+
+
+
+
+
+
+------------
+
+kubectl get clusterrolebinding --all-namespaces
+kubectl get roles --all-namespaces
+
+
+https://docs.bitnami.com/kubernetes/how-to/configure-rbac-in-your-kubernetes-cluster/
+https://sysdig.com/blog/kubernetes-security-rbac-tls/
+
+Username: employee
+Group: bitnami
+namespace: office
+context: employee-context
+
+kubectl create namespace office
+
+openssl genrsa -out employee.key 2048
+openssl req -new -key employee.key -out employee.csr -subj "/CN=employee/O=bitnami"
+openssl x509 -req -in employee.csr -CA ~/ca/ca.crt -CAkey ~/ca/ca.key -CAcreateserial -out employee.crt -days 500
+
+kubectl config set-credentials employee --client-certificate=/home/vagrant/employee/employee.crt  --client-key=/home/vagrant/employee/employee.key
+kubectl config set-context employee-context --cluster=kubernetes --namespace=office --user=employee
+
+kubectl --context=employee-context get pods
+
+cat <<EOF | kubectl create -f -
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: office
+  name: deployment-manager
+rules:
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["deployments", "replicasets", "pods"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] # You can also use ["*"]
+EOF
+
+cat <<EOF | kubectl create -f -
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: deployment-manager-binding
+  namespace: office
+subjects:
+- kind: User
+  name: employee
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: deployment-manager
+  apiGroup: ""
+EOF
+
+cat <<-EOF > clients/$USER/kubeconfig
+apiVersion: v1
+kind: Config
+preferences:
+  colors: true
+current-context: $CLUSTERNAME
+clusters:
+- name: $CLUSTERNAME
+  cluster:
+    server: $CLUSTERENDPOINT
+    certificate-authority-data: $(cat $CACERT | base64 --wrap=0)
+contexts:
+- context:
+    cluster: $CLUSTERNAME
+    user: $USER
+  name: $CLUSTERNAME
+users:
+- name: $USER
+  user:
+    client-certificate-data: $(cat $CLIENTCERTCRT | base64 --wrap=0)
+    client-key-data: $(cat $CLIENTCERTKEY | base64 --wrap=0)
+EOF
