@@ -1,13 +1,15 @@
 #cd /etc/kubernetes/pki
 
+export KUBECONFIG=k8s/config
+
+kubectl create namespace testing
+
 openssl genrsa -out janwillies.key 2048
 openssl req -new -key janwillies.key -out janwillies.csr -subj "/CN=janwillies/O=testing/O=preprod"
 sudo openssl x509 -req -in janwillies.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out janwillies.crt -days 10000
 
 base64 -w0 janwillies.crt && echo
 base64 -w0 janwillies.key && echo
-
-kubectl create namespace testing
 
 cat <<EOF > k8s/janwillies.conf
 apiVersion: v1
@@ -48,3 +50,6 @@ roleRef:
 EOF
 
 export KUBECONFIG=k8s/janwillies.conf
+
+kubectl get all
+kubectl run --image bitnami/dokuwiki mydokuwiki

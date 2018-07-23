@@ -1,0 +1,8 @@
+./create-namespace-role.sh <namespace>
+
+./create-user-role.sh <username> <email> <namespace>
+
+
+./create-namespace-role.sh test
+
+./create-user-role.sh usertest usertest@email.com test
