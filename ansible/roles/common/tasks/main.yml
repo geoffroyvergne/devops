@@ -1,7 +1,5 @@
 ---
 
-- name: echo
-  shell: echo 'Ansible vagrant common'
 - name: Add locale gen file
   template:
     src: locale.gen
@@ -30,5 +28,4 @@
     - ca-certificates
     - curl
     - software-properties-common
-  become: yes
 

@@ -1,6 +1,5 @@
 ---
-- name: echo
-  shell: echo 'Ansible vagrant postgres'
+
 - name: Install Postgres dependencies
   apt: name={{item}} update_cache=yes
   with_items:
@@ -8,7 +7,6 @@
     - postgresql-client
     - libpq-dev
     - python-psycopg2
-  become: yes
 
 - name: Configuration file
   template:
@@ -17,7 +15,6 @@
   with_items:
     - pg_hba.conf
     - postgresql.conf
-  become: yes
 
 - name: Ensure the PostgreSQL service is running
   service: name=postgresql state=started enabled=yes
@@ -47,13 +44,3 @@
   service:
     name: postgresql
     state: restarted
-  become: yes
-
-#- name: Create user
-#  shell |
-#  psql -c "CREATE USER userTest WITH PASSWORD 'userTest';"
-#  psql -c "CREATE DATABASE userTest OWNER userTest;"
-
-
-#CREATE USER test WITH PASSWORD 'test';
-#CREATE DATABASE test OWNER test;

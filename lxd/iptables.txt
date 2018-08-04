@@ -1,0 +1,23 @@
+apt install iptables-persistent
+
+10.211.171.117:443
+
+sudo iptables -t nat -I PREROUTING -i eth0 -p TCP -d 192.168.33.10 --dport 443 -j DNAT --to-destination 10.211.171.117:443 -m comment --comment "forward to the Kubernetes container"
+
+
+PORT=80
+PUBLIC_IP=your_public_ip
+CONTAINER_IP=your_container_ip
+sudo -E bash -c 'iptables -t nat -I PREROUTING -i eth0 -p TCP -d $PUBLIC_IP --dport $PORT -j DNAT --to-destination $CONTAINER_IP:$PORT -m comment --comment "forward to the Apache2 container"'
+
+
+iptables -t nat -A POSTROUTING -o lxdbr0 -s 10.170.248.0/24 -p tcp -m multiport --dports 80 -j SNAT --to-source 192.168.33.10
+
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to 10.170.248.40:80
+
+---
+
+sudo iptables -t nat -L -n -v
+sudo iptables -t nat -A PREROUTING -p tcp -i lxdbr0 -d 192.168.33.10 --dport 9000 -j DNAT --to 10.170.248.40:80
+
+iptables -t nat -A PREROUTING -p tcp -d 10.170.248.40 --dport 80 -j DNAT --to-destination 192.168.33.10:80

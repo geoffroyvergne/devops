@@ -1,13 +1,12 @@
 ---
-- name: echo
-  shell: echo 'Ansible vagrant mariadb'
+
 - name: Install Mariadb dependencies
   apt: name={{item}} update_cache=yes
   with_items:
     - mariadb-client
     - mariadb-server
     - python-mysqldb
-  become: yes
+
 - name: Configuration file
   template:
     src: "{{ item }}"
@@ -15,7 +14,6 @@
   with_items:
     - 50-server.conf
     - 50-server.cnf
-  become: yes
 
 - name: Ensure the Mariadb service is running
   service: name=mariadb state=started enabled=yes
@@ -27,13 +25,11 @@
     priv: '*.*:ALL'
     host: "%"
     state: present
-  become: yes
 
 - name: Create datababse
   mysql_db:
     name: "{{ user_db_name }}"
     state: present
-  become: yes
 
 - name: Create user
   mysql_user:
@@ -42,10 +38,8 @@
     password: "{{ user_password }}"
     priv: '{{ user_db_name }}.*:ALL'
     state: present
-  become: yes
 
 - name: Restart service
   service:
     name: mariadb
     state: restarted
-  become: yes

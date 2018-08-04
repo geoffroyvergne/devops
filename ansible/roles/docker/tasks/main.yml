@@ -1,22 +1,33 @@
 ---
-- name: echo
-  shell: echo 'Ansible vagrant docker'
 
-  become: yes
 - name: Add Docker GPG key
   apt_key:
     url: https://download.docker.com/linux/debian/gpg
     validate_certs: false
-  become: yes
+
 - name: Add Docker APT repository
   apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/debian stretch stable"
-  become: yes
+    repo: "{{ docker_repo }}"
 
 - name: Install Docker
   apt: name={{item}} update_cache=yes
   with_items:
     - docker-ce={{ docker_version }}
     - docker-compose
-  become: yes
 
+- name: Add docker insecure registry
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+
+- name: Open Docker socket
+  lineinfile:
+    path: /etc/default/docker
+    line: 'DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock"'
+    create: no
+  when: docker_open_socket
+
+- name: Restart docker
+  service:
+    name: docker
+    state: restarted

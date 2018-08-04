@@ -1,17 +1,34 @@
 apt-get install snapd
 snap install lxd
 
+sudo apt install lxd zfsutils-linux
+
+sudo usermod -a -G lxd $USER
+newgrp lxd
+
 . /etc/profile.d/apps-bin-path.sh
 
 lxd init
 lxd init --auto --network-address 0.0.0.0
+lxc network create lxbr0 ipv4.address=auto ipv4.nat=true ipv6.address=none ipv6.nat=false
+lxc network create lxdbr0 ipv4.address=auto ipv4.nat=true ipv6.address=none ipv6.nat=false
 
+lxc launch images:debian/stretch debian
 lxc launch images:debian/stretch debian-stretch-container
 
 lxc list
 
 lxc exec debian bash
 
+get ip
+lxc list -c4 --format csv debian | cut -d' ' -f1
+
 # ssh
 ssh-keygen
 ssh-copy-id -i ~/.ssh/id_rsa.pub 10.2.165.5
+
+Unable to find IPv4-only network bridge for LXD. For information on configuring networking for LXD, see https://docs.conjure-up.io/devel/en/#users-of-lxd
+
+conjure-up kubernetes
+
+

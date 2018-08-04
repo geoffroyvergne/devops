@@ -6,6 +6,6 @@
     containers:
       - { name: 'debian-stretch-container', template: 'debian', release: 'stretch', ip: '10.0.3.100/24', ipv4: '10.0.3.100', sshPort: 2000 }
   roles:
-    - test
     - common
     - lxc
+  become: yes

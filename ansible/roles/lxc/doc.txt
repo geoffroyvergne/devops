@@ -1,0 +1,4 @@
+ansible-playbook -i ansible/inventories/inventory --limit stretch64 ansible/lxc.yml
+ansible-playbook -i ansible/inventories/inventory --limit lxc-debian ansible/lxc.yml
+
+ssh root@192.168.33.12 -p 2000 -i  ansible/roles/lxc/files/keys/id_rsa

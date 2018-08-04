@@ -1,7 +1,0 @@
----
-
-docker_registries: []
-
-docker_insecure_registries: []
-
-docker_regular_user: vagrant

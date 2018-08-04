@@ -1,16 +1,12 @@
 ---
-- name: echo
-  shell: echo 'Ansible kubernetes'
 
 - name: Add Kubernetes GPG key
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-  become: yes
 
 - name: Add Kubernetes APT repository
   apt_repository:
     repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
-  become: yes
 
 - name: Install Kubernetes
   apt: name={{item}} update_cache=no
@@ -18,13 +14,11 @@
     - kubelet
     - kubeadm
     - kubectl
-  become: yes
 
 - name: Init kube
   shell: |
     swapoff -a
     kubeadm config images pull
-    kubeadm init --apiserver-advertise-address=0.0.0.0 --node-name kube-master --apiserver-cert-extra-sans=192.168.33.13
-  become: yes
+    kubeadm init --apiserver-advertise-address=0.0.0.0 --node-name $(hostname) --apiserver-cert-extra-sans=10.168.162.181
 
-
+#--ignore-preflight-errors=All

@@ -5,9 +5,8 @@
   vars:
     docker_version: 17.03.2~ce-0~debian-stretch
   roles:
-    - test
     - common
     - docker
-    - docker-config
     - kubernetes
-    - kubernetes-config
+    #- kubernetes-config
+  become: yes

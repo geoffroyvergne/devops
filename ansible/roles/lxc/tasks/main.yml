@@ -1,13 +1,11 @@
 ---
-- name: echo
-  shell: echo 'LXC vagrant docker'
+
 - name: Install LXC dependencies
   apt: name={{ item }} update_cache=yes
   with_items:
     - lxc
     - lxctl
     - python-lxc
-  become: yes
 
 - name: Copy config files
   template:
@@ -16,13 +14,11 @@
   loop:
     - { src: 'lxc-net', dest: '/etc/default/lxc-net' }
     - { src: 'default.conf', dest: '/etc/lxc/default.conf' }
-  become: yes
 
 - name: Restart service
   service:
     name: lxc-net
     state: restarted
-  become: yes
 
 # Start container
 - name: Create a container
@@ -36,6 +32,13 @@
       - "lxc.start.auto = 1"
       - "lxc.network.ipv4 = {{ item.ip }}"
       - "lxc.network.ipv4.gateway = 10.0.3.1"
+    state: started
+  register: create_vm
+  loop: "{{ containers }}"
+
+- name: Run first commands
+  lxc_container:
+    name: "{{ item.name }}"
     container_command: |
       apt-get update
       apt-get install -y python
@@ -48,41 +51,20 @@
       auto eth0
       iface eth0 inet manual
       EOL
-    state: started
-  register: create_vm
-  become: yes
   loop: "{{ containers }}"
 
 - name: Add ssh port forward
   template:
     src: ssh_forward
     dest: /etc/xinetd.d/ssh_forward
-  become: yes
 
 - name: Restart xinetd
   service:
     name: xinetd
     state: restarted
-  become: yes
 
 - name: Copy key
   copy:
     src: keys/authorized_keys
     dest: /var/lib/lxc/{{ item.name }}/rootfs/root/.ssh/authorized_keys
   loop: "{{ containers }}"
-  become: yes
-
-#- name: Copy network config
-#  copy:
-#    src: interfaces
-#    dest: "/var/lib/lxc/{{ item.name }}/rootfs/etc/network/interfaces"
-#  loop: "{{ containers }}"
-#  become: yes
-
-#- name: Copy key
-#  lineinfile:
-#    path: "/var/lib/lxc/{{ item.name }}/rootfs/root/.ssh/authorized_keys"
-#    state: present
-#    line: "{{ pubkey }}"
-#  become: yes
-#  loop: "{{ containers }}"

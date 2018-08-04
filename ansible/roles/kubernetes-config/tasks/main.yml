@@ -1,6 +1,4 @@
 ---
-- name: echo
-  shell: echo 'Ansible kubernetes-config'
 
 - file:
     path: $HOME/.kube

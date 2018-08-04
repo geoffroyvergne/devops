@@ -1,0 +1,2 @@
+ansible-playbook -i ansible/inventories/inventory --limit stretch64 ansible/lxd.yml
+

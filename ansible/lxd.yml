@@ -1,8 +1,7 @@
-
 ---
 - hosts: all
   remote_user: root
   roles:
-    - test
-    - common
-    - mariadb
+  - common
+  - lxd
+  become: yes
