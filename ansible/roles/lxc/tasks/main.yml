@@ -1,70 +1,11 @@
 ---
 
-- name: Install LXC dependencies
-  apt: name={{ item }} update_cache=yes
-  with_items:
-    - lxc
-    - lxctl
-    - python-lxc
+- include: xinetd.yml
 
-- name: Copy config files
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-  loop:
-    - { src: 'lxc-net', dest: '/etc/default/lxc-net' }
-    - { src: 'default.conf', dest: '/etc/lxc/default.conf' }
+- include: install.yml
 
-- name: Restart service
-  service:
-    name: lxc-net
-    state: restarted
+- include: container.yml
 
-# Start container
-- name: Create a container
-  lxc_container:
-    name: "{{ item.name }}"
-    container_log: true
-    container_log_level: INFO
-    template: "{{ item.template }}"
-    template_options: --release "{{ item.release}}" --arch=amd64
-    container_config:
-      - "lxc.start.auto = 1"
-      - "lxc.network.ipv4 = {{ item.ip }}"
-      - "lxc.network.ipv4.gateway = 10.0.3.1"
-    state: started
-  register: create_vm
-  loop: "{{ containers }}"
+- include: ssh.yml
 
-- name: Run first commands
-  lxc_container:
-    name: "{{ item.name }}"
-    container_command: |
-      apt-get update
-      apt-get install -y python
 
-      mkdir /root/.ssh
-      cat > /etc/network/interfaces << EOL
-      auto lo
-      iface lo inet loopback
-
-      auto eth0
-      iface eth0 inet manual
-      EOL
-  loop: "{{ containers }}"
-
-- name: Add ssh port forward
-  template:
-    src: ssh_forward
-    dest: /etc/xinetd.d/ssh_forward
-
-- name: Restart xinetd
-  service:
-    name: xinetd
-    state: restarted
-
-- name: Copy key
-  copy:
-    src: keys/authorized_keys
-    dest: /var/lib/lxc/{{ item.name }}/rootfs/root/.ssh/authorized_keys
-  loop: "{{ containers }}"

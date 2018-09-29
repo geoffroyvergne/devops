@@ -1,0 +1,13 @@
+---
+
+- name: Create .ssh dir
+  file:
+    path: /var/lib/lxc/{{ item.name }}/rootfs/root/.ssh
+    state: directory
+  loop: "{{ containers }}"
+
+- name: Copy key
+  copy:
+    src: keys/authorized_keys
+    dest: /var/lib/lxc/{{ item.name }}/rootfs/root/.ssh/authorized_keys
+  loop: "{{ containers }}"

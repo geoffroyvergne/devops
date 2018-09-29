@@ -6,13 +6,13 @@ ansible all -m ping
 ansible all -a "/bin/echo hello"
 
 # Playbook
-
-ansible-playbook -i inventories/inventory playbooks/docker.yml
-ansible-playbook --limit stretch64 playbooks/docker.yml
+ansible-playbook -i inventories/inventory docker.yml
+ansible-playbook --limit stretch64 docker.yml
 ansible-playbook playbooks/docker.yml --list-hosts
 
-ansible-playbook -i inventories/lxc --limit debian-stretch-container playbooks/docker.yml
-ansible-playbook -i inventories/inventory --limit stretch64 playbooks/lxc.yml
+ansible-playbook -i inventories/lxc --limit debian-stretch-container docker.yml
+ansible-playbook -i inventories/inventory --limit stretch64 lxc.yml
+ansible-playbook -i inventories/inventory --limit lxc-debian lxc.yml
 
 # Roles
 ansible-galaxy init docker
