@@ -2,8 +2,8 @@
 
 - name: Add ssh port forward
   template:
-    src: ssh_forward
-    dest: /etc/xinetd.d/ssh_forward
+    src: k8s_forward
+    dest: /etc/xinetd.d/k8s_forward
 
 - name: Restart xinetd
   service:

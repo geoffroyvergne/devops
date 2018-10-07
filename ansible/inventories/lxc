@@ -1,5 +1,5 @@
 [lxccontainers]
-debian-stretch-container ansible_ssh_host=192.168.33.14
+lxc-k8s-master ansible_ssh_host=192.168.33.15
 
 [lxccontainers:vars]
 ansible_ssh_port=2000

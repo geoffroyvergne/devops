@@ -1,0 +1,19 @@
+---
+
+- name: Add ssh port forward
+  template:
+    src: ssh_forward
+    dest: /etc/xinetd.d/ssh_forward
+  register: ssh_forward_created
+
+- name: Add k8s port forward
+  template:
+    src: k8s_forward
+    dest: /etc/xinetd.d/k8s_forward
+  register: k8s_forward_created
+
+- name: Restart xinetd
+  service:
+    name: xinetd
+    state: restarted
+  when: (ssh_forward_created is changed) or (k8s_forward_created is changed)

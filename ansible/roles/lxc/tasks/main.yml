@@ -1,11 +1,4 @@
 ---
 
-- include: xinetd.yml
-
-- include: install.yml
-
-- include: container.yml
-
-- include: ssh.yml
-
-
+- include: ubuntu/install.yml
+  when: ansible_distribution == 'Ubuntu'

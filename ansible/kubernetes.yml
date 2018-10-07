@@ -8,5 +8,5 @@
     - common
     - docker
     - kubernetes
-    #- kubernetes-config
+    - kubernetes-config
   become: yes

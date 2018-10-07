@@ -1,0 +1,20 @@
+
+---
+- hosts: all
+  remote_user: root
+  #vars:
+  #  containers:
+  #    - { name: 'debian-stretch-container', template: 'debian', release: 'stretch', ip: '10.0.3.100/24', ipv4: '10.0.3.100', sshPort: 2000 }
+  #    - { name: 'ubuntu-bionic-container', template: 'download', release: 'bionic', ip: '10.0.3.100/24', ipv4: '10.0.3.100', sshPort: 2000 }
+  roles:
+  - role: lxc-container
+    vars:
+      containers:
+      - name: 'lxc-k8s-master'
+        template: 'download'
+        dist: 'ubuntu'
+        release: 'bionic'
+        ipv4: '10.0.4.100'
+        gateway: '10.0.4.1'
+        sshPort: 2000
+  become: yes

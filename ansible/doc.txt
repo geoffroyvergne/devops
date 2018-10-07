@@ -11,6 +11,8 @@ ansible-playbook --limit stretch64 docker.yml
 ansible-playbook playbooks/docker.yml --list-hosts
 
 ansible-playbook -i inventories/lxc --limit debian-stretch-container docker.yml
+ansible-playbook -i inventories/lxc --limit ubuntu-bionic-container kubernetes.yml
+
 ansible-playbook -i inventories/inventory --limit stretch64 lxc.yml
 ansible-playbook -i inventories/inventory --limit lxc-debian lxc.yml
 

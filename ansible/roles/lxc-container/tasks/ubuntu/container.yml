@@ -1,0 +1,41 @@
+---
+
+# Start container
+- name: Create container(s)
+  lxc_container:
+    name: "{{ item.name }}"
+    container_log: true
+    container_log_level: INFO
+    template: "{{ item.template }}"
+    template_options: "--dist {{ item.dist }} --release {{ item.release }} --arch amd64"
+    container_config:
+    - "lxc.net.0.type = veth"
+    - "lxc.net.0.link = lxcbr"
+    - "lxc.net.0.flags = up"
+    - "lxc.net.0.ipv4.address = {{ item.ipv4 }}/24"
+    - "lxc.net.0.ipv4.gateway = {{ item.gateway }}"
+    - "lxc.apparmor.profile=unconfined"
+    - "lxc.cgroup.devices.allow=a"
+    - "lxc.mount.auto=proc:rw sys:ro cgroup:ro"
+    - "lxc.autodev=1"
+    - "lxc.cap.drop ="
+    state: started
+  loop: "{{ containers }}"
+
+- name: Restart container(s)
+  lxc_container:
+    name: "{{ item.name }}"
+    state: restarted
+  loop: "{{ containers }}"
+
+- name: "Install python"
+  shell: |
+    lxc-attach -n {{ item.name }} -- apt install -y python
+  loop: "{{ containers }}"
+  changed_when: False
+
+- name: "Install ssh"
+  shell: |
+    lxc-attach -n {{ item.name }} -- apt install -y ssh
+  loop: "{{ containers }}"
+  changed_when: False

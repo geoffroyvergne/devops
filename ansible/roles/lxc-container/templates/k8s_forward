@@ -1,0 +1,23 @@
+service k8s-dashboard_forward
+{
+        disable         = no
+        type            = UNLISTED
+        socket_type     = stream
+        protocol        = tcp
+        user            = nobody
+        wait            = no
+        redirect        = 10.0.4.100 31223
+        port            = 31223
+}
+
+service k8s-admin_forward
+{
+        disable         = no
+        type            = UNLISTED
+        socket_type     = stream
+        protocol        = tcp
+        user            = nobody
+        wait            = no
+        redirect        = 10.0.4.100 6443
+        port            = 6443
+}
