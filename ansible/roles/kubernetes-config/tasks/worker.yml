@@ -1,0 +1,12 @@
+---
+
+- name: Get master token
+  shell: |
+    kubeadm token create --print-join-command
+  register: token_command
+  delegate_to: lxc-k8s-master
+
+- debug: msg={{ token_command.stdout }}
+
+- name: Join cluster
+  shell: "{{ token_command.stdout }} --ignore-preflight-errors=all"

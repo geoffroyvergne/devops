@@ -1,0 +1,20 @@
+[vagrantboxes]
+lxc-ubuntu ansible_ssh_host=192.168.33.15 ansible_ssh_private_key_file=~/dev/devops/vagrant/lxc-ubuntu/.vagrant/machines/default/virtualbox/private_key
+
+[lxc-masters]
+lxc-k8s-master ansible_ssh_host=192.168.33.15 ansible_ssh_port=2001
+
+[lxc-workers]
+lxc-k8s-worker-1 ansible_ssh_host=192.168.33.15 ansible_ssh_port=2010
+
+[lxc-containers:children]
+lxc-masters
+lxc-workers
+
+[vagrantboxes:vars]
+ansible_ssh_port=22
+ansible_ssh_user=vagrant
+
+[lxc-containers:vars]
+ansible_ssh_user=root
+ansible_ssh_private_key_file=~/.ssh/id_rsa

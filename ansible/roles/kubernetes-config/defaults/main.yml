@@ -1,2 +1,4 @@
 ---
-# defaults file for kubernetes-config
+k8s_type: 'master'
+k8s_dashboard_port: 31223
+k8s_master_as_worker: True

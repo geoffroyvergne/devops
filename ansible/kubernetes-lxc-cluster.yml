@@ -1,0 +1,67 @@
+---
+
+# ansible-playbook -i ansible/inventories/kubernetes-lxc-cluster ansible/kubernetes-lxc-cluster.yml
+# ssh root@192.168.33.15 -p 2001
+# ssh root@192.168.33.15 -p 2010
+
+- hosts: lxc-ubuntu
+  remote_user: root
+  roles:
+  - common
+  - lxc
+  - role: lxc-container
+    vars:
+      k8s_master_ip: '10.0.4.100'
+      container_gateway: '10.0.4.1'
+      container_template: 'download'
+      container_dist: 'ubuntu'
+      container_release: 'bionic'
+      containers:
+      - name: 'lxc-k8s-master'
+        template: '{{ container_template }}'
+        dist: '{{ container_dist }}'
+        release: '{{ container_release }}'
+        ipv4: "{{ k8s_master_ip }}"
+        gateway: "{{ container_gateway }}"
+        sshPort: 2001
+      - name: 'lxc-k8s-worker-1'
+        template: '{{ container_template }}'
+        dist: '{{ container_dist }}'
+        release: '{{ container_release }}'
+        ipv4: '10.0.4.110'
+        gateway: "{{ container_gateway }}"
+        sshPort: 2010
+      ports_forward:
+      - name: 'k8s-dashboard_forward'
+        ip: "{{ k8s_master_ip }}"
+        port: 31223
+      - name: 'k8s-admin_forward'
+        ip: "{{ k8s_master_ip }}"
+        port: 6443
+  become: yes
+
+- hosts: lxc-containers
+  remote_user: root
+  vars:
+    docker_version: 17.03.2~ce-0~debian-stretch
+  roles:
+  - common
+  - docker
+  - kubernetes
+  become: yes
+
+- hosts: lxc-masters
+  remote_user: root
+  roles:
+  - kubernetes-config
+  vars:
+    k8s_type: 'master'
+  become: yes
+
+- hosts: lxc-workers
+  remote_user: root
+  roles:
+  - kubernetes-config
+  vars:
+    k8s_type: 'worker'
+  become: yes

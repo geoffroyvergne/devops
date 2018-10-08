@@ -1,0 +1,13 @@
+{% for item in ports_forward %}
+service {{ item.name }}
+{
+        disable         = no
+        type            = UNLISTED
+        socket_type     = stream
+        protocol        = tcp
+        user            = nobody
+        wait            = no
+        redirect        = {{ item.ip }} {{ item.port }}
+        port            = {{ item.port }}
+}
+{% endfor %}

@@ -6,14 +6,14 @@
     dest: /etc/xinetd.d/ssh_forward
   register: ssh_forward_created
 
-- name: Add k8s port forward
+- name: Add container port forward
   template:
-    src: k8s_forward
-    dest: /etc/xinetd.d/k8s_forward
-  register: k8s_forward_created
+    src: container_forward
+    dest: /etc/xinetd.d/container_forward
+  register: container_forward_created
 
 - name: Restart xinetd
   service:
     name: xinetd
     state: restarted
-  when: (ssh_forward_created is changed) or (k8s_forward_created is changed)
+  #when: (ssh_forward_created is changed) or (container_forward_created is changed)
