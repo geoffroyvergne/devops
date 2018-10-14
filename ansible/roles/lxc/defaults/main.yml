@@ -1,5 +1,9 @@
 ---
 
 lxc_bridge_name: lxcbr
-lxc_bridge_address: 10.0.4.1
 lxc_bridge_net_mask: 24
+
+lxc_container_bridge_name: lxcbr
+lxc_container_ip_prefix: 10.0.4
+
+lxc_bridge_address: "{{ lxc_container_ip_prefix }}.1"

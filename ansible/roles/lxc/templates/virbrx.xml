@@ -1,0 +1,10 @@
+<network>
+    <name>{{ lxc_container_bridge_name }}</name>
+    <bridge name="{{ lxc_container_bridge_name }}"/>
+    <forward/>
+    <ip address="{{ lxc_container_ip_prefix }}.1" netmask="255.255.255.0">
+        <dhcp>
+            <range start="{{ lxc_container_ip_prefix }}.10" end="{{ lxc_container_ip_prefix }}.254"/>
+        </dhcp>
+    </ip>
+</network>

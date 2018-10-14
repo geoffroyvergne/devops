@@ -59,7 +59,7 @@ Vagrant.configure("2") do |config|
   #
   #   # Customize the amount of memory on the VM:
   #   vb.memory = "1024"
-      vb.memory = "4096"
+      vb.memory = "8000"
       vb.cpus = "4"
   end
 
@@ -72,6 +72,6 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
      apt update
-     aptq install -y python
+     apt install -y python
   SHELL
 end

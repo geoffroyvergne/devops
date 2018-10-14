@@ -9,13 +9,37 @@
     - lxc-templates
     - bridge-utils
     - debootstrap
+    - libvirt-bin
 
-- name: "Verification de l'existance du bridge labbr (lab bridge)"
-  shell: "lxc network show {{lxc_bridge_name}}"
-  register: bridge_exists
-  changed_when: bridge_exists.rc != 0
-  failed_when: False
+#- name: "Verification de l'existance du bridge labbr (lab bridge)"
+#  shell: "lxc network show {{lxc_bridge_name}}"
+#  register: bridge_exists
+#  changed_when: bridge_exists.rc != 0
+#  failed_when: False
+#
+#- name: "Creation du bridge"
+#  shell: lxc network create {{lxc_bridge_name}} ipv6.address=none ipv4.address={{ lxc_bridge_address }}/{{ lxc_bridge_net_mask }} ipv4.nat=true
+#  when: bridge_exists.rc != 0
 
-- name: "Creation du bridge"
-  shell: lxc network create {{lxc_bridge_name}} ipv6.address=none ipv4.address={{ lxc_bridge_address }}/{{ lxc_bridge_net_mask }} ipv4.nat=true
-  when: bridge_exists.rc != 0
+- name: "Templating libvirt network"
+  file:
+    path: "/usr/share/libvirt/networks"
+    state: directory
+
+- name: Templating du bridge virtlib
+  template:
+    src: virbrx.xml
+    dest: "/usr/share/libvirt/networks/{{ lxc_container_bridge_name }}.xml"
+  register: template_virbr
+
+- name: Enregistrement de la definition du bridge
+  shell: "virsh net-define /usr/share/libvirt/networks/{{ lxc_container_bridge_name }}.xml"
+  when: template_virbr is changed
+
+- name: Demarrage automatique du bridge
+  shell: "virsh net-autostart {{ lxc_container_bridge_name }}"
+  when: template_virbr is changed
+
+- name: Demarrage du bridge
+  shell: "virsh net-start {{ lxc_container_bridge_name }}"
+  when: template_virbr is changed

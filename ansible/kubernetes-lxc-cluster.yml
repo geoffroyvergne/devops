@@ -31,6 +31,13 @@
         ipv4: '10.0.4.110'
         gateway: "{{ container_gateway }}"
         sshPort: 2010
+      - name: 'lxc-k8s-worker-2'
+        template: '{{ container_template }}'
+        dist: '{{ container_dist }}'
+        release: '{{ container_release }}'
+        ipv4: '10.0.4.111'
+        gateway: "{{ container_gateway }}"
+        sshPort: 2011
       ports_forward:
       - name: 'k8s-dashboard_forward'
         ip: "{{ k8s_master_ip }}"
