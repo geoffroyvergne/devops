@@ -45,6 +45,12 @@
       - name: 'k8s-admin_forward'
         ip: "{{ k8s_master_ip }}"
         port: 6443
+      - name: 'k8s-http_forward'
+        ip: "{{ k8s_master_ip }}"
+        port: 80
+      - name: 'k8s-https_forward'
+        ip: "{{ k8s_master_ip }}"
+        port: 443
   become: yes
 
 - hosts: lxc-containers

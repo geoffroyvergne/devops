@@ -3,3 +3,4 @@
 **/*.retry
 **/authorized_keys
 **/keys
+**/ssl/**
