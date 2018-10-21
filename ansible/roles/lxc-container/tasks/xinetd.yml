@@ -16,4 +16,4 @@
   service:
     name: xinetd
     state: restarted
-  #when: (ssh_forward_created is changed) or (container_forward_created is changed)
+  when: (ssh_forward_created is changed) or (container_forward_created is changed)

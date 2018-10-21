@@ -1,9 +1,12 @@
 
 ---
-- hosts: all
+- hosts: lxc-ubuntu
   remote_user: root
   vars:
-    docker_version: 17.03.2~ce-0~debian-stretch
+    docker_pgp_key: "https://download.docker.com/linux/ubuntu/gpg"
+    docker_repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+    docker_insecure_registries:
+      - "127.0.0.1:5005"
   roles:
     - common
     - docker

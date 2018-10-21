@@ -1,0 +1,53 @@
+---
+
+- name: "Templating ingress service yml"
+  template:
+    src: ingress-dashboard.yml
+    dest: $HOME/ingress-dashboard.yml
+
+- name: Instal dashboard
+  shell: |
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+    kubectl -n kube-system patch service kubernetes-dashboard --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
+    kubectl -n kube-system patch service kubernetes-dashboard --type='json' -p '[{"op":"replace","path":"/spec/ports/0/nodePort","value":{{ k8s_dashboard_port }} }]'
+    touch $HOME/dashboard.initialized
+  args:
+    creates: dashboard.initialized
+
+- name: "Install ingress dashboard"
+  shell: |
+    kubectl apply -f $HOME/ingress-dashboard.yml
+    touch $HOME/ingress-dashboard.initialized
+  args:
+    creates: ingress-dashboard.initialized
+
+- name: Create token for dashboard
+  shell: |
+    kubectl create serviceaccount cluster-admin-dashboard-sa
+    kubectl create clusterrolebinding cluster-admin-dashboard-sa --clusterrole=cluster-admin --serviceaccount=default:cluster-admin-dashboard-sa
+
+    TOKEN=$(kubectl describe secret $(kubectl -n kube-system get secret | awk '/^cluster-admin-dashboard-sa-token-/{print $1}') | awk '$1=="token:"{print $2}')
+    touch $HOME/.kube/token
+    echo $TOKEN > $HOME/.kube/token
+  args:
+    creates: .kube/token
+
+- name: Register token
+  shell: cat $HOME/.kube/token
+  register: kube_token
+
+- name: "Copy token and config locally"
+  copy:
+    content: "{{ kube_token.stdout }}"
+    dest: $HOME/.kube/token
+  delegate_to: "{{ item }}"
+  become: false
+  loop:
+  - localhost
+  - lxc-ubuntu
+
+- name: "Dashboard token : "
+  debug:
+    msg: "{{ kube_token.stdout }}"
+
+# cat $HOME/.kube/token | pbcopy

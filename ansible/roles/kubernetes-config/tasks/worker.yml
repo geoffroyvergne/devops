@@ -6,9 +6,14 @@
   register: token_command
   delegate_to: lxc-k8s-master
 
-- debug: msg={{ token_command.stdout }}
+- debug:
+    msg: "{{ token_command.stdout }} --ignore-preflight-errors=all"
 
 # kubeadm join 10.0.4.100:6443 --token d4klpr.m2qntrbrsii9exmq --discovery-token-ca-cert-hash sha256:fe8679264f8da463989651164b92c21b4d562fafc9fceb09889dda4ae7bfe467
 
 - name: Join cluster
   shell: "{{ token_command.stdout }} --ignore-preflight-errors=all"
+
+#    touch $HOME/cluster.joined
+#  args:
+#    creates: cluster.joined

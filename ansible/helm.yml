@@ -1,0 +1,9 @@
+---
+
+- hosts:
+  - lxc-ubuntu
+  - lxc-masters
+  remote_user: root
+  roles:
+  - helm
+  become: yes

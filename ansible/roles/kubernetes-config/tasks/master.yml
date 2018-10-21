@@ -26,37 +26,46 @@
     mode: "u=rw,g=,o="
     remote_src: yes
 
-#- name: Add master as worker
-#  shell: kubectl taint nodes --all node-role.kubernetes.io/master-
-#  when: k8s_master_as_worker
+- name: Add master as worker
+  shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+  when: k8s_master_as_worker == True
 
 - name: Flannel Installation
   shell: |
     kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
     kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
+    touch $HOME/flannel.initialized
   args:
-    creates: /root/flannel.initialized
+    creates: flannel.initialized
 
 #- name: Install cloud.weave
 #  shell: |
 #    kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+#    touch $HOME/weave.initialized
 #  args:
-#    creates: /root/weave.initialized
+#    creates: weave.initialized
 
-- name: Instal dashboard
-  shell: |
-    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
-    kubectl -n kube-system patch service kubernetes-dashboard --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
-    kubectl -n kube-system patch service kubernetes-dashboard --type='json' -p '[{"op":"replace","path":"/spec/ports/0/nodePort","value":{{ k8s_dashboard_port }} }]'
-  args:
-    creates: /root/dashboard.initialized
+- name: Register config
+  shell : cat $HOME/.kube/config | sed -e 's/10.0.4.100:6443/192.168.33.15:6443/'
+  register: kube_config
 
-- name: Create token for dashboard
-  shell: |
-    kubectl create serviceaccount cluster-admin-dashboard-sa
-    kubectl create clusterrolebinding cluster-admin-dashboard-sa --clusterrole=cluster-admin --serviceaccount=default:cluster-admin-dashboard-sa
+- name: "Init config for user"
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: "u=rwx,g=,o="
+  delegate_to: "{{ item }}"
+  become: false
+  loop:
+  - localhost
+  - lxc-ubuntu
 
-    TOKEN=$(kubectl describe secret $(kubectl -n kube-system get secret | awk '/^cluster-admin-dashboard-sa-token-/{print $1}') | awk '$1=="token:"{print $2}')
-    touch $HOME/.kube/token
-    echo $TOKEN > $HOME/.kube/token
-
+- name: "Copy config and config locally"
+  copy:
+    content: "{{ kube_config.stdout }}"
+    dest: $HOME/.kube/config
+  delegate_to: "{{ item }}"
+  become: false
+  loop:
+  - localhost
+  - lxc-ubuntu

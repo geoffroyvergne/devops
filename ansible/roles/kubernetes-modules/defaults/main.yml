@@ -1,0 +1,4 @@
+---
+k8s_dashboard_port: 31223
+k8s_ingress_external_ips: []
+k8s_dashboard_hostname:

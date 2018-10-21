@@ -21,6 +21,10 @@
     - "lxc.cap.drop ="
     state: started
   loop: "{{ containers }}"
+  retries: 3
+  delay: 10
+  register: result
+  until: result is succeeded
 
 #- name: Restart container(s)
 #  lxc_container:
@@ -28,20 +32,14 @@
 #    state: restarted
 #  loop: "{{ containers }}"
 
-- name: "Install python"
+- name: "Install common dependencies"
   shell: |
     lxc-attach -n {{ item.name }} -- apt install -y python
-  loop: "{{ containers }}"
-  retries: 3
-  delay: 10
-  register: result
-  until: result.rc == 0
-
-- name: "Install ssh"
-  shell: |
     lxc-attach -n {{ item.name }} -- apt install -y ssh
   loop: "{{ containers }}"
   retries: 3
   delay: 10
   register: result
   until: result.rc == 0
+
+

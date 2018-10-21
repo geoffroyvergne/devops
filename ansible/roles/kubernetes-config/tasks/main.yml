@@ -1,10 +1,7 @@
 ---
 
-#- include_tasks: master.yml
-#  when: k8s_type == 'master'
-#
-#- include_tasks: worker.yml
-#  when: k8s_type == 'worker'
-
-- include_tasks: local-config.yml
+- include_tasks: master.yml
   when: k8s_type == 'master'
+
+- include_tasks: worker.yml
+  when: k8s_type == 'worker'
