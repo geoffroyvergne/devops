@@ -1,0 +1,6 @@
+---
+# tasks file for ceph
+
+- name: "Install CEPH server"
+  debug:
+    msg: "Install CEPH server"

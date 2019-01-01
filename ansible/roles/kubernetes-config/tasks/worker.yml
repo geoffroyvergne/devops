@@ -13,6 +13,7 @@
 
 - name: Join cluster
   shell: "{{ token_command.stdout }} --ignore-preflight-errors=all"
+  changed_when: token_command is changed
 
 #    touch $HOME/cluster.joined
 #  args:

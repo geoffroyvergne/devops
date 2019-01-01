@@ -23,8 +23,8 @@
   loop: "{{ containers }}"
   retries: 3
   delay: 10
-  register: result
-  until: result is succeeded
+  register: create_container
+  until: create_container is succeeded
 
 #- name: Restart container(s)
 #  lxc_container:
@@ -41,5 +41,6 @@
   delay: 10
   register: result
   until: result.rc == 0
+  changed_when: create_container is changed
 
 

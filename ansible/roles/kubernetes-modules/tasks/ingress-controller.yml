@@ -4,6 +4,7 @@
   template:
     src: ingress-nginx-service-nodeport.yaml
     dest: $HOME/ingress-nginx-service-nodeport.yaml
+  register: ingress_service
 
 - name: "Install ingress controller"
   shell: |
@@ -22,3 +23,4 @@
     touch $HOME/ingress-controller.initialized
   args:
     creates: ingress-controller.initialized
+  changed_when: ingress_service is changed

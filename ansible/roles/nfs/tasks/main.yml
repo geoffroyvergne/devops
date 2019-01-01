@@ -1,0 +1,52 @@
+---
+# tasks file for nfs
+
+- name: "Install NFS server"
+  debug:
+    msg: "Install NFS server"
+
+- name: "Instal dependencies"
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - nfs-kernel-server
+    - nfs-common
+
+- name: "Create shared folders"
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ server_share_dir }}"
+
+- name: "Configure server"
+  lineinfile:
+    path: /etc/exports
+    line: "{{ item }}"
+  with_items:
+    - "{{ server_share_dir }} {{ host }}(rw,sync,no_subtree_check)"
+
+- name: Restart nfs service
+  service:
+    name: nfs-kernel-server
+    state: restarted
+
+- name: "Create client mountpoint"
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ client_share_dir }}"
+
+# OSX
+# sudo mount_nfs -o resvport 192.168.33.50:/var/nfs/shared /mnt/nfs/shared
+
+# LINUX
+# sudo mount 192.168.33.50:/var/nfs/shared /mnt/nfs/shared
+
+- name: "Mount shared folder"
+  debug:
+    msg: "sudo mount {{ host }}:{{ server_share_dir }} {{ client_share_dir }}"

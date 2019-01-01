@@ -1,0 +1,12 @@
+
+---
+- hosts: data-servers
+  remote_user: root
+  vars:
+    host: 192.168.99.100
+    server_share_dir: /var/nfs
+    client_share_dir: /mnt/nfs
+  roles:
+    - nfs
+    - ceph
+  become: yes

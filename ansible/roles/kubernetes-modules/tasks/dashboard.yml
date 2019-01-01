@@ -4,6 +4,7 @@
   template:
     src: ingress-dashboard.yml
     dest: $HOME/ingress-dashboard.yml
+  register: ingress_service
 
 - name: Instal dashboard
   shell: |
@@ -13,6 +14,7 @@
     touch $HOME/dashboard.initialized
   args:
     creates: dashboard.initialized
+  changed_when: ingress_service is changed
 
 - name: "Install ingress dashboard"
   shell: |
@@ -20,6 +22,7 @@
     touch $HOME/ingress-dashboard.initialized
   args:
     creates: ingress-dashboard.initialized
+  changed_when: ingress_service is changed
 
 - name: Create token for dashboard
   shell: |
@@ -45,9 +48,11 @@
   loop:
   - localhost
   - lxc-ubuntu
+  changed_when: kube_token is changed
 
 - name: "Dashboard token : "
   debug:
     msg: "{{ kube_token.stdout }}"
+  changed_when: kube_token is changed
 
 # cat $HOME/.kube/token | pbcopy
