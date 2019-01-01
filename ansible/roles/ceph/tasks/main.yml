@@ -1,6 +1,24 @@
 ---
+# http://prashplus.blogspot.com/2018/01/ceph-single-node-setup-ubuntu.html
 # tasks file for ceph
 
 - name: "Install CEPH server"
   debug:
     msg: "Install CEPH server"
+
+#- name: "Add CEPH GPG key"
+#  apt_key:
+#    url: "https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc"
+    #validate_certs: false
+
+#- name: "Add CEPH APT repository"
+#  apt_repository:
+#    repo: "deb http://ceph.com/archive/debian-dumpling/ wheezy main"
+
+- name: Install CEPH
+  package:
+    name: "{{item}}"
+  with_items:
+    - ceph-deploy
+    - ceph-mds
+

@@ -17,6 +17,8 @@
   file:
     path: "{{ item }}"
     state: directory
+    owner: nobody
+    group: nogroup
     mode: 0755
   with_items:
     - "{{ server_share_dir }}"
@@ -42,10 +44,10 @@
     - "{{ client_share_dir }}"
 
 # OSX
-# sudo mount_nfs -o resvport 192.168.33.50:/var/nfs/shared /mnt/nfs/shared
+# sudo mount_nfs -o resvport 192.168.99.50:/var/nfs /mnt/nfs
 
 # LINUX
-# sudo mount 192.168.33.50:/var/nfs/shared /mnt/nfs/shared
+# sudo mount 192.168.99.50:/var/nfs /mnt/nfs
 
 - name: "Mount shared folder"
   debug:
