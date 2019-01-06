@@ -7,7 +7,7 @@
     server_share_dir: /var/nfs
     client_share_dir: /mnt/nfs
   roles:
-    - common
-    - nfs
-    #- ceph
+    #- common
+    #- nfs
+    - ceph
   become: yes

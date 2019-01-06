@@ -21,4 +21,129 @@
   with_items:
     - ceph-deploy
     - ceph-mds
+    - ceph-common
+    - dnsmasq
+
+
+# http://prashplus.blogspot.com/2018/01/ceph-single-node-setup-ubuntu.html
+# sudo useradd -m -s /bin/bash ceph-deploy
+# sudo passwd ceph-deploy
+- name: "Add ceph-deploy user"
+  user:
+    name: ceph-deploy
+    shell: /bin/bash
+    #groups: ceph-deploy
+    password: lol
+
+# sudo echo "ceph-deploy ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ceph-deploy
+# sudo chmod 0440 /etc/sudoers.d/ceph-deploy
+- name: "Add ceph-deploy as sudoer"
+  lineinfile:
+    path: /etc/sudoers.d/ceph-deploy
+    line: "ceph-deploy ALL = (root) NOPASSWD:ALL"
+    create: yes
+    mode: 0440
+
+# sudo su - ceph-deploy
+
+# /etc/ssh/sshd_config - PasswordAuthentication yes - service ssh restart
+- name: "Change ssh config"
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: 'PasswordAuthentication'
+    line: "PasswordAuthentication yes"
+  register: ssh_config
+
+- name: Restart ssh service
+  service:
+    name: ssh
+    state: restarted
+  when: ssh_config.changed
+
+# /etc/hosts - 192.168.99.50   ubuntu-data - 192.168.33.50   ubuntu-data
+- name: "Update /etc/hosts"
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item }}"
+  with_items:
+    - "192.168.99.50   ubuntu-data"
+    - "192.168.33.50   ubuntu-data"
+
+# mkdir /home/ceph-deploy/my-cluster
+- name: "Create directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: ceph-deploy
+    group: ceph-deploy
+  with_items:
+    - "/home/ceph-deploy/my-cluster"
+    - "/home/ceph-deploy/.ssh"
+
+# /home/ceph-deploy/.ssh/config
+- name: "add ssh config"
+  template:
+    src: ssh-config.tpl
+    dest: /home/ceph-deploy/.ssh/config
+    owner: ceph-deploy
+    group: ceph-deploy
+
+# ssh-keygen
+- name: "ssh-keygen"
+  command: ssh-keygen -q -t rsa -f /home/ceph-deploy/.ssh/id_rsa  -C '' -N ''
+  args:
+    creates: /home/ceph-deploy/.ssh/id_rsa.pub
+  become_user: ceph-deploy
+
+# ssh-copy-id ceph-deploy@ubuntu-data
+- name: "Set authorized key taken from file"
+  shell: touch /home/ceph-deploy/.ssh/authorized_keys && cat /home/ceph-deploy/.ssh/id_rsa.pub > /home/ceph-deploy/.ssh/authorized_keys
+  args:
+    creates: /home/ceph-deploy/.ssh/authorized_keys
+  become_user: ceph-deploy
+
+# ceph-deploy new ubuntu-data
+- name: "deploy new cluster"
+  shell: cd /home/ceph-deploy/my-cluster && ceph-deploy new ubuntu-data
+  args:
+    creates: /home/ceph-deploy/my-cluster/ceph.mon.keyring
+  become_user: ceph-deploy
+
+# ceph.conf - osd pool default size = 2 - osd crush chooseleaf type = 0
+
+# ceph-deploy install ubuntu-data
+
+# ceph-deploy mon create-initial
+
+# sudo ceph-disk zap /dev/sdc
+# sudo ceph-disk zap /dev/sdd
+
+# ceph-deploy osd prepare ubuntu-data:sdc
+# ceph-deploy osd prepare ubuntu-data:sdd
+
+# ceph-deploy osd activate ubuntu-data:/dev/sdc1
+# ceph-deploy osd activate ubuntu-data:/dev/sdd1
+
+# ceph-deploy admin ubuntu-data
+
+# ceph-deploy disk list ubuntu-data
+
+# ceph-deploy mgr create ubuntu-data
+
+# ceph-deploy osd create ubuntu-data:/dev/sdc
+# ceph-deploy osd create ubuntu-data:/dev/sdd
+
+# CEPH FS
+
+# sudo ceph osd pool create cephfs_data 64
+# sudo ceph osd pool create cephfs_metadata 64
+
+# sudo ceph fs new cephfs cephfs_metadata cephfs_data
+
+# sudo mkdir /mnt/cephfs
+
+# cat ~/my-cluster/ceph.client.admin.keyring
+
+# sudo mount.ceph ubuntu-data:6789:/ /mnt/cephfs/ -o name=admin,secret=AQA27jFcI44XDRAA6j5tnSsXKl1JMvpQilswzw==
 

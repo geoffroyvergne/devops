@@ -1,0 +1,14 @@
+---
+# tasks file for fake-block-device
+
+# sudo fallocate -l 1G /var/vda.img
+# sudo mknod /dev/vda b 7 200
+# sudo losetup /dev/vda /var/vda.img
+# sudo mkfs.ext4 /dev/vda
+# sudo mount /dev/vda /mnt/vda-drive
+
+# sudo losetup -d /dev/vda
+
+# mdadm --create --verbose /dev/md0 --level=raid0 --raid-devices=2 /dev/vda /dev/vdb
+# sudo mkfs.ext4 /dev/md0
+# sudo mount /dev/mk0 /mnt/sraid0

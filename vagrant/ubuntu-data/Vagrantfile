@@ -5,6 +5,11 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
+
+data_0 = './data_0.vdi'
+data_1 = './data_1.vdi'
+data_2 = './data_2.vdi'
+
 Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
@@ -15,7 +20,7 @@ Vagrant.configure("2") do |config|
   # config.vm.box = "base"
   config.vm.box = "ubuntu/bionic64"
   config.vm.hostname= "ubuntu-data"
-  config.disksize.size = "50GB"
+  config.disksize.size = "10GB"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -55,13 +60,34 @@ Vagrant.configure("2") do |config|
   # Example for VirtualBox:
   #
   config.vm.provider "virtualbox" do |vb|
+
   #   # Display the VirtualBox GUI when booting the machine
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
-  #  vb.memory = "1024"
-     vb.memory = "512"
+     vb.memory = "1024"
+  #  vb.memory = "512"
      vb.cpus = "1"
+
+     #vb.customize ['storagectl', :id, '--name', 'SATA Controller', '--add', 'sata', '--portcount', 4]
+
+     unless File.exist?(data_0)
+       vb.customize ['createhd', '--filename', data_0, '--size', 10 * 1024]
+     end
+
+     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 4, '--device', 0, '--type', 'hdd', '--medium', data_0]
+
+     unless File.exist?(data_1)
+       vb.customize ['createhd', '--filename', data_1, '--size', 10 * 1024]
+     end
+
+     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 5, '--device', 0, '--type', 'hdd', '--medium', data_1]
+
+     unless File.exist?(data_2)
+       vb.customize ['createhd', '--filename', data_2, '--size', 10 * 1024]
+     end
+
+     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 6, '--device', 0, '--type', 'hdd', '--medium', data_2]
   end
   #
   # View the documentation for the provider you are using for more

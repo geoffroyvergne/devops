@@ -4,3 +4,4 @@
 **/authorized_keys
 **/keys
 **/ssl/**
+**/*.vdi
