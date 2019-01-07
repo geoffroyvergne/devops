@@ -111,28 +111,93 @@
   become_user: ceph-deploy
 
 # ceph.conf - osd pool default size = 2 - osd crush chooseleaf type = 0
+- name: "ceph.conf"
+  lineinfile:
+    path: /home/ceph-deploy/my-cluster/ceph.conf
+    line: "{{ item }}"
+  with_items:
+    - "osd pool default size = 2"
+    - "osd crush chooseleaf type = 0"
 
 # ceph-deploy install ubuntu-data
+- name: "ceph-deploy install ubuntu-data"
+  shell: cd /home/ceph-deploy/my-cluster && ceph-deploy install ubuntu-data && touch /home/ceph-deploy/my-cluster/install-ubuntu-data.log
+  args:
+    creates: /home/ceph-deploy/my-cluster/install-ubuntu-data.log
+  become_user: ceph-deploy
 
 # ceph-deploy mon create-initial
+- name: "ceph-deploy mon create-initial"
+  shell: cd /home/ceph-deploy/my-cluster && ceph-deploy mon create-initial && touch /home/ceph-deploy/my-cluster/mon-create-initial.log
+  args:
+    creates: /home/ceph-deploy/my-cluster/mon-create-initial.log
+  become_user: ceph-deploy
+
+# ceph-deploy admin ubuntu-data
+- name: "ceph-deploy admin ubuntu-data"
+  shell: cd /home/ceph-deploy/my-cluster && ceph-deploy admin ubuntu-data && touch /home/ceph-deploy/my-cluster/admin-ubuntu-data.log
+  args:
+    creates: /home/ceph-deploy/my-cluster/admin-ubuntu-data.log
+  become_user: ceph-deploy
+
+# ceph-deploy mgr create ubuntu-data
+- name: "ceph-deploy mgr create ubuntu-data"
+  shell: cd /home/ceph-deploy/my-cluster && ceph-deploy mgr create ubuntu-data && touch /home/ceph-deploy/my-cluster/mgr-create-ubuntu-data.log
+  args:
+    creates: /home/ceph-deploy/my-cluster/mgr-create-ubuntu-data.log
+  become_user: ceph-deploy
 
 # sudo ceph-disk zap /dev/sdc
 # sudo ceph-disk zap /dev/sdd
+- name: "ceph-disk zap"
+  shell: "ceph-disk zap /dev/{{ item }} && touch /home/ceph-deploy/my-cluster/ceph-disk-zap-{{ item }}.log"
+  args:
+    creates: "/home/ceph-deploy/my-cluster/ceph-disk-zap-{{ item }}.log"
+  with_items:
+    - sdc
+    - sdd
 
 # ceph-deploy osd prepare ubuntu-data:sdc
 # ceph-deploy osd prepare ubuntu-data:sdd
+- name: "ceph-deploy osd prepare"
+  shell: "cd /home/ceph-deploy/my-cluster && ceph-deploy osd prepare ubuntu-data:{{ item }} && touch /home/ceph-deploy/my-cluster/osd-prepare-{{ item }}.log"
+  args:
+    creates: /home/ceph-deploy/my-cluster/osd-prepare-{{ item }}.log
+  with_items:
+    - sdc
+    - sdd
+  ignore_errors: yes
+  #no_log: True
 
 # ceph-deploy osd activate ubuntu-data:/dev/sdc1
 # ceph-deploy osd activate ubuntu-data:/dev/sdd1
-
-# ceph-deploy admin ubuntu-data
-
-# ceph-deploy disk list ubuntu-data
-
-# ceph-deploy mgr create ubuntu-data
+- name: "ceph-deploy osd activate"
+  shell: "cd /home/ceph-deploy/my-cluster && ceph-deploy osd activate ubuntu-data:/dev/{{ item }} && touch /home/ceph-deploy/my-cluster/osd-activate-{{ item }}.log"
+  args:
+    creates: /home/ceph-deploy/my-cluster/osd-activate-{{ item }}.log
+  with_items:
+    - sdc1
+    - sdd1
+  ignore_errors: yes
+  #no_log: True
 
 # ceph-deploy osd create ubuntu-data:/dev/sdc
 # ceph-deploy osd create ubuntu-data:/dev/sdd
+
+- name: "Check CEPH health"
+  shell: "ceph -s | grep health | tr -d '[:blank:]' | tr -d 'health:'"
+  register: ceph_healph
+
+- debug:
+    msg: "{{ ceph_healph.stdout }}"
+
+- name: "Check CEPH usage"
+  shell: "ceph -s | grep usage | tr -d '[:blank:]' | tr -d 'usage:'"
+  register: ceph_usage
+
+- debug:
+    msg: "{{ ceph_usage.stdout }}"
+
 
 # CEPH FS
 
