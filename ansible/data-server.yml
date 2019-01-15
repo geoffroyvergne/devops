@@ -6,8 +6,13 @@
     host: 192.168.0.0/16
     server_share_dir: /var/nfs
     client_share_dir: /mnt/nfs
+    ceph_disks:
+      - sde
+      - sdf
+      - sdd
   roles:
-    - common
+    #- common
     #- nfs
-    - ceph
+    #- ceph
+    - glusterfs
   become: yes

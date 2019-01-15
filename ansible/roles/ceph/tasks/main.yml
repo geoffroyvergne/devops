@@ -80,6 +80,7 @@
   with_items:
     - "/home/ceph-deploy/my-cluster"
     - "/home/ceph-deploy/.ssh"
+    - "/mnt/cephfs"
 
 # /home/ceph-deploy/.ssh/config
 - name: "add ssh config"
@@ -147,6 +148,13 @@
     creates: /home/ceph-deploy/my-cluster/mgr-create-ubuntu-data.log
   become_user: ceph-deploy
 
+#  ceph-deploy mds create ubuntu-data
+- name: "ceph-deploy mds create ubuntu-data"
+  shell: cd /home/ceph-deploy/my-cluster && ceph-deploy mds create ubuntu-data && touch /home/ceph-deploy/my-cluster/mds-create-ubuntu-data.log
+  args:
+    creates: /home/ceph-deploy/my-cluster/mds-create-ubuntu-data.log
+  become_user: ceph-deploy
+
 # sudo ceph-disk zap /dev/sdc
 # sudo ceph-disk zap /dev/sdd
 - name: "ceph-disk zap"
@@ -154,8 +162,7 @@
   args:
     creates: "/home/ceph-deploy/my-cluster/ceph-disk-zap-{{ item }}.log"
   with_items:
-    - sdc
-    - sdd
+    "{{ ceph_disks }}"
 
 # ceph-deploy osd prepare ubuntu-data:sdc
 # ceph-deploy osd prepare ubuntu-data:sdd
@@ -164,20 +171,18 @@
   args:
     creates: /home/ceph-deploy/my-cluster/osd-prepare-{{ item }}.log
   with_items:
-    - sdc
-    - sdd
+    "{{ ceph_disks }}"
   ignore_errors: yes
   #no_log: True
 
 # ceph-deploy osd activate ubuntu-data:/dev/sdc1
 # ceph-deploy osd activate ubuntu-data:/dev/sdd1
 - name: "ceph-deploy osd activate"
-  shell: "cd /home/ceph-deploy/my-cluster && ceph-deploy osd activate ubuntu-data:/dev/{{ item }} && touch /home/ceph-deploy/my-cluster/osd-activate-{{ item }}.log"
+  shell: "cd /home/ceph-deploy/my-cluster && ceph-deploy osd activate ubuntu-data:/dev/{{ item }}1 && touch /home/ceph-deploy/my-cluster/osd-activate-{{ item }}.log"
   args:
     creates: /home/ceph-deploy/my-cluster/osd-activate-{{ item }}.log
   with_items:
-    - sdc1
-    - sdd1
+    "{{ ceph_disks }}"
   ignore_errors: yes
   #no_log: True
 
@@ -185,30 +190,58 @@
 # ceph-deploy osd create ubuntu-data:/dev/sdd
 
 - name: "Check CEPH health"
-  shell: "ceph -s | grep health | tr -d '[:blank:]' | tr -d 'health:'"
-  register: ceph_healph
+  shell: "ceph -s | grep health | tr -d ' ' | sed -e 's/health://g'"
+  register: ceph_health
 
 - debug:
-    msg: "{{ ceph_healph.stdout }}"
+    msg: "{{ ceph_health.stdout }}"
 
 - name: "Check CEPH usage"
-  shell: "ceph -s | grep usage | tr -d '[:blank:]' | tr -d 'usage:'"
+  shell: "ceph -s | grep usage | tr -d '' | sed -e 's/usage://g'"
   register: ceph_usage
 
 - debug:
     msg: "{{ ceph_usage.stdout }}"
 
+- name: "get ceph key"
+  shell: "cat /home/ceph-deploy/my-cluster/ceph.client.admin.keyring | grep key | tr -d '\t' | sed -e 's/key = //g'"
+  register: ceph_keyring
+
+- debug:
+    msg: "{{ ceph_keyring.stdout }}"
 
 # CEPH FS
 
-# sudo ceph osd pool create cephfs_data 64
-# sudo ceph osd pool create cephfs_metadata 64
-
+# sudo ceph osd pool create cephfs_data 128
+# sudo ceph osd pool create cephfs_metadata 128
 # sudo ceph fs new cephfs cephfs_metadata cephfs_data
+
+- name: "CEPH FS"
+  shell: |
+    ceph osd pool create cephfs_data 128
+    sudo ceph osd pool create cephfs_metadata 128
+    sudo ceph fs new cephfs cephfs_metadata cephfs_data
+    touch /home/ceph-deploy/my-cluster/ceph-cmient.log
+  args:
+    creates: /home/ceph-deploy/my-cluster/ceph-cmient.log
 
 # sudo mkdir /mnt/cephfs
 
-# cat ~/my-cluster/ceph.client.admin.keyring
+# cat /home/ceph-deploy/my-cluster/ceph.client.admin.keyring
 
-# sudo mount.ceph ubuntu-data:6789:/ /mnt/cephfs/ -o name=admin,secret=AQA27jFcI44XDRAA6j5tnSsXKl1JMvpQilswzw==
+- name: "Add admin.secret"
+  lineinfile:
+    path: /home/ceph-deploy/my-cluster/admin.secret
+    line: "{{ ceph_keyring.stdout }}"
+    create: yes
 
+# sudo mount -t ceph ubuntu-data:6789:/ /mnt/cephfs -o name=admin,secret=AQAN0zlcQ4iTDxAARN7wnD8mxmyzRHsdxhgilQ==
+# sudo mount -t ceph ubuntu-data:6789:/ /mnt/cephfs -o name=admin,secretfile=/home/ceph-deploy/my-cluster/admin.secret
+
+- name: "Mount CEPH fs"
+  mount:
+    path: /mnt/cephfs
+    src: "ubuntu-data:6789:/"
+    fstype: ceph
+    opts: "name=admin,secret={{ ceph_keyring.stdout }}"
+    state: present

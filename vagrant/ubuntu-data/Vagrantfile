@@ -9,6 +9,7 @@
 data_0 = './data_0.vdi'
 data_1 = './data_1.vdi'
 data_2 = './data_2.vdi'
+data_3 = './data_3.vdi'
 
 Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
@@ -75,19 +76,25 @@ Vagrant.configure("2") do |config|
        vb.customize ['createhd', '--filename', data_0, '--size', 10 * 1024]
      end
 
-     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 4, '--device', 0, '--type', 'hdd', '--medium', data_0]
+     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 3, '--device', 0, '--type', 'hdd', '--medium', data_0]
 
      unless File.exist?(data_1)
        vb.customize ['createhd', '--filename', data_1, '--size', 10 * 1024]
      end
 
-     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 5, '--device', 0, '--type', 'hdd', '--medium', data_1]
+     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 4, '--device', 0, '--type', 'hdd', '--medium', data_1]
 
      unless File.exist?(data_2)
        vb.customize ['createhd', '--filename', data_2, '--size', 10 * 1024]
      end
 
-     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 6, '--device', 0, '--type', 'hdd', '--medium', data_2]
+     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 5, '--device', 0, '--type', 'hdd', '--medium', data_2]
+
+     unless File.exist?(data_3)
+        vb.customize ['createhd', '--filename', data_3, '--size', 10 * 1024]
+     end
+
+     vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 6, '--device', 0, '--type', 'hdd', '--medium', data_3]
   end
   #
   # View the documentation for the provider you are using for more
