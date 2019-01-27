@@ -12,7 +12,8 @@
   package:
     name: "{{ item }}"
   with_items:
-    - kubernetes-cni=0.6.0-00
+    - kubernetes-cni
+    #=0.6.0-00
     - kubelet
     - kubeadm
     - kubectl

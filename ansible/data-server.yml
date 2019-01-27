@@ -12,7 +12,7 @@
       - sdd
   roles:
     #- common
-    #- nfs
+    - nfs
+    #- glusterfs
     #- ceph
-    - glusterfs
   become: yes

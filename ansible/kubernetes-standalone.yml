@@ -1,0 +1,12 @@
+---
+
+- hosts: kubernetes-ubuntu
+  remote_user: root
+  vars:
+
+  roles:
+    #- common
+    #- docker
+    #- kubernetes
+    - kubernetes-config
+  become: yes

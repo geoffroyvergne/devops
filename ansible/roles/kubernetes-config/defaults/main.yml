@@ -1,3 +1,13 @@
 ---
 k8s_type: 'master'
 k8s_master_as_worker: True
+k8s_network_type: 'flannel'
+
+#--apiserver-advertise-address=<container ip>
+#--pod-network-cidr=<sous reseau des pods> (flannel) 10.244.0.0/16 (weave) 10.32.0.0/16
+#--apiserver-cert-extra-sans=<ne pas mettre>
+
+k8s_pod_network_cidr: "10.244.0.0/16"
+k8s_apiserver_advertise_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+k8s_apiserver_cert_extra_sans: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+
