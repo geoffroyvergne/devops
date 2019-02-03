@@ -4,9 +4,15 @@
   shell: |
     swapoff -a
     kubeadm config images pull
-    kubeadm init --apiserver-advertise-address={{ k8s_apiserver_advertise_address }} --node-name $(hostname) --pod-network-cidr={{ k8s_pod_network_cidr }}  --apiserver-cert-extra-sans={{ k8s_apiserver_cert_extra_sans }} --ignore-preflight-errors=all
+    kubeadm init \
+      --apiserver-advertise-address={{ k8s_apiserver_advertise_address }} \
+      --node-name $(hostname) --pod-network-cidr={{ k8s_pod_network_cidr }}  \
+      --apiserver-cert-extra-sans={{ k8s_apiserver_cert_extra_sans }} \
+      --ignore-preflight-errors=all
   args:
     creates: /etc/kubernetes/admin.conf
+
+#       --kubernetes-version=1.5 \
 
 - name: "Init config for user"
   file:
@@ -26,6 +32,7 @@
 - name: Add master as worker
   shell: |
     kubectl taint nodes --all node-role.kubernetes.io/master-
+    #kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
     touch $HOME/master-as-worker.initialized
   args:
     creates: master-as-worker.initialized
@@ -49,10 +56,7 @@
   when: k8s_network_type == 'weave'
 
 - name: Register config
-  shell : "cat $HOME/.kube/config | sed -e 's/10.0.4.100:6443/{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:6443/'"
-
-  #cat $HOME/.kube/config | sed 's|https://10.0.2.15:6443|https://192.168.33.16:6443|g'
-
+  shell : "cat $HOME/.kube/config"
   register: kube_config
 
 - name: "Init config for user"
@@ -64,7 +68,7 @@
   become: false
   loop:
   - localhost
-  - "kubernetes-ubuntu"
+  - "{{ k8s_master_node }}"
 
 - name: "Copy config and config locally"
   copy:
@@ -74,4 +78,4 @@
   become: false
   loop:
   - localhost
-  - "kubernetes-ubuntu"
+  - "{{ k8s_master_node }}"
