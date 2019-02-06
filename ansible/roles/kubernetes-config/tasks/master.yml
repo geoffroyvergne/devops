@@ -32,7 +32,6 @@
 - name: Add master as worker
   shell: |
     kubectl taint nodes --all node-role.kubernetes.io/master-
-    #kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
     touch $HOME/master-as-worker.initialized
   args:
     creates: master-as-worker.initialized
