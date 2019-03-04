@@ -33,6 +33,9 @@
 
 # launch
 # heketi --config=<config file>
+# heketi --config /etc/heketi.json
 
 - debug:
     msg: "heketi --config=/etc/heketi.json"
+
+# heketi-cli --server http://localhost:8080 --user admin --secret heketi-secret cluster list

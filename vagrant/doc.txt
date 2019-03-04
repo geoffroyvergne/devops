@@ -3,3 +3,7 @@ vagrant init
 vagrant up
 
 vagrant ssh
+
+
+vagrant package --base /data/iso/vagrant-box/ubuntu-budgie/
+vagrant box add --name ubuntu-budgie /data/iso/vagrant-box/ubuntu-budgie/package.box

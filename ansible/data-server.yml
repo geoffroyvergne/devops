@@ -11,8 +11,8 @@
       - sdf
       - sdd
   roles:
-    #- common
+    - common
     #- nfs
-    - glusterfs
-    #- ceph
+    #- glusterfs
+    - ceph
   become: yes

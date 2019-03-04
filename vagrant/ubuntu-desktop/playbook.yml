@@ -1,0 +1,18 @@
+---
+
+- hosts: all
+  remote_user: root
+  become: yes
+  tasks:
+
+  - debug:
+      msg: "Ubuntu desktop provisioning"
+
+  - name: Run the equivalent of "apt-get update" as a separate step
+    apt:
+      update_cache: yes
+
+  - name: Upgrade all packages to the latest version
+    apt:
+      name: "*"
+      state: latest

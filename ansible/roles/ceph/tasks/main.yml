@@ -216,14 +216,23 @@
 # sudo ceph osd pool create cephfs_metadata 128
 # sudo ceph fs new cephfs cephfs_metadata cephfs_data
 
-- name: "CEPH FS"
-  shell: |
-    ceph osd pool create cephfs_data 128
-    sudo ceph osd pool create cephfs_metadata 128
-    sudo ceph fs new cephfs cephfs_metadata cephfs_data
-    touch /home/ceph-deploy/my-cluster/ceph-cmient.log
-  args:
-    creates: /home/ceph-deploy/my-cluster/ceph-cmient.log
+#- name: "CEPH FS"
+#  shell: |
+    #ceph osd pool create cephfs_data 128
+    #sudo ceph osd pool create cephfs_metadata 128
+    #sudo ceph fs new cephfs cephfs_metadata cephfs_data
+
+#    sudo ceph osd pool create kube 1024
+#    sudo ceph auth get-or-create client.kube mon 'allow r, allow command "osd blacklist"' osd 'allow class-read object_prefix rbd_children, allow rwx pool=kube' -o ceph.client.kube.keyring
+
+#    cd my-cluster && sudo ceph osd pool create kube 128 128
+#    cd my-cluster && sudo ceph auth add client.kube mon 'allow r' osd 'allow rwx pool=kube'
+
+#    touch /home/ceph-deploy/my-cluster/ceph-client.log
+#  args:
+#    creates: /home/ceph-deploy/my-cluster/ceph-client.log
+
+# ceph auth get-or-create client.cephfs_data mon 'allow r, allow command "osd blacklist"' osd 'allow class-read object_prefix rbd_children, allow rwx pool=cephfs_data' -o ceph.client.cephfs_data.keyring
 
 # sudo mkdir /mnt/cephfs
 
@@ -238,10 +247,10 @@
 # sudo mount -t ceph ubuntu-data:6789:/ /mnt/cephfs -o name=admin,secret=AQAN0zlcQ4iTDxAARN7wnD8mxmyzRHsdxhgilQ==
 # sudo mount -t ceph ubuntu-data:6789:/ /mnt/cephfs -o name=admin,secretfile=/home/ceph-deploy/my-cluster/admin.secret
 
-- name: "Mount CEPH fs"
-  mount:
-    path: /mnt/cephfs
-    src: "ubuntu-data:6789:/"
-    fstype: ceph
-    opts: "name=admin,secret={{ ceph_keyring.stdout }}"
-    state: present
+#- name: "Mount CEPH fs"
+#  mount:
+#    path: /mnt/cephfs
+#    src: "ubuntu-data:6789:/"
+#    fstype: ceph
+#    opts: "name=admin,secret={{ ceph_keyring.stdout }}"
+#    state: present
