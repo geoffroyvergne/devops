@@ -3,9 +3,9 @@
 - hosts: all
   remote_user: root
   vars:
-    partition_type: "standard"
+    partition_type: "lvm"
     disk: "/dev/sda"
-    partition_number: 1
+    partition_number: 2
   roles:
     - { role: "../../ansible/roles/disk-utils" }
   become: yes

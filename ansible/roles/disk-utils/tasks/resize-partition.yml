@@ -1,0 +1,23 @@
+---
+
+- debug:
+    msg: "Resize partition"
+
+- name: "Resize LVM partion"
+  shell: |
+    growpart {{ disk }} {{ partition_number }}
+    resize2fs {{ disk }}{{ partition_number }}
+  when: partition_type == 'lvm'
+
+- name: "Resize Standard partion"
+  shell: |
+    parted {{ disk }} resizepart {{ partition_number }} Y 100%
+    resize2fs {{ disk }}{{ partition_number }}
+  when: partition_type == 'standard'
+
+- shell:  df -H | grep /dev/sda
+  register: disk_space
+
+- debug:
+    msg: "{{ disk_space.stdout }}"
+

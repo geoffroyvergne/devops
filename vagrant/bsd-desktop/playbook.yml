@@ -7,3 +7,12 @@
 
     - debug:
         msg: "Bsd desktop provisioning"
+
+    #- name: "Resize root partition"
+    #  shell: |
+    #    swapoff /dev/ada0s1b
+    #    gpart delete -i 2 ada0
+    #    gpart delete -i 2 ada0s1
+    #    sysctl kern.geom.debugflags=16
+    #    gpart resize -i 1 ada0s1
+    #    growfs -y /dev/ada0s1
