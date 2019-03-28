@@ -6,6 +6,14 @@
     partition_type: "lvm"
     disk: "/dev/sda"
     partition_number: 2
+  tasks:
+    - debug:
+        msg: "Ubuntu server provisioning"
   roles:
-    - { role: "../../ansible/roles/disk-utils" }
+    #- { role: "../../ansible/roles/common" }
+    #- { role: "../../ansible/roles/disk-utils" }
+    #- { role: "../../ansible/roles/docker" }
+
+    - common
+    - disk-utils
   become: yes

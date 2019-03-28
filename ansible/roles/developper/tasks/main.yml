@@ -1,0 +1,5 @@
+---
+# tasks file for developper
+
+- debug:
+    msg: "Developer tools"

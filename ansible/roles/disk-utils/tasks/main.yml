@@ -1,4 +1,4 @@
 ---
 
-- include_tasks: rezize-partition.yml
+- include_tasks: resize-partition.yml
 - include_tasks: fake-block-device.yml
