@@ -10,8 +10,7 @@
     - debug:
         msg: "Ubuntu desktop provisioning"
   roles:
-    - { role: "../../ansible/roles/common" }
-    - { role: "../../ansible/roles/disk-utils" }
-    - { role: "../../ansible/roles/docker" }
-    - { role: "../../ansible/roles/developer " }
+    - common
+    - disk-utils
+    #- developper
   become: yes

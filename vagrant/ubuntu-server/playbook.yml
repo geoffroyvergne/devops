@@ -10,10 +10,7 @@
     - debug:
         msg: "Ubuntu server provisioning"
   roles:
-    #- { role: "../../ansible/roles/common" }
-    #- { role: "../../ansible/roles/disk-utils" }
-    #- { role: "../../ansible/roles/docker" }
-
     - common
     - disk-utils
+    #- docker
   become: yes

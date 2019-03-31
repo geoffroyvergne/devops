@@ -27,6 +27,6 @@ sudo apt-get autoremove
 sudo apt-get clean
 
 Create vagrant box :
-vagrant package --base /data/iso/vagrant-box/ubuntu-server/
-vagrant box add --name ubuntu-budgie /data/iso/vagrant-box/ubuntu-server/package.box
+vagrant package --base ubuntu-server
+vagrant box add --name ubuntu-server /data/iso/vagrant-box/ubuntu-server/package.box
 vagrant init ubuntu-server
