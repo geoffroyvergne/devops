@@ -30,3 +30,6 @@ Create vagrant box :
 vagrant package --base ubuntu-server
 vagrant box add --name ubuntu-server /data/iso/vagrant-box/ubuntu-server/package.box
 vagrant init ubuntu-server
+
+Package existing vagrant box :
+vagrant package --output <path>/package.box

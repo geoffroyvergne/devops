@@ -3,9 +3,15 @@
 - hosts: all
   remote_user: root
   vars:
-    partition_type: "lvm"
     disk: "/dev/sda"
-    partition_number: 2
+
+    #Debian
+    partition_type: "standard"
+    partition_number: 1
+
+    #Ubuntu
+    #partition_type: "lvm"
+    #partition_number: 2
   tasks:
     - debug:
         msg: "Ubuntu server provisioning"

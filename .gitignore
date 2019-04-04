@@ -6,3 +6,5 @@
 **/ssl/**
 **/*.vdi
 **/*.log
+**/packer_cache
+**/box/

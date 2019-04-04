@@ -14,9 +14,9 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   #config.vm.box = "generic/ubuntu1810"
   #config.vm.box = "ubuntu-budgie"
-  config.vm.box = "debian-desktop"
+  config.vm.box = "debian-desktop-base"
   #config.vm.box = "ubuntu-lxqt"
-  config.vm.hostname= "ubuntu-desktop"
+  config.vm.hostname= "debian-desktop"
   config.disksize.size = "50GB"
 
   # Disable automatic box update checking. If you disable this, then
