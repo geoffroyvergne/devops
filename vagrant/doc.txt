@@ -8,4 +8,4 @@ vagrant ssh
 vagrant package --base /data/iso/vagrant-box/ubuntu-budgie/
 vagrant box add --name ubuntu-budgie /data/iso/vagrant-box/ubuntu-budgie/package.box
 
-vagrant provision --provision-with install
+vagrant provision --provision-with install-ubuntu

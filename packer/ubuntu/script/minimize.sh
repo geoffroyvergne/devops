@@ -22,11 +22,9 @@ echo "==> Removing other oddities"
 apt-get -y purge accountsservice bind9-host busybox-static command-not-found command-not-found-data \
     dmidecode dosfstools friendly-recovery geoip-database hdparm info install-info installation-report \
     iso-codes krb5-locales language-selector-common laptop-detect lshw mlocate mtr-tiny nano \
-    ncurses-term ntfs-3g os-prober parted pciutils plymouth popularity-contest powermgmt-base \
+    ncurses-term nplan ntfs-3g os-prober parted pciutils plymouth popularity-contest powermgmt-base \
     publicsuffix python-apt-common shared-mime-info ssh-import-id \
-    tasksel tcpdump ufw usbutils uuid-runtime xdg-user-dirs
-#apt-get -y purge apparmor iptables multiarch-support
-#apt-get -y purge crda iw wireless-regdb
+    tasksel tcpdump ufw ureadahead usbutils uuid-runtime xdg-user-dirs
 apt-get -y autoremove --purge
 
 # Clean up orphaned packages with deborphan
