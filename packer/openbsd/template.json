@@ -10,7 +10,8 @@
     "atlas_box_version": "1.0.0",
     "vm_name": "openbsd-6.4",
     "version": "0.1",
-    "vagrantfile_template": ""
+    "vagrantfile_template": "",
+    "filesystem": "zfs"
   },
   "provisioners": [
     {
@@ -36,6 +37,9 @@
       "type": "virtualbox-iso",
       "boot_command": [
         "S<enter>",
+        "cat <<EOF >>/tmp/disklabel.auto<enter>",
+        "/        8G<enter>",
+        "EOF<enter>",
         "cat <<EOF >>install.conf<enter>",
         "System hostname = openbsd64<enter>",
         "Password for root = vagrant<enter>",
@@ -46,6 +50,7 @@
         "Location of sets = cd<enter>",
         "Set name(s) = -game*.tgz -x*.tgz<enter>",
         "Directory does not contain SHA256.sig. Continue without verification = yes<enter>",
+        "URL to autopartitioning template for disklabel = file:///tmp/disklabel.auto<enter>",
         "EOF<enter>",
         "install -af install.conf && reboot<enter>"
       ],

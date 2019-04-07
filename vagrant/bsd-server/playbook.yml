@@ -21,6 +21,6 @@
 
   roles:
     #- common
-    - disk-utils
+    #- disk-utils
     #- docker
   become: yes

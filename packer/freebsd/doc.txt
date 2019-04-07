@@ -1,1 +1,7 @@
 https://github.com/jlduran/packer-FreeBSD
+
+bsdinstall scriptedpart ada0 { 20G freebsd-ufs /, 4G freebsd-swap, 20G freebsd-ufs /var, auto	freebsd-ufs /usr }
+
+"bsdinstall scriptedpart ada0 { 20G freebsd-ufs / }<enter>",
+
+"bsdinstall script /tmp/installerconfig<enter>",
