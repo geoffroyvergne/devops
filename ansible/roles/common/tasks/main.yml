@@ -10,12 +10,17 @@
 #    locale-gen
 #    dpkg-reconfigure locales -f noninteractive
 
-- name: Wait for automatic system updates
-  become: true
-  shell: while sudo fuser /var/lib/dpkg/{{ item }} >/dev/null 2>&1; do sleep 1; done;
-  with_items:
-    - lock
-    - lock-frontend
+#- name: Wait for automatic system updates
+#  become: true
+#  shell: while sudo fuser /var/lib/dpkg/{{ item }} >/dev/null 2>&1; do sleep 1; done;
+#  with_items:
+#    - lock
+#    - lock-frontend
+
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Install Common
   package:

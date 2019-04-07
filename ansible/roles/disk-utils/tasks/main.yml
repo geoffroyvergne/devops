@@ -1,4 +1,12 @@
 ---
 
+- name: Install Common
+  package:
+    name: "{{ item }}"
+  with_items:
+    - parted
+    - cloud-guest-utils
+  when: partition_type != 'zfs'
+
 - include_tasks: resize-partition.yml
-- include_tasks: fake-block-device.yml
+#- include_tasks: fake-block-device.yml

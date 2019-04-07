@@ -37,3 +37,10 @@ chown -R $SSH_USER:$SSH_USER $SSH_USER_HOME/.ssh
 
 # SSH tweaks
 echo "UseDNS no" >> /etc/ssh/sshd_config
+
+# Python path for ansible
+ln -s /usr/bin/python3 /usr/bin/python
+
+# Change apt country repository
+#sed -i 's/http:\/\/us./http:\/\/fr./g' /etc/apt/sources.list
+#apt update

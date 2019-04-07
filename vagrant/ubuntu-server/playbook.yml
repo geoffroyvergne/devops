@@ -5,13 +5,20 @@
   vars:
     disk: "/dev/sda"
 
-    #Debian
+    #partition_type: "lvm"
     partition_type: "standard"
     partition_number: 1
+    filesystem: "/dev/sda1"
 
   tasks:
     - debug:
         msg: "Debian server provisioning"
+      when: ansible_distribution == 'Debian'
+
+    - debug:
+        msg: "Ubuntu server provisioning"
+      when: ansible_distribution == 'Ubuntu'
+
   roles:
     - common
     - disk-utils

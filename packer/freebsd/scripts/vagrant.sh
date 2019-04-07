@@ -39,3 +39,4 @@ sysrc -f "$NFSCLIENT_RC_CONF_FILE" nfs_client_enable=YES
 
 # Set the build time
 date > /etc/vagrant_box_build_time
+
