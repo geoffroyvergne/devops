@@ -13,9 +13,6 @@ else
 	export nonInteractive="YES"
 fi
 
-
-#export ZFSBOOT_DISKS=ada0
-
 #!/bin/sh -e
 
 # Setup rc.conf location sentinel
@@ -35,7 +32,6 @@ fi
 # Disable X11
 echo 'OPTIONS_UNSET+=X11' >> /etc/make.conf
 
-#sysrc scriptedpart ada0 { 20G freebsd-ufs / }
 
 # Basic network options
 sysrc hostname=freebsd-12
