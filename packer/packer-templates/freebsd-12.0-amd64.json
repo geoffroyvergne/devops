@@ -101,13 +101,13 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "freebsd-12.0-amd64-{{.Provider}}.box",
+    "output": "box/freebsd-12.0-amd64-{{.Provider}}.box",
     "vagrantfile_template": "vagrantfile_templates/freebsd.rb"
   }],
   "variables": {
     "compression_level": "6",
     "cpus": "1",
-    "disk_size": "40000",
+    "disk_size": "10000",
     "headless": "false",
     "iso_checksum": "63abec8aeb915f1a021dd2df6c7767251f9b6e87f403b7ddf9a423446d0a5453",
     "iso_checksum_type": "sha256",

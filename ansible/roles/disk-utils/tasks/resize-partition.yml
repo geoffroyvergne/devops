@@ -11,7 +11,7 @@
 
 - name: "Resize Standard partion"
   shell: |
-    sgdisk -e {{ disk }}
+    #sgdisk -e {{ disk }}
     parted {{ disk }} resizepart {{ partition_number }} Y 100%
     resize2fs {{ disk }}{{ partition_number }}
   when: partition_type == 'standard'

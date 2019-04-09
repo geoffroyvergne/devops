@@ -3,3 +3,18 @@ https://github.com/kaorimatz/packer-templates
 packer build -only=virtualbox-iso freebsd-11.2-amd64.json
 
 packer build -only=virtualbox-iso freebsd-12.0-amd64.json
+
+vagrant box add box/freebsd-12.0-amd64-virtualbox.box --name freebsd-12.0-amd64-virtualbox
+
+Parted :
+sudo parted /dev/sda print
+sudo parted /dev/sda resizepart 1 Y 100%
+sudo resize2fs /dev/sda1
+
+Gpart :
+sudo gpart show ada0
+sudo gpart recover ada0
+sudo gpart resize -i 1 -s 50G -a 4k ada0
+sudo growfs /dev/ada0s1 -y
+
+

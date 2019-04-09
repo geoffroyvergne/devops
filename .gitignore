@@ -8,3 +8,4 @@
 **/*.log
 **/packer_cache
 **/box/
+**/.DS_Store

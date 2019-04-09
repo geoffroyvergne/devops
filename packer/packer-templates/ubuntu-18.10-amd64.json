@@ -1,19 +1,26 @@
 {
   "builders": [{
     "type": "qemu",
-    "iso_url": "{{user `mirror`}}/iso/2018.04.01/archlinux-2018.04.01-x86_64.iso",
+    "iso_url": "{{user `mirror`}}/ubuntu/releases/cosmic/release/ubuntu-18.10-server-amd64.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
-    "output_directory": "output-archlinux-x86_64-{{build_type}}",
-    "vm_name": "packer-archlinux-x86_64",
+    "output_directory": "box/output-ubuntu-18.10-amd64-{{build_type}}",
+    "vm_name": "packer-ubuntu-18.10-amd64",
     "disk_size": "{{user `disk_size`}}",
     "headless": "{{user `headless`}}",
     "http_directory": "http",
     "boot_wait": "5s",
     "boot_command": [
-      "<enter><wait10><wait10><wait10><wait10>",
-      "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/archlinux/install{,-chroot}.sh'<enter><wait>",
-      "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
+      "<esc><wait>",
+      "<esc><wait>",
+      "<enter><wait>",
+      "/install/vmlinuz ",
+      "initrd=/install/initrd.gz ",
+      "net.ifnames=0 ",
+      "auto-install/enable=true ",
+      "debconf/priority=critical ",
+      "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/ubuntu-18.10/preseed.cfg ",
+      "<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
     "ssh_username": "vagrant",
@@ -25,25 +32,31 @@
     ]
   }, {
     "type": "virtualbox-iso",
-    "guest_os_type": "ArchLinux_64",
-    "iso_url": "{{user `mirror`}}/iso/2018.04.01/archlinux-2018.04.01-x86_64.iso",
+    "guest_os_type": "Ubuntu_64",
+    "iso_url": "{{user `mirror`}}/ubuntu/releases/cosmic/release/ubuntu-18.10-server-amd64.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
-    "output_directory": "output-archlinux-x86_64-{{build_type}}",
-    "vm_name": "packer-archlinux-x86_64",
+    "output_directory": "box/output-ubuntu-18.10-amd64-{{build_type}}",
+    "vm_name": "packer-ubuntu-18.10-amd64",
     "disk_size": "{{user `disk_size`}}",
     "headless": "{{user `headless`}}",
     "http_directory": "http",
     "boot_wait": "5s",
     "boot_command": [
-      "<enter><wait10><wait10><wait10><wait10>",
-      "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/archlinux/install{,-chroot}.sh'<enter><wait>",
-      "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
+      "<esc><wait>",
+      "<esc><wait>",
+      "<enter><wait>",
+      "/install/vmlinuz ",
+      "initrd=/install/initrd.gz ",
+      "net.ifnames=0 ",
+      "auto-install/enable=true ",
+      "debconf/priority=critical ",
+      "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/ubuntu-18.10/preseed.cfg ",
+      "<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
-    "guest_additions_mode": "disable",
     "shutdown_command": "sudo systemctl poweroff",
     "vboxmanage": [
       ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
@@ -51,20 +64,27 @@
     ]
   }, {
     "type": "vmware-iso",
-    "guest_os_type": "other3xlinux-64",
-    "iso_url": "{{user `mirror`}}/iso/2018.04.01/archlinux-2018.04.01-x86_64.iso",
+    "guest_os_type": "ubuntu-64",
+    "iso_url": "{{user `mirror`}}/ubuntu/releases/cosmic/release/ubuntu-18.10-server-amd64.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
-    "output_directory": "output-archlinux-x86_64-{{build_type}}",
-    "vm_name": "packer-archlinux-x86_64",
+    "output_directory": "box/output-ubuntu-18.10-amd64-{{build_type}}",
+    "vm_name": "packer-ubuntu-18.10-amd64",
     "disk_size": "{{user `disk_size`}}",
     "headless": "{{user `headless`}}",
     "http_directory": "http",
     "boot_wait": "5s",
     "boot_command": [
-      "<enter><wait10><wait10><wait10><wait10>",
-      "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/archlinux/install{,-chroot}.sh'<enter><wait>",
-      "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
+      "<esc><wait>",
+      "<esc><wait>",
+      "<enter><wait>",
+      "/install/vmlinuz ",
+      "initrd=/install/initrd.gz ",
+      "net.ifnames=0 ",
+      "auto-install/enable=true ",
+      "debconf/priority=critical ",
+      "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/ubuntu-18.10/preseed.cfg ",
+      "<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
     "ssh_username": "vagrant",
@@ -79,28 +99,30 @@
   "provisioners": [{
     "type": "shell",
     "scripts": [
-      "scripts/archlinux/virtualbox.sh",
-      "scripts/archlinux/vmware.sh",
+      "scripts/ubuntu/apt.sh",
+      "scripts/ubuntu/virtualbox.sh",
+      "scripts/ubuntu/vmware.sh",
       "scripts/common/vagrant.sh",
       "scripts/common/sshd.sh",
-      "scripts/archlinux/cleanup.sh",
+      "scripts/ubuntu/cleanup.sh",
       "scripts/common/minimize.sh"
     ]
   }],
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "archlinux-x86_64-{{.Provider}}.box"
+    "output": "box/ubuntu-18.10-amd64-{{.Provider}}.box"
   }],
   "variables": {
     "compression_level": "6",
     "cpus": "1",
-    "disk_size": "40000",
+    "disk_size": "10000",
     "headless": "false",
-    "iso_checksum": "42cf488fb6cba31c57f8ad875cb03784760c4b94",
-    "iso_checksum_type": "sha1",
+    "iso_checksum": "cf9250781dadd919f23c9d9612212cad653e35fccc2fbcf6853f67ad09e067ba",
+    "iso_checksum_type": "sha256",
     "memory": "512",
-    "mirror": "http://mirrors.kernel.org/archlinux",
+    "mirror": "http://cdimage.ubuntu.com",
     "ssh_timeout": "60m"
   }
 }
+
