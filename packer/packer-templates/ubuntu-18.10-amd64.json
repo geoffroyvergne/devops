@@ -1,4 +1,15 @@
 {
+  "variables": {
+    "compression_level": "6",
+    "cpus": "1",
+    "memory": "512",
+    "disk_size": "10000",
+    "headless": "false",
+    "iso_checksum": "cf9250781dadd919f23c9d9612212cad653e35fccc2fbcf6853f67ad09e067ba",
+    "iso_checksum_type": "sha256",
+    "mirror": "http://cdimage.ubuntu.com",
+    "ssh_timeout": "60m"
+  },
   "builders": [{
     "type": "qemu",
     "iso_url": "{{user `mirror`}}/ubuntu/releases/cosmic/release/ubuntu-18.10-server-amd64.iso",
@@ -90,10 +101,6 @@
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
     "shutdown_command": "sudo systemctl poweroff",
-    "vmx_data": {
-      "memsize": "{{user `memory`}}",
-      "numvcpus": "{{user `cpus`}}"
-    },
     "vmx_remove_ethernet_interfaces": true
   }],
   "provisioners": [{
@@ -112,17 +119,6 @@
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
     "output": "box/ubuntu-18.10-amd64-{{.Provider}}.box"
-  }],
-  "variables": {
-    "compression_level": "6",
-    "cpus": "1",
-    "disk_size": "10000",
-    "headless": "false",
-    "iso_checksum": "cf9250781dadd919f23c9d9612212cad653e35fccc2fbcf6853f67ad09e067ba",
-    "iso_checksum_type": "sha256",
-    "memory": "512",
-    "mirror": "http://cdimage.ubuntu.com",
-    "ssh_timeout": "60m"
-  }
+  }]
 }
 

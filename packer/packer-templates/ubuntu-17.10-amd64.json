@@ -1,4 +1,15 @@
 {
+  "variables": {
+    "compression_level": "6",
+    "cpus": "1",
+    "memory": "512",
+    "disk_size": "10000",
+    "headless": "false",
+    "iso_checksum": "7b3feffcc9ade0dcaba3c5996c1eb797928cd76cecfa4c54bf8297b191bd461f",
+    "iso_checksum_type": "sha256",
+    "mirror": "http://ftp.openbsd.org/pub/OpenBSD",
+    "ssh_timeout": "60m"
+  },
   "builders": [{
     "type": "qemu",
     "iso_url": "{{user `mirror`}}/17.10/ubuntu-17.10.1-server-amd64.iso",
@@ -90,10 +101,6 @@
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
     "shutdown_command": "sudo systemctl poweroff",
-    "vmx_data": {
-      "memsize": "{{user `memory`}}",
-      "numvcpus": "{{user `cpus`}}"
-    },
     "vmx_remove_ethernet_interfaces": true
   }],
   "provisioners": [{

@@ -1,11 +1,23 @@
 {
+  "variables": {
+    "compression_level": "6",
+    "cpus": "1",
+    "memory": "512",
+    "disk_size": "10000",
+    "headless": "false",
+    "iso_checksum": "710d237907f1753dbfbecb1186e401d9635156eeef6914f24f632f3219e59d3b",
+    "iso_checksum_type": "sha256",
+    "iso_url": "http://ftp.freebsd.org/pub/FreeBSD/releases/ISO-IMAGES/11.2/FreeBSD-11.2-RELEASE-amd64-disc1.iso",
+    "version": "11.2",
+    "ssh_timeout": "60m"
+  },
   "builders": [{
     "type": "qemu",
-    "iso_url": "{{user `mirror`}}/releases/ISO-IMAGES/11.2/FreeBSD-11.2-RELEASE-amd64-disc1.iso",
+    "iso_url": "{{user `iso_url`}}",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
-    "output_directory": "output-freebsd-11.2-amd64-{{build_type}}",
-    "vm_name": "packer-freebsd-11.2-amd64",
+    "output_directory": "output-freebsd-{{user `version`}}-amd64-{{build_type}}",
+    "vm_name": "packer-freebsd-{{user `version`}}-amd64",
     "disk_size": "{{user `disk_size`}}",
     "headless": "{{user `headless`}}",
     "http_directory": "http",
@@ -15,7 +27,7 @@
       "<enter><wait>",
       "mdmfs -s 100m md1 /tmp<enter><wait>",
       "dhclient -l /tmp/dhclient.leases -p /tmp/dhclient.pid vtnet0<enter><wait5>",
-      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd-11.2/installerconfig<enter><wait>",
+      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd-{{user `version`}}/installerconfig<enter><wait>",
       "bsdinstall script /tmp/installerconfig && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -29,11 +41,11 @@
   }, {
     "type": "virtualbox-iso",
     "guest_os_type": "FreeBSD_64",
-    "iso_url": "{{user `mirror`}}/releases/ISO-IMAGES/11.2/FreeBSD-11.2-RELEASE-amd64-disc1.iso",
+    "iso_url": "{{user `iso_url`}}",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
-    "output_directory": "output-freebsd-11.2-amd64-{{build_type}}",
-    "vm_name": "packer-freebsd-11.2-amd64",
+    "output_directory": "output-freebsd-{{user `version`}}-amd64-{{build_type}}",
+    "vm_name": "packer-freebsd-{{user `version`}}-amd64",
     "disk_size": "{{user `disk_size`}}",
     "headless": "{{user `headless`}}",
     "http_directory": "http",
@@ -43,7 +55,7 @@
       "<enter><wait>",
       "mdmfs -s 100m md1 /tmp<enter><wait>",
       "dhclient -l /tmp/dhclient.leases -p /tmp/dhclient.pid em0<enter><wait5>",
-      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd-11.2/installerconfig<enter><wait>",
+      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd-{{user `version`}}/installerconfig<enter><wait>",
       "bsdinstall script /tmp/installerconfig && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -58,11 +70,11 @@
   }, {
     "type": "vmware-iso",
     "guest_os_type": "freeBSD-64",
-    "iso_url": "{{user `mirror`}}/releases/ISO-IMAGES/11.2/FreeBSD-11.2-RELEASE-amd64-disc1.iso",
+    "iso_url": "{{user `iso_url`}}",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
-    "output_directory": "output-freebsd-11.2-amd64-{{build_type}}",
-    "vm_name": "packer-freebsd-11.2-amd64",
+    "output_directory": "output-freebsd-{{user `version`}}-amd64-{{build_type}}",
+    "vm_name": "packer-freebsd-{{user `version`}}-amd64",
     "disk_size": "{{user `disk_size`}}",
     "headless": "{{user `headless`}}",
     "http_directory": "http",
@@ -72,7 +84,7 @@
       "<enter><wait>",
       "mdmfs -s 100m md1 /tmp<enter><wait>",
       "dhclient -l /tmp/dhclient.leases -p /tmp/dhclient.pid em0<enter><wait5>",
-      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd-11.2/installerconfig<enter><wait>",
+      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd-{{user `version`}}/installerconfig<enter><wait>",
       "bsdinstall script /tmp/installerconfig && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -80,10 +92,6 @@
     "ssh_password": "vagrant",
     "tools_upload_flavor": "freebsd",
     "shutdown_command": "sudo poweroff",
-    "vmx_data": {
-      "memsize": "{{user `memory`}}",
-      "numvcpus": "{{user `cpus`}}"
-    },
     "vmx_remove_ethernet_interfaces": true
   }],
   "provisioners": [{
@@ -101,18 +109,7 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "box/freebsd-11.2-amd64-{{.Provider}}.box",
+    "output": "box/freebsd-{{user `version`}}-amd64-{{.Provider}}.box",
     "vagrantfile_template": "vagrantfile_templates/freebsd.rb"
-  }],
-  "variables": {
-    "compression_level": "6",
-    "cpus": "1",
-    "disk_size": "40000",
-    "headless": "false",
-    "iso_checksum": "710d237907f1753dbfbecb1186e401d9635156eeef6914f24f632f3219e59d3b",
-    "iso_checksum_type": "sha256",
-    "memory": "512",
-    "mirror": "http://ftp.freebsd.org/pub/FreeBSD",
-    "ssh_timeout": "60m"
-  }
+  }]
 }
