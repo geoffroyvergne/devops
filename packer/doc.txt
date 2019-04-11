@@ -17,4 +17,5 @@ sudo gpart recover ada0
 sudo gpart resize -i 1 -s 50G -a 4k ada0
 sudo growfs /dev/ada0s1 -y
 
+sudo zpool online -e zroot /dev/ada0p3
 

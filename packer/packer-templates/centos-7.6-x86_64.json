@@ -2,7 +2,7 @@
   "variables": {
     "compression_level": "6",
     "cpus": "1",
-    "memory": "512",
+    "memory": "1024",
     "disk_size": "10000",
     "headless": "false",
     "iso_checksum": "19d94274ef856c4dfcacb2e7cfe4be73e442a71dd65cc3fb6e46db826040b56e",

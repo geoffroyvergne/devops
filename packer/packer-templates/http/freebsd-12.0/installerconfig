@@ -1,14 +1,21 @@
-if [ -e /dev/vtbd0 ]; then
-  PARTITIONS=vtbd0
-elif [ -e /dev/ada0 ]; then
-  PARTITIONS="ada0 { 10G freebsd-ufs / }"
+#if [ -e /dev/vtbd0 ]; then
+#  PARTITIONS=vtbd0
+#elif [ -e /dev/ada0 ]; then
+#  PARTITIONS="ada0 { 10G freebsd-ufs / }"
 
-elif [ -e /dev/da0 ]; then
-  PARTITIONS=da0
-else
-  echo "ERROR: There is no disk available for installation" >&2
-  exit 1
-fi
+#elif [ -e /dev/da0 ]; then
+#  PARTITIONS=da0
+#else
+#  echo "ERROR: There is no disk available for installation" >&2
+#  exit 1
+#fi
+
+DISTRIBUTIONS="base.txz kernel.txz"
+
+export ZFSBOOT_DISKS="ada0"
+#export ZFSBOOT_SWAP_SIZE=0
+#export ZFSBOOT_BOOT_POOL_SIZE=0
+export nonInteractive="YES"
 
 #!/bin/sh
 cat <<EOF > /etc/resolv.conf
@@ -19,10 +26,13 @@ ASSUME_ALWAYS_YES=yes pkg install curl
 ASSUME_ALWAYS_YES=yes pkg install sudo
 
 interface=$(route get default | awk '/interface/ { print $2 }')
-cat <<EOF > /etc/rc.conf
-ifconfig_${interface}="DHCP"
-sshd_enable="YES"
-EOF
+#cat <<EOF > /etc/rc.conf
+#ifconfig_${interface}="DHCP"
+#sshd_enable="YES"
+#EOF
+
+echo "ifconfig_${interface}=DHCP" >> /etc/rc.conf
+echo "sshd_enable=YES" >> /etc/rc.conf
 
 echo 'vagrant' | pw useradd vagrant -h 0 -m
 echo 'vagrant' | pw usermod root -h 0
