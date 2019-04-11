@@ -2,5 +2,4 @@
 
 partition_type: "standard"
 disk: "/dev/sda"
-filesystem: "/dev/sda"
 partition_number: 1

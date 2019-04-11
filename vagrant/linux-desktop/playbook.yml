@@ -12,5 +12,6 @@
   roles:
     - common
     - disk-utils
+    - x11
     #- developper
   become: yes

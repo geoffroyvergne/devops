@@ -16,18 +16,8 @@
     resize2fs {{ disk }}{{ partition_number }}
   when: partition_type == 'standard'
 
-- name: "Resize ZFS partion"
-  shell: |
-    #gpart show {{ disk }}
-    gpart recover {{ disk }}
-    gpart resize -i 1 -s 512k 4k {{ disk }}
-    gpart resize -i {{ partition_number }} -s 40G -a 4k {{ disk }}
-    zpool online -e zroot {{ disk }}p{{ partition_number }}
 
-  when: partition_type == 'zfs'
-
-
-- shell:  df -H | grep {{ filesystem }}
+- shell:  df -H | grep {{ disk }}
   register: disk_space
 
 - debug:
