@@ -22,6 +22,18 @@
     update_cache: yes
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+- name: Add repository
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+  when: ansible_distribution == 'CentOS'
+
+- name: Update cache
+  yum:
+    update_cache: yes
+  when: ansible_distribution == 'CentOS'
+
 - name: Install Common
   package:
     name: "{{ item }}"
@@ -35,11 +47,13 @@
     - htop
     - psmisc
     - iputils-*
-    - ssh
     - python
+
+- name: Install Common Ubuntu Debian
+  package:
+    name: "{{ item }}"
+  with_items:
     - apt-transport-https
     - ca-certificates
     - software-properties-common
-    #- parted
-    #- cloud-guest-utils
-
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

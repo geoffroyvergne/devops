@@ -27,7 +27,7 @@
       "<enter><wait>",
       "mdmfs -s 100m md1 /tmp<enter><wait>",
       "dhclient -l /tmp/dhclient.leases -p /tmp/dhclient.pid vtnet0<enter><wait5>",
-      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd-{{user `version`}}/installerconfig<enter><wait>",
+      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd/installerconfig<enter><wait>",
       "bsdinstall script /tmp/installerconfig && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -55,7 +55,7 @@
       "<enter><wait>",
       "mdmfs -s 100m md1 /tmp<enter><wait>",
       "dhclient -l /tmp/dhclient.leases -p /tmp/dhclient.pid em0<enter><wait5>",
-      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd-{{user `version`}}/installerconfig<enter><wait>",
+      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd/installerconfig<enter><wait>",
       "bsdinstall script /tmp/installerconfig && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -84,7 +84,7 @@
       "<enter><wait>",
       "mdmfs -s 100m md1 /tmp<enter><wait>",
       "dhclient -l /tmp/dhclient.leases -p /tmp/dhclient.pid em0<enter><wait5>",
-      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd-{{user `version`}}/installerconfig<enter><wait>",
+      "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd/installerconfig<enter><wait>",
       "bsdinstall script /tmp/installerconfig && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -102,6 +102,7 @@
       "scripts/freebsd/init.sh",
       "scripts/common/vagrant.sh",
       "scripts/common/sshd.sh",
+      "scripts/freebsd/custom.sh",
       "scripts/freebsd/cleanup.sh",
       "scripts/freebsd/minimize.sh"
     ]

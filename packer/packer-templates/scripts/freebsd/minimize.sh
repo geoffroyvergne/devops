@@ -10,4 +10,3 @@ set -x
 #sudo swapctl -d "$swap_device"
 #sudo dd if=/dev/zero of="$swap_device" bs=1M || :
 
-touch /root/gv

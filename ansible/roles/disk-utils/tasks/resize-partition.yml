@@ -1,25 +1,16 @@
 ---
 
-- debug:
-    msg: "Resize partition"
-
 - name: "Resize LVM partion"
   shell: |
     growpart {{ disk }} {{ partition_number }}
     resize2fs {{ disk }}{{ partition_number }}
-  when: partition_type == 'lvm'
+  when: partition_type == 'growpart'
 
 - name: "Resize Standard partion"
   shell: |
-    #sgdisk -e {{ disk }}
     parted {{ disk }} resizepart {{ partition_number }} Y 100%
     resize2fs {{ disk }}{{ partition_number }}
-  when: partition_type == 'standard'
+  when: partition_type == 'parted'
 
 
-- shell:  df -H | grep {{ disk }}
-  register: disk_space
-
-- debug:
-    msg: "{{ disk_space.stdout }}"
 

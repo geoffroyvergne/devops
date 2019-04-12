@@ -19,3 +19,6 @@ sudo growfs /dev/ada0s1 -y
 
 sudo zpool online -e zroot /dev/ada0p3
 
+Growpart
+sudo growpart /dev/sda 1
+sudo resize2fs /dev/sda1

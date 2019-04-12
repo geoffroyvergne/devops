@@ -8,12 +8,18 @@
   package:
     name: "{{ item }}"
   with_items:
-    - lightdm # vi /usr/share/lightdm/lightdm.conf.d/50-xfce-greeter.conf
+    - lightdm
     - xfonts-base
     - xserver-xorg
     - xterm
     #- xorg
     - xfce4
+  when: ansible_distribution == 'Ubuntu'
+
+- name: "temptelte xfce-greeter"
+  template:
+    src: 50-xfce-greeter.conf
+    dest: /usr/share/lightdm/lightdm.conf.d/50-xfce-greeter.conf
   when: ansible_distribution == 'Ubuntu'
 
 - debug:
@@ -27,3 +33,25 @@
     - xorg
     - xfce4
   when: ansible_distribution == 'Debian'
+
+- debug:
+    msg: "X11 Centos"
+  when: ansible_distribution == 'CentOS'
+
+# yum groupinstall Xfce
+- name: Install Dependencies
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "@X Window System"
+    - "@Xfce"
+  when: ansible_distribution == 'CentOS'
+
+- name: Start X11
+  shell: |
+    sudo systemctl set-default graphical.target
+    rm -f '/etc/systemd/system/default.target'
+    ln -s '/usr/lib/systemd/system/graphical.target' '/etc/systemd/system/default.target'
+
+  when: ansible_distribution == 'CentOS'
