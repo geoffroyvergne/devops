@@ -1,0 +1,18 @@
+---
+
+- debug:
+    msg: "X11 OpenBSD"
+
+- name: Install dependencies
+  openbsd_pkg:
+    name: [xfce, slim]
+    state: present
+
+
+- name: "Enable startx"
+  lineinfile:
+    path: /home/vagrant/.xinitrc
+    line: exec startxfce4
+    owner: vagrant
+    group: vagrant
+    create: yes

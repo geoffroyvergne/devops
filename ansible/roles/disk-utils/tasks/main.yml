@@ -17,7 +17,6 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - include_tasks: resize-partition.yml
-#- include_tasks: fake-block-device.yml
 
 - shell:  df -H | grep {{ disk }}
   register: disk_space

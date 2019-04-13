@@ -2,25 +2,13 @@
 
 - hosts: all
   remote_user: root
-  vars:
-    disk: "ada0"
-
-    #partition_type: "lvm"
-    partition_type: "zfs"
-    partition_number: 3
-    filesystem: "zroot/ROOT/default"
 
   tasks:
     - debug:
-        msg: "Debian server provisioning"
-      when: ansible_distribution == 'Debian'
-
-    - debug:
-        msg: "Ubuntu server provisioning"
-      when: ansible_distribution == 'Ubuntu'
+        msg: "ansible_distribution : {{ ansible_distribution }}"
 
   roles:
-    #- common
+    - common
     #- disk-utils
     #- docker
   become: yes

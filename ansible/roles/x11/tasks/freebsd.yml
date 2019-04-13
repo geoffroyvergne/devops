@@ -1,0 +1,35 @@
+---
+
+- debug:
+    msg: "X11 FreeBSD"
+
+- name: Install Dependencies
+  pkgng:
+    name: [
+      'virtualbox-ose-5.2.26_4',
+      'virtualbox-ose-additions-5.2.26_4',
+      'virtualbox-ose-kmod-5.2.26',
+      'xorg',
+      'xfce'
+    ]
+    state: present
+
+- name: "Enable services"
+  lineinfile:
+    path: /etc/rc.conf
+    line: "{{ item }}"
+  with_items:
+    - 'moused_enable="YES"'
+    - 'dbus_enable="YES"'
+    - 'hald_enable="YES"'
+    - 'vboxnet_enable="YES"'
+    - 'dbus_enable="YES"'
+    - 'hald_enable="YES"'
+
+- name: "Enable startx"
+  lineinfile:
+    path: /home/vagrant/.xinitrc
+    line: /usr/local/bin/xfce4-session
+    owner: vagrant
+    group: vagrant
+    create: yes

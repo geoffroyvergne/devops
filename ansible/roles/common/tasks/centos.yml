@@ -1,0 +1,14 @@
+---
+
+- name: Add repository
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+  when: ansible_distribution == 'CentOS'
+
+- name: Update cache
+  yum:
+    update_cache: yes
+  when: ansible_distribution == 'CentOS'
+

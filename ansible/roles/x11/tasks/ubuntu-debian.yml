@@ -1,0 +1,44 @@
+---
+
+- debug:
+    msg: "X11 Ubuntu"
+  when: ansible_distribution == 'Ubuntu'
+
+- debug:
+    msg: "X11 Debian"
+  when: ansible_distribution == 'Debian'
+
+- name: Install Dependencies
+  package:
+    name: "{{ item }}"
+  with_items:
+    - lightdm
+    - xfonts-base
+    - xserver-xorg
+    - xterm
+    #- xorg
+    - xfce4
+  when: ansible_distribution == 'Ubuntu'
+
+- name: "temptelte xfce-greeter"
+  template:
+    src: 50-xfce-greeter.conf
+    dest: /usr/share/lightdm/lightdm.conf.d/50-xfce-greeter.conf
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install Dependencies
+  package:
+    name: "{{ item }}"
+  with_items:
+    - xorg
+    - xfce4
+  when: ansible_distribution == 'Debian'
+
+- name: Install Common Ubuntu Debian
+  package:
+    name: "{{ item }}"
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - software-properties-common
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

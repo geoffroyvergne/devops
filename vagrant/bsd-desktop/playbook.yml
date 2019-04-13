@@ -3,10 +3,14 @@
 - hosts: all
   remote_user: root
   become: yes
-  tasks:
 
+  tasks:
     - debug:
-        msg: "Bsd desktop provisioning"
+        msg: "ansible_distribution : {{ ansible_distribution }}"
+
+  roles:
+    - common
+    - x11
 
     #- name: "Resize root partition"
     #  shell: |

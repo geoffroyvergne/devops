@@ -1,5 +1,14 @@
 ---
 
+- include_tasks: centos.yml
+  when: ansible_distribution == 'CentOS'
+
+- include_tasks: freebsd.yml
+  when: ansible_distribution == 'FreeBSD'
+
+- include_tasks: ubuntu-debian.yml
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
 #- name: Add locale gen file
 #  template:
 #    src: locale.gen
@@ -17,43 +26,7 @@
 #    - lock
 #    - lock-frontend
 
-- name: Update repositories cache
-  apt:
-    update_cache: yes
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-- name: Add repository
-  yum_repository:
-    name: epel
-    description: EPEL YUM repo
-    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
-  when: ansible_distribution == 'CentOS'
-
-- name: Update cache
-  yum:
-    update_cache: yes
-  when: ansible_distribution == 'CentOS'
-
 - name: Install Common
   package:
-    name: "{{ item }}"
-  with_items:
-    - vim
-    - git
-    - curl
-    - wget
-    - net-tools
-    - xinetd
-    - htop
-    - psmisc
-    - iputils-*
-    - python
-
-- name: Install Common Ubuntu Debian
-  package:
-    name: "{{ item }}"
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - software-properties-common
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    name: ['vim', 'git', 'curl', 'wget', 'net-tools', 'xinetd', 'htop', 'psmisc', 'iputils-*', 'python']
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or  ansible_distribution == 'CentOS'

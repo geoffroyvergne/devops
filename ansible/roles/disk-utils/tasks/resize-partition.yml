@@ -12,5 +12,3 @@
     resize2fs {{ disk }}{{ partition_number }}
   when: partition_type == 'parted'
 
-
-

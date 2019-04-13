@@ -1,0 +1,17 @@
+---
+
+- debug:
+    msg: "X11 FreeBSD"
+
+- name: "Update repository"
+  template:
+    src: FreeBSD.conf
+    dest: /etc/pkg/FreeBSD.conf
+
+- command: "pkg update"
+- command: "pkg upgrade -y"
+
+- name: Install Dependencies
+  pkgng:
+    name: ['vim']
+    state: present
