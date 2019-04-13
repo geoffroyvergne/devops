@@ -1,0 +1,6 @@
+---
+
+- name: Install dependencies
+  openbsd_pkg:
+    name: [ vim-8.1.0438-no_x11 ]
+    state: present

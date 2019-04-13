@@ -8,10 +8,11 @@
     src: FreeBSD.conf
     dest: /etc/pkg/FreeBSD.conf
 
-- command: "pkg update"
-- command: "pkg upgrade -y"
+- command: ["pkg update", "pkg upgrade -y"]
 
 - name: Install Dependencies
   pkgng:
-    name: ['vim']
+    name: [
+      'vim'
+    ]
     state: present

@@ -10,7 +10,8 @@
       'virtualbox-ose-additions-5.2.26_4',
       'virtualbox-ose-kmod-5.2.26',
       'xorg',
-      'xfce'
+      'xfce',
+      'slim'
     ]
     state: present
 
@@ -25,6 +26,7 @@
     - 'vboxnet_enable="YES"'
     - 'dbus_enable="YES"'
     - 'hald_enable="YES"'
+    - 'slim_enable="YES"'
 
 - name: "Enable startx"
   lineinfile:

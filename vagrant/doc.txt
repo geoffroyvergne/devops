@@ -9,3 +9,6 @@ vagrant package --base /data/iso/vagrant-box/ubuntu-budgie/
 vagrant box add --name ubuntu-budgie /data/iso/vagrant-box/ubuntu-budgie/package.box
 
 vagrant provision --provision-with install-ubuntu
+
+Save vm state
+vagrant package --package --output /data/iso/vagrant-box/freebsd-desktop.box

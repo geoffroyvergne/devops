@@ -6,6 +6,9 @@
 - include_tasks: freebsd.yml
   when: ansible_distribution == 'FreeBSD'
 
+- include_tasks: openbsd.yml
+  when: ansible_distribution == 'OpenBSD'
+
 - include_tasks: ubuntu-debian.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
@@ -28,5 +31,16 @@
 
 - name: Install Common
   package:
-    name: ['vim', 'git', 'curl', 'wget', 'net-tools', 'xinetd', 'htop', 'psmisc', 'iputils-*', 'python']
+    name: [
+      'vim',
+      'git',
+      'curl',
+      'wget',
+      'net-tools',
+      'xinetd',
+      'htop',
+      'psmisc',
+      'iputils-*',
+      'python'
+    ]
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or  ansible_distribution == 'CentOS'

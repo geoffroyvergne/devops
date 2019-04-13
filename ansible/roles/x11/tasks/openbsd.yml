@@ -5,9 +5,13 @@
 
 - name: Install dependencies
   openbsd_pkg:
-    name: [xfce, slim]
+    name: [
+      xfce,
+      slim
+    ]
     state: present
 
+#  export PKG_PATH=https://ftp.openbsd.org/pub/OpenBSD/6.4/packages/amd64/
 
 - name: "Enable startx"
   lineinfile:
@@ -16,3 +20,17 @@
     owner: vagrant
     group: vagrant
     create: yes
+
+- name: "Enable slim"
+  lineinfile:
+    path: /etc/rc.local
+    line: /usr/local/bin/slim -d
+    create: yes
+
+- name: "Enable dbus"
+  lineinfile:
+    path: /etc/rc.conf.local
+    line: "{{ item }}"
+    with_items:
+      - 'pkg_scripts=" dbus_daemon avahi_daemon"'
+      - 'dbus_enable=YES'
