@@ -1,5 +1,14 @@
 ---
 
+- name: Install Common
+  package:
+    name: [
+      'python',
+      'python3-apt'
+    ]
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or  ansible_distribution == 'CentOS'
+
+
 - include_tasks: centos.yml
   when: ansible_distribution == 'CentOS'
 
@@ -9,7 +18,7 @@
 - include_tasks: openbsd.yml
   when: ansible_distribution == 'OpenBSD'
 
-- include_tasks: ubuntu-debian.yml
+- include_tasks: debian-ubuntu.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 #- name: Add locale gen file
@@ -40,7 +49,22 @@
       'xinetd',
       'htop',
       'psmisc',
-      'iputils-*',
-      'python'
+      'iputils-*'
     ]
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or  ansible_distribution == 'CentOS'
+
+# linux
+# localectl list-keymaps
+# localectl set-keymap fr-mac
+- name: "Set keyboard layout"
+  shell: |
+    localectl set-keymap fr-ma
+    localectl set-x11-keymap fr macintosh
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or  ansible_distribution == 'CentOS'
+
+# openbsd
+# wsconsctl -w keyboard.encoding=fr
+# echo "fr" > /etc/kbdtype
+
+# freebsd
+# echo 'keymap="fr"' >> /etc/rc.conf

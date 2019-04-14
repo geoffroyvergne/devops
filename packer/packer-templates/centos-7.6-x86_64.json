@@ -9,7 +9,8 @@
     "iso_checksum_type": "sha256",
     "iso_url": "http://mirrors.kernel.org/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-NetInstall-1810.iso",
     "version": "7.6",
-    "ssh_timeout": "60m"
+    "ssh_timeout": "60m",
+    "final_box_dir": "/data/iso/vagrant-box"
   },
   "builders": [{
     "type": "qemu",
@@ -103,6 +104,6 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "box/centos-{{user `version`}}-x86_64-{{.Provider}}.box"
+    "output": "{{user `final_box_dir`}}/centos-{{user `version`}}-x86_64-{{.Provider}}.box"
   }]
 }

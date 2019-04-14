@@ -9,7 +9,8 @@
    "iso_checksum_type": "sha256",
    "iso_url": "http://cdimage.debian.org/debian-cd/9.8.0/amd64/iso-cd/debian-9.8.0-amd64-netinst.iso",
    "version": "9.8",
-   "ssh_timeout": "60m"
+   "ssh_timeout": "60m",
+   "final_box_dir": "/data/iso/vagrant-box"
   },
   "builders": [{
     "type": "qemu",
@@ -104,6 +105,6 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "box/debian-{{user `version`}}-amd64-{{.Provider}}.box"
+    "output": "{{user `final_box_dir`}}/debian-{{user `version`}}-amd64-{{.Provider}}.box"
   }]
 }

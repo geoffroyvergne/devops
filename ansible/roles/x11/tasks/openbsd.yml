@@ -31,6 +31,12 @@
   lineinfile:
     path: /etc/rc.conf.local
     line: "{{ item }}"
-    with_items:
-      - 'pkg_scripts=" dbus_daemon avahi_daemon"'
-      - 'dbus_enable=YES'
+  with_items:
+    - 'pkg_scripts="dbus_daemon avahi_daemon"'
+    - 'dbus_enable=YES'
+
+# /usr/X11R6/share/X11/xorg.conf.d/keyboard-fr-mac.conf
+- name: "Keyboard fr mac"
+  template:
+    src: keyboard-fr-mac.conf
+    dest: /usr/X11R6/share/X11/xorg.conf.d/keyboard-fr-mac.conf

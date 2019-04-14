@@ -10,7 +10,8 @@
     "mirror": "http://cdimage.ubuntu.com",
     "iso_url": "http://cdimage.ubuntu.com/ubuntu/releases/cosmic/release/ubuntu-18.10-server-amd64.iso",
     "version": "18.10",
-    "ssh_timeout": "60m"
+    "ssh_timeout": "60m",
+    "final_box_dir": "/data/iso/vagrant-box"
   },
   "builders": [{
     "type": "qemu",
@@ -121,7 +122,7 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "box/ubuntu-{{user `version`}}-amd64-{{.Provider}}.box"
+    "output": "{{user `final_box_dir`}}/ubuntu-{{user `version`}}-amd64-{{.Provider}}.box"
   }]
 }
 

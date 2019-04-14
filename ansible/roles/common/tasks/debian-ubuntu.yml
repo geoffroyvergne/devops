@@ -1,6 +1,30 @@
 ---
 
+- name: "Update Debian to SID fr repository"
+  template:
+    src: debian-sources.list
+    dest: /etc/apt/sources.list
+  when: ansible_distribution == 'Debian'
+
+- name: "Update Ubuntu to fr repository"
+  template:
+    src: ubuntu-sources.list
+    dest: /etc/apt/sources.list
+  when: ansible_distribution == 'Ubuntu'
+
 - name: Update repositories cache
   apt:
     update_cache: yes
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+#- name: Upgrade all packages to the latest version
+#  apt:
+#    name: "*"
+#    state: latest
+#  when: ansible_distribution == 'Debian'
+
+- name: Upgrade repositories cache
+  apt:
+    upgrade: dist
+    update_cache: yes
+  when: ansible_distribution == 'Debian'

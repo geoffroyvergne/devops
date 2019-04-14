@@ -3,12 +3,14 @@
 - debug:
     msg: "X11 FreeBSD"
 
-- name: "Update repository"
-  template:
-    src: FreeBSD.conf
-    dest: /etc/pkg/FreeBSD.conf
+#/etc/pkg/FreeBSD.conf
+#- name: "change pkg repository"
+#  template:
+#    src: FreeBSD.conf
+#    dest: /etc/pkg/FreeBSD.conf
 
-- command: ["pkg update", "pkg upgrade -y"]
+#- command: "pkg update"
+#- command: "pkg upgrade -y"
 
 - name: Install Dependencies
   pkgng:

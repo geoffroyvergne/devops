@@ -6,12 +6,13 @@
 - name: Install Dependencies
   pkgng:
     name: [
-      'virtualbox-ose-5.2.26_4',
       'virtualbox-ose-additions-5.2.26_4',
       'virtualbox-ose-kmod-5.2.26',
       'xorg',
       'xfce',
-      'slim'
+      #'slim',
+      'lightdm',
+      'lightdm-gtk-greeter'
     ]
     state: present
 
@@ -26,7 +27,8 @@
     - 'vboxnet_enable="YES"'
     - 'dbus_enable="YES"'
     - 'hald_enable="YES"'
-    - 'slim_enable="YES"'
+    #- 'slim_enable="YES"'
+    - 'lightdm_enable="YES"'
 
 - name: "Enable startx"
   lineinfile:
@@ -35,3 +37,14 @@
     owner: vagrant
     group: vagrant
     create: yes
+
+# /usr/local/etc/X11/xorg.conf.d/keyboard-fr-mac.conf
+- name: "Keyboard fr mac"
+  template:
+    src: keyboard-fr-mac.conf
+    dest: /usr/local/etc/X11/xorg.conf.d/keyboard-fr-mac.conf
+
+- name: "lightdm"
+  shell: |
+    sed -i '' -e 's/memorylocked=128M/memorylocked=256M/' /etc/login.conf
+    cap_mkdb /etc/login.conf

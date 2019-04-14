@@ -12,3 +12,6 @@ vagrant provision --provision-with install-ubuntu
 
 Save vm state
 vagrant package --package --output /data/iso/vagrant-box/freebsd-desktop.box
+
+remove all boxes :
+vagrant box list | cut -f 1 -d ' ' | xargs -L 1 vagrant box remove -f

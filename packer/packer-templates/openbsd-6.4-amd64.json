@@ -9,7 +9,8 @@
     "iso_checksum_type": "sha256",
     "iso_url": "http://ftp.openbsd.org/pub/OpenBSD/6.4/amd64/cd64.iso",
     "version": "6.4",
-    "ssh_timeout": "60m"
+    "ssh_timeout": "60m",
+    "final_box_dir": "/data/iso/vagrant-box"
   },
   "builders": [{
     "type": "qemu",
@@ -115,7 +116,7 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "box/openbsd-{{user `version`}}-amd64-{{.Provider}}.box",
+    "output": "{{user `final_box_dir`}}/openbsd-{{user `version`}}-amd64-{{.Provider}}.box",
     "vagrantfile_template": "vagrantfile_templates/openbsd.rb"
   }]
 }

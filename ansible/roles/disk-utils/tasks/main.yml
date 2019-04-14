@@ -10,7 +10,7 @@
       - cloud-utils-growpart
   when: ansible_distribution == 'CentOS'
 
-- name: Install common Centos
+- name: Install common
   package:
     name:
       - cloud-guest-utils
