@@ -1,14 +1,14 @@
 ---
 
 - hosts: kubernetes-ubuntu
-  remote_user: root
+  remote_user: vagrant
   vars:
-    k8s_master_node: kubernetes-ubuntu
+    partition_type: "parted"
+    k8s_master_node: "kubernetes-ubuntu"
     k8s_apiserver_advertise_address: "192.168.33.16"
     k8s_apiserver_cert_extra_sans: "192.168.33.16"
-    k8s_ingress_external_ips: [192.168.33.16]
+    k8s_ingress_external_ips: [ "192.168.33.16" ]
     k8s_dashboard_port: 31223
-    k8s_dashboard_hostname: "dashboard.192.168.33.16.nip.io"
   roles:
     - common
     - disk-utils

@@ -1,4 +1,22 @@
 ---
+
+k8s_ingress_external_ips: [ "192.168.33.16" ]
+
+# Dashboard
 k8s_dashboard_port: 31223
-k8s_ingress_external_ips: [192.168.33.16]
-k8s_dashboard_hostname: "dashboard.192.168.33.16.nip.io"
+k8s_dashboard_hostname: "dashboard.{{ k8s_ingress_external_ips[0] }}.nip.io"
+
+# Istio
+istio_version: 1.1.3
+
+# Jaeger
+istio_jaeger_hostname: "jaeger.{{ k8s_ingress_external_ips[0] }}.nip.io"
+
+# Grafana
+istio_grafana_hostname: "grafana.{{ k8s_ingress_external_ips[0] }}.nip.io"
+
+# Prometeus
+istio_prometeus_hostname: "prometeus.{{ k8s_ingress_external_ips[0] }}.nip.io"
+
+# ServiceGraph
+istio_servicegraph_hostname: "servicegraph.{{ k8s_ingress_external_ips[0] }}.nip.io"

@@ -7,7 +7,7 @@
   openbsd_pkg:
     name: [
       xfce,
-      slim
+      #slim
     ]
     state: present
 
@@ -21,11 +21,11 @@
     group: vagrant
     create: yes
 
-- name: "Enable slim"
-  lineinfile:
-    path: /etc/rc.local
-    line: /usr/local/bin/slim -d
-    create: yes
+#- name: "Enable slim"
+#  lineinfile:
+#    path: /etc/rc.local
+#    line: /usr/local/bin/slim -d
+#    create: yes
 
 - name: "Enable dbus"
   lineinfile:

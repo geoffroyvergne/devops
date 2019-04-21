@@ -1,0 +1,119 @@
+---
+
+- name: "Wait all pod kube-system ready"
+  command: kubectl get pods --field-selector=status.phase!=Running
+  register: result
+  retries: 100
+  delay: 10
+  until: result.stderr == 'No resources found.'
+
+- name: "Get Istio project {{ istio_version }}"
+  shell: curl -L https://git.io/getLatestIstio | ISTIO_VERSION={{ istio_version }} sh -
+  args:
+    creates: "istio-{{ istio_version }}"
+
+- name: "Prepare Helm"
+  shell: kubectl apply -f /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/helm-service-account.yaml
+  register: result
+
+- debug:
+    msg: "{{ result }}"
+
+- name: "Update helm tiller"
+  shell: helm init --upgrade --service-account tiller
+
+# helm install /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system \
+# --set certmanager.enabled=true
+# for i in /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
+- name: "Install istio init"
+  shell: helm install /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system --set certmanager.enabled=true
+  register: result
+  retries: 100
+  delay: 10
+  until: result is not failed
+  #ignore_errors: yes
+  args:
+    creates: "istio-init"
+
+- debug:
+    msg: "{{ result }}"
+
+- name: "Prepare Install istio with Helm"
+  shell: |
+    helm template /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio --name istio --namespace istio-system \
+    --set grafana.enabled=true \
+    --set servicegraph.enabled=true \
+    --set tracing.enabled=true \
+    --set kiali.enabled=true \
+    > $HOME/istio-install.yaml
+  register: result
+  #etries: 100
+  #delay: 10
+  #until: result is not failed
+  #ignore_errors: yes
+  args:
+    creates: "istio-install.yaml"
+
+- debug:
+    msg: "{{ result }}"
+
+- name: "Install istio"
+  shell: kubectl apply -f $HOME/istio-install.yaml
+  register: result
+  retries: 100
+  delay: 10
+  until: result is not failed
+
+# kubectl -n istio-system patch service istio-ingressgateway --patch '{"spec": {"externalIPs": ["192.168.33.16"]}}'
+- name: "Expose external ip"
+  shell: |
+    kubectl -n istio-system patch service istio-ingressgateway --patch '{"spec": {"externalIPs": ["{{ k8s_ingress_external_ips[0] }}"] }}'
+  register: result
+  retries: 100
+  delay: 10
+  until: result is not failed
+  #ignore_errors: yes
+
+- name: "Create /etc/ssl/istio"
+  file:
+    path: /etc/istio
+    state: directory
+
+- name: "Copy ssl certificates"
+  copy:
+    src: ssl
+    dest: /etc/istio
+    directory_mode: yes
+
+- name: "Enable ssl"
+  shell: |
+    kubectl create -n istio-system secret tls istio-ingressgateway-certs \
+    --key /etc/istio/ssl/key.pem \
+    --cert /etc/istio/ssl/cert.pem
+  ignore_errors: yes
+
+- name: "Expose istio services"
+  template:
+    src: istio-ingressgateway.yml
+    dest: $HOME/istio-ingressgateway.yml
+
+- name: "Expose istio services"
+  shell: |
+    kubectl apply -f $HOME/istio-ingressgateway.yml
+
+#- name: "wait for gateway"
+#  wait_for:
+#    host: 192.168.33.16
+#    port: 80
+#    delay: 10
+#    state: drained
+
+#- name: "wait for grafana to come up"
+#  uri:
+#    url: "https://grafana.192.168.33.16.nip.io"
+#    status_code: 200
+#    validate_certs: False
+#    register: result
+#    until: result | succeeded
+#    retries: 100
+#    delay: 1

@@ -1,0 +1,122 @@
+{
+  "variables": {
+    "compression_level": "6",
+    "cpus": "1",
+    "memory": "512",
+    "disk_size": "40000",
+    "headless": "false",
+    "iso_checksum": "1a280cd45ea5fe8d818b61f9d8702c58d5edeff9aee1575f7445b505f45a8c77",
+    "iso_checksum_type": "sha256",
+    "iso_url": "http://ftp.openbsd.org/pub/OpenBSD/6.4/amd64/cd64.iso",
+    "version": "6.4",
+    "ssh_timeout": "60m",
+    "final_box_dir": "/data/iso/vagrant-box"
+  },
+  "builders": [{
+    "type": "qemu",
+    "iso_url": "{{user `iso_url`}}",
+    "iso_checksum": "{{user `iso_checksum`}}",
+    "iso_checksum_type": "{{user `iso_checksum_type`}}",
+    "output_directory": "box/output-openbsd-desktop-{{user `version`}}-amd64-{{build_type}}",
+    "vm_name": "packer-openbsd-{{user `version`}}-amd64",
+    "disk_size": "{{user `disk_size`}}",
+    "headless": "{{user `headless`}}",
+    "http_directory": "http",
+    "boot_wait": "20s",
+    "boot_command": [
+      "S<enter><wait>",
+      "cat <<EOF >>/tmp/disklabel.auto<enter>",
+      "/        20G<enter>",
+      "EOF<enter>",
+      "dhclient vio0<enter><wait>",
+      "ftp -o install.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/install-desktop.conf<enter><wait>",
+      "ftp -o install.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/install.sh<enter><wait>",
+      "ftp -o install-chroot.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/install-chroot.sh<enter><wait>",
+      "sh install.sh < install-chroot.sh && reboot<enter>"
+    ],
+    "ssh_timeout": "{{user `ssh_timeout`}}",
+    "ssh_username": "vagrant",
+    "ssh_password": "vagrant",
+    "shutdown_command": "sudo shutdown -h -p now",
+    "qemuargs": [
+      ["-m", "{{user `memory`}}"],
+      ["-smp", "{{user `cpus`}}"]
+    ]
+  }, {
+    "type": "virtualbox-iso",
+    "guest_os_type": "OpenBSD_64",
+    "iso_url": "{{user `iso_url`}}",
+    "iso_checksum": "{{user `iso_checksum`}}",
+    "iso_checksum_type": "{{user `iso_checksum_type`}}",
+    "output_directory": "box/output-openbsd-desktop-{{user `version`}}-amd64-{{build_type}}",
+    "vm_name": "packer-openbsd-{{user `version`}}-amd64",
+    "disk_size": "{{user `disk_size`}}",
+    "headless": "{{user `headless`}}",
+    "http_directory": "http",
+    "boot_wait": "20s",
+    "boot_command": [
+      "S<enter><wait>",
+      "cat <<EOF >>/tmp/disklabel.auto<enter>",
+      "/        10G<enter>",
+      "EOF<enter>",
+      "dhclient em0<enter><wait>",
+      "ftp -o install.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/install-desktop.conf<enter><wait>",
+      "ftp -o install.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/install.sh<enter><wait>",
+      "ftp -o install-chroot.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/install-chroot.sh<enter><wait>",
+      "sh install.sh < install-chroot.sh && reboot<enter>"
+    ],
+    "ssh_timeout": "{{user `ssh_timeout`}}",
+    "ssh_username": "vagrant",
+    "ssh_password": "vagrant",
+    "guest_additions_mode": "disable",
+    "shutdown_command": "sudo shutdown -h -p now",
+    "vboxmanage": [
+      ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
+      ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"]
+    ]
+  }, {
+    "type": "vmware-iso",
+    "guest_os_type": "freebsd-64",
+    "iso_url": "{{user `iso_url`}}",
+    "iso_checksum": "{{user `iso_checksum`}}",
+    "iso_checksum_type": "{{user `iso_checksum_type`}}",
+    "output_directory": "box/output-openbsd-desktop-{{user `version`}}-amd64-{{build_type}}",
+    "vm_name": "packer-openbsd-{{user `version`}}-amd64",
+    "disk_size": "{{user `disk_size`}}",
+    "headless": "{{user `headless`}}",
+    "http_directory": "http",
+    "boot_wait": "20s",
+    "boot_command": [
+      "S<enter><wait>",
+      "cat <<EOF >>/tmp/disklabel.auto<enter>",
+      "/        10G<enter>",
+      "EOF<enter>",
+      "dhclient em0<enter><wait>",
+      "ftp -o install.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/install-desktop.conf<enter><wait>",
+      "ftp -o install.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/install.sh<enter><wait>",
+      "ftp -o install-chroot.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/install-chroot.sh<enter><wait>",
+      "sh install.sh < install-chroot.sh && reboot<enter>"
+    ],
+    "ssh_timeout": "{{user `ssh_timeout`}}",
+    "ssh_username": "vagrant",
+    "ssh_password": "vagrant",
+    "shutdown_command": "sudo shutdown -h -p now",
+    "vmx_remove_ethernet_interfaces": true
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "scripts": [
+      "scripts/openbsd/init.sh",
+      "scripts/common/vagrant.sh",
+      "scripts/common/sshd.sh",
+      "scripts/openbsd/custom.sh",
+      "scripts/openbsd/minimize.sh"
+    ]
+  }],
+  "post-processors": [{
+    "type": "vagrant",
+    "compression_level": "{{user `compression_level`}}",
+    "output": "{{user `final_box_dir`}}/openbsd-desktop-{{user `version`}}-amd64-{{.Provider}}.box",
+    "vagrantfile_template": "vagrantfile_templates/openbsd.rb"
+  }]
+}

@@ -1,5 +1,7 @@
 ---
 
 - include_tasks: helm.yml
-- include_tasks: ingress-controller.yml
-- include_tasks: dashboard.yml
+- include_tasks: istio.yml
+
+#- include_tasks: ingress-controller.yml
+#- include_tasks: dashboard.yml

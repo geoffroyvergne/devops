@@ -9,7 +9,9 @@
 - name: Instal dashboard
   shell: |
     #kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
-    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+    #kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
+
 
     kubectl -n kube-system patch service kubernetes-dashboard --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
     kubectl -n kube-system patch service kubernetes-dashboard --type='json' -p '[{"op":"replace","path":"/spec/ports/0/nodePort","value":{{ k8s_dashboard_port }} }]'
@@ -18,13 +20,13 @@
     creates: dashboard.initialized
   changed_when: ingress_service is changed
 
-- name: "Install ingress dashboard"
-  shell: |
-    kubectl apply -f $HOME/ingress-dashboard.yml
-    touch $HOME/ingress-dashboard.initialized
-  args:
-    creates: ingress-dashboard.initialized
-  changed_when: ingress_service is changed
+#- name: "Install ingress dashboard"
+#  shell: |
+#    kubectl apply -f $HOME/ingress-dashboard.yml
+#    touch $HOME/ingress-dashboard.initialized
+#  args:
+#    creates: ingress-dashboard.initialized
+#  changed_when: ingress_service is changed
 
 - name: Create token for dashboard
   shell: |
@@ -58,3 +60,20 @@
   changed_when: kube_token is changed
 
 # cat $HOME/.kube/token | pbcopy
+
+#- name: "wait for Dashboard"
+#  wait_for:
+#    host: 192.168.33.16
+#    port: "{{ k8s_dashboard_port }}"
+#    delay: 10
+#    state: drained
+
+#- name: "wait for Dashboard to come up"
+#  uri:
+#    url: "https://192.168.33.16:{{ k8s_dashboard_port }}/#!/login"
+#    status_code: 200
+#    validate_certs: False
+#    register: result
+#    until: result | succeeded
+#    retries: 100
+#    delay: 1

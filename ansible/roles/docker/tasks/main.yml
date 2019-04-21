@@ -17,20 +17,20 @@
     - docker-compose
   register: docker_installed
 
-- name: Add docker insecure registry
-  template:
-    src: daemon.json.j2
-    dest: /etc/docker/daemon.json
+#- name: Add docker insecure registry
+#  template:
+#   src: daemon.json.j2
+#    dest: /etc/docker/daemon.json
 
-- name: Open Docker socket
-  lineinfile:
-    path: /etc/default/docker
-    line: 'DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock"'
-    create: no
-  when: docker_open_socket
+#- name: Open Docker socket
+#  lineinfile:
+#    path: /etc/default/docker
+#    line: 'DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock"'
+#    create: no
+#  when: docker_open_socket
 
-- name: Restart docker
-  service:
-    name: docker
-    state: restarted
-  when: docker_installed is changed
+#- name: Restart docker
+#  service:
+#    name: docker
+#    state: restarted
+#  when: docker_installed is changed

@@ -49,7 +49,8 @@
       'xinetd',
       'htop',
       'psmisc',
-      'iputils-*'
+      'iputils-*',
+      'snap', 'snapd'
     ]
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or  ansible_distribution == 'CentOS'
 
@@ -66,5 +67,29 @@
 # wsconsctl -w keyboard.encoding=fr
 # echo "fr" > /etc/kbdtype
 
+- name: "FR Keyboard"
+  lineinfile:
+    path: /etc/kbdtype
+    line: fr
+    create: yes
+  when: ansible_distribution == 'OpenBSD'
+
 # freebsd
 # echo 'keymap="fr"' >> /etc/rc.conf
+
+- name: "FR Keyboard"
+  lineinfile:
+    path: /etc/rc.conf
+    line: 'keymap="fr"'
+  when: ansible_distribution == 'FreeBSD'
+
+# sudo timedatectl set-timezone Europe/Paris
+- name: "Change timezone"
+  shell: timedatectl set-timezone Europe/Paris
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or  ansible_distribution == 'CentOS'
+
+# OpenBsd
+# # zic -l Europe/Paris
+
+# FreeBsd
+# tzsetup /usr/share/zoneinfo/Europe/Paris
