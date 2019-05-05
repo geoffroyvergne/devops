@@ -96,23 +96,24 @@
 
 ##### POST INSTALL ####
 
-#- name: "Test ceph status"
-#  shell: kubectl -n rook-ceph exec $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') ceph status
-#  register: status
+- name: "Test ceph status"
+  shell: kubectl -n rook-ceph exec $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') ceph status
+  register: status
+  retries: 100
+  delay: 10
+  until: status is not failed or status.stdout | length > 0
 
-#- debug:
-#    msg: "ceph status : {{ statud.stdout }}"
+- debug:
+    msg: "ceph status : {{ statud.stdout }}"
 
-#- name: "Fix ceph dashboard bug 1.0"
-#  shell: |
-#    kubectl -n rook-ceph exec $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') ceph status
+- name: "Fix ceph dashboard bug 1.0"
+  shell: |
+    kubectl -n rook-ceph exec $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') ceph status
+    kubectl -n rook-ceph exec $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') ceph dashboard ac-role-create admin-no-iscsi
+    kubectl -n rook-ceph exec $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') for scope in dashboard-settings log rgw prometheus grafana nfs-ganesha manager hosts rbd-image config-opt rbd-mirroring cephfs user osd pool monitor; do ceph dashboard ac-role-add-scope-perms admin-no-iscsi ${scope} create delete read update; done
+    kubectl -n rook-ceph exec $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') ceph dashboard ac-user-set-roles admin admin-no-iscsi
+##
 
-####
-
-#ceph dashboard ac-role-create admin-no-iscsi
-
-#for scope in dashboard-settings log rgw prometheus grafana nfs-ganesha manager hosts rbd-image config-opt rbd-mirroring cephfs user osd pool monitor; do
-#    ceph dashboard ac-role-add-scope-perms admin-no-iscsi ${scope} create delete read update;
-#done
-
-#ceph dashboard ac-user-set-roles admin admin-no-iscsi
+# ceph dashboard ac-role-create admin-no-iscsi
+# for scope in dashboard-settings log rgw prometheus grafana nfs-ganesha manager hosts rbd-image config-opt rbd-mirroring cephfs user osd pool monitor; do ceph dashboard ac-role-add-scope-perms admin-no-iscsi ${scope} create delete read update; done
+# ceph dashboard ac-user-set-roles admin admin-no-iscsi
