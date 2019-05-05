@@ -9,11 +9,14 @@
     k8s_apiserver_cert_extra_sans: "192.168.33.16"
     k8s_ingress_external_ips: [ "192.168.33.16" ]
     k8s_dashboard_port: 31223
+    docker_insecure_registries: ["registry.192.168.33.16.nip.io"]
   roles:
-    - common
-    - disk-utils
-    - docker
-    - kubernetes
-    - kubernetes-config
+    #- common
+    #- disk-utils
+    #- docker
+    #- kubernetes
+    #- kubernetes-config
+    - kubernetes-istio
     - kubernetes-modules
+    - kubernetes-rookio-ceph
   become: yes

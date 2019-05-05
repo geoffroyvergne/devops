@@ -1,0 +1,17 @@
+---
+
+- name: "Create local volume"
+  file:
+    path: "{{ k8s_registry_local_folder }}"
+    state: directory
+    mode: 0755
+
+- name: "get registry yml"
+  template:
+    src: registry.yml
+    dest: $HOME/registry.yml
+
+- name: "Install registry"
+  shell: istioctl kube-inject -f $HOME/registry.yml | kubectl apply -f -
+
+  #shell: kubectl apply -f $HOME/registry.yml

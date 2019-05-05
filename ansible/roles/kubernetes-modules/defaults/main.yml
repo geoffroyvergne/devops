@@ -1,5 +1,7 @@
 ---
 
+k8s_registry_local_folder: /data/registry
+
 k8s_ingress_external_ips: [ "192.168.33.16" ]
 
 # Dashboard
@@ -20,3 +22,6 @@ istio_prometeus_hostname: "prometeus.{{ k8s_ingress_external_ips[0] }}.nip.io"
 
 # ServiceGraph
 istio_servicegraph_hostname: "servicegraph.{{ k8s_ingress_external_ips[0] }}.nip.io"
+
+# Registry
+k8s_registry_hostname: "registry.{{ k8s_ingress_external_ips[0] }}.nip.io"

@@ -1,0 +1,158 @@
+---
+
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: registry
+  labels:
+    name: registry
+---
+
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: registrylocalvolume
+  namespace: registry
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: registrylocalvolume
+  namespace: registry
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: registrylocalvolume
+  local:
+    path: "{{ k8s_registry_local_folder }}"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - kubernetes-ubuntu
+
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: registrylocalvolume
+  namespace: registry
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: registrylocalvolume
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry
+  namespace: registry
+spec:
+  selector:
+    matchLabels:
+      app: registry
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: registry
+    spec:
+      containers:
+        - name: registry
+          image: registry:2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: registry
+              mountPath: /var/lib/registry
+      volumes:
+        - name: registry
+          persistentVolumeClaim:
+            claimName: "registrylocalvolume"
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: registry
+  namespace: registry
+  labels:
+    app: registry
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+  selector:
+    app: registry
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: registry
+  namespace: registry
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http-registry
+        protocol: HTTP
+      hosts:
+        - "{{ k8s_registry_hostname }}"
+    - port:
+        number: 443
+        name: https-nginx
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+        privateKey: /etc/istio/ingressgateway-certs/tls.key
+      hosts:
+        - "{{ k8s_registry_hostname }}"
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: registry
+  namespace: registry
+spec:
+  hosts:
+    - "{{ k8s_registry_hostname }}"
+  gateways:
+    - registry
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: registry
+            port:
+              number: 5000
+

@@ -1,0 +1,118 @@
+---
+
+# kubectl create -f common.yaml
+# kubectl create -f operator.yaml
+
+# kubectl create -f cluster-test.yaml
+
+# kubectl create -f storageclass-test.yaml
+
+# kubectl create -f dashboard-external-https.yaml
+
+# kubectl apply -f toolbox.yaml
+
+- name: "get rookio common yaml"
+  template:
+    src: rookio-common.yaml
+    dest: $HOME/rookio-common.yaml
+
+- name: "Install rookio common"
+  shell: kubectl create -f $HOME/rookio-common.yaml && touch $HOME/rookio-common
+  args:
+    creates: "/root/rookio-common"
+
+- name: "get rookio operator yaml"
+  template:
+    src: rookio-operator.yaml
+    dest: $HOME/rookio-operator.yaml
+
+- name: "Install rookio operator"
+  shell: kubectl create -f $HOME/rookio-operator.yaml && touch $HOME/rookio-operator
+  register: result
+  retries: 100
+  delay: 10
+  until: result is not failed
+  args:
+    creates: "/root/rookio-operator"
+
+- name: "get rookio cluster test yaml"
+  template:
+    src: rookio-cluster-test.yaml
+    dest: $HOME/rookio-cluster-test.yaml
+
+- name: "Install rookio cluster test"
+  shell: kubectl create -f $HOME/rookio-cluster-test.yaml && touch $HOME/rookio-cluster-test
+  register: result
+  retries: 100
+  delay: 10
+  until: result is not failed
+  args:
+    creates: "/root/rookio-cluster-test"
+
+- name: "get rookio storageclass test yaml"
+  template:
+    src: rookio-storageclass-test.yaml
+    dest: $HOME/rookio-storageclass-test.yaml
+
+- name: "Install rookio storageclass test "
+  shell: kubectl create -f $HOME/rookio-storageclass-test.yaml && touch $HOME/rookio-storageclass-test
+  args:
+    creates: "/root/rookio-storageclass-test"
+
+- name: "get rookio dashboard yaml"
+  template:
+    src: rookio-dashboard-external-https.yaml
+    dest: $HOME/rookio-dashboard-external-https.yaml
+
+- name: "Install rookio dashboard"
+  shell: kubectl create -f $HOME/rookio-dashboard-external-https.yaml && touch $HOME/rookio-dashboard-external-https
+  args:
+    creates: "/root/rookio-dashboard-external-https"
+
+- name: "get Ceph dashboard secret"
+  template:
+    src: rook-ceph-dashboard-password.yaml
+    dest: $HOME/rook-ceph-dashboard-password.yaml
+
+- name: "Change Ceph dashboard secret"
+  shell: kubectl apply -f $HOME/rook-ceph-dashboard-password.yaml
+
+#- name: "Get dashboard password"
+#  shell: kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o yaml | grep "password:" | awk '{print $2}' | base64 --decode
+#  register: result
+
+#- debug:
+#    msg: "ROOK Dashboard password : {{ result.stdout }}"
+
+- name: "get rookio toolbox yaml"
+  template:
+    src: rookio-toolbox.yaml
+    dest: $HOME/rookio-toolbox.yaml
+
+- name: "Install rookio toolbox"
+  shell: kubectl create -f $HOME/rookio-toolbox.yaml && touch $HOME/rookio-toolbox
+  args:
+    creates: "/root/rookio-toolbox"
+
+##### POST INSTALL ####
+
+#- name: "Test ceph status"
+#  shell: kubectl -n rook-ceph exec $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') ceph status
+#  register: status
+
+#- debug:
+#    msg: "ceph status : {{ statud.stdout }}"
+
+#- name: "Fix ceph dashboard bug 1.0"
+#  shell: |
+#    kubectl -n rook-ceph exec $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') ceph status
+
+####
+
+#ceph dashboard ac-role-create admin-no-iscsi
+
+#for scope in dashboard-settings log rgw prometheus grafana nfs-ganesha manager hosts rbd-image config-opt rbd-mirroring cephfs user osd pool monitor; do
+#    ceph dashboard ac-role-add-scope-perms admin-no-iscsi ${scope} create delete read update;
+#done
+
+#ceph dashboard ac-user-set-roles admin admin-no-iscsi

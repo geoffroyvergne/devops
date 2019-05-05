@@ -5,3 +5,6 @@
 
 - include_tasks: worker.yml
   when: k8s_type == 'worker'
+
+
+- include_tasks: helm.yml

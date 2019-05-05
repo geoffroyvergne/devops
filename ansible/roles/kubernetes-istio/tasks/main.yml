@@ -12,6 +12,11 @@
   args:
     creates: "istio-{{ istio_version }}"
 
+- name: "Copy istioctl in path"
+  shell: cp /home/vagrant/istio-{{ istio_version }}/bin/istioctl /usr/bin/
+  args:
+    creates: /usr/bin/istioctl
+
 - name: "Prepare Helm"
   shell: kubectl apply -f /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/helm-service-account.yaml
   register: result
@@ -32,8 +37,6 @@
   delay: 10
   until: result is not failed
   #ignore_errors: yes
-  args:
-    creates: "istio-init"
 
 - debug:
     msg: "{{ result }}"
@@ -94,12 +97,26 @@
 
 - name: "Expose istio services"
   template:
-    src: istio-ingressgateway.yml
-    dest: $HOME/istio-ingressgateway.yml
+    src: istio-ingress.yml
+    dest: $HOME/istio-ingress.yml
 
 - name: "Expose istio services"
   shell: |
-    kubectl apply -f $HOME/istio-ingressgateway.yml
+    kubectl apply -f $HOME/istio-ingress.yml
+
+- name: "Get kiali secret"
+  template:
+    src: istio-kiali-secret.yml
+    desc: $HOME/istio-kiali-secret.yml
+
+- name: "Create kiali secret"
+  shell: kubectl apply -f $HOME/istio-kiali-secret.yml
+
+- name: "Restart kiali"
+  shell: kubectl -n istio-system delete pod $(kubectl -n istio-system get pod -l "app=kiali" -o jsonpath='{.items[0].metadata.name}')
+
+
+#####
 
 #- name: "wait for gateway"
 #  wait_for:

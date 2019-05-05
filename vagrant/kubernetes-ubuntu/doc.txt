@@ -1,0 +1,11 @@
+ansible-playbook -i inventory playbook.yml
+
+Save vm state
+vagrant package --output /data/iso/vagrant-box/ubuntu-kubernetes.box
+vagrant box add --name kubernetes-ubuntu /data/iso/vagrant-box/ubuntu-kubernetes.box
+
+
+swapoff -a
+systemctl daemon-reload
+systemctl restart kubelet
+systemctl status kubelet

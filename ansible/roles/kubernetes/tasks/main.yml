@@ -1,5 +1,20 @@
 ---
 
+- name: Remove swapfile from /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '(/swapfile*)'
+    replace: '#\1'
+
+#  mount:
+#    name: swap
+#    fstype: swap
+#    state: absent
+
+- name: Disable swap
+  command: swapoff -a
+  #when: ansible_swaptotal_mb > 0
+
 - name: Add Kubernetes GPG key
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -12,8 +27,13 @@
   package:
     name: "{{ item }}"
   with_items:
+    - xfsprogs
     #- kubernetes-cni
     - kubelet
     - kubeadm
     - kubectl
 
+- name: "enable kubelet"
+  systemd:
+    name: kubelet
+    enabled: yes

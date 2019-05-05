@@ -2,7 +2,6 @@
 
 - name: Init kube
   shell: |
-    swapoff -a
     kubeadm config images pull
     kubeadm init \
       --apiserver-advertise-address={{ k8s_apiserver_advertise_address }} \

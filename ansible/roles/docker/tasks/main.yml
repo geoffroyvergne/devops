@@ -15,12 +15,13 @@
   with_items:
     - docker-ce
     - docker-compose
-  register: docker_installed
+  #register: docker_installed
 
-#- name: Add docker insecure registry
-#  template:
-#   src: daemon.json.j2
-#    dest: /etc/docker/daemon.json
+- name: Add docker insecure registry
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+  register: docker_installed
 
 #- name: Open Docker socket
 #  lineinfile:
@@ -29,8 +30,8 @@
 #    create: no
 #  when: docker_open_socket
 
-#- name: Restart docker
-#  service:
-#    name: docker
-#    state: restarted
-#  when: docker_installed is changed
+- name: Restart docker
+  service:
+    name: docker
+    state: restarted
+  when: docker_installed is changed
