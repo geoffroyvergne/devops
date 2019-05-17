@@ -7,4 +7,3 @@
   when: k8s_type == 'worker'
 
 
-- include_tasks: helm.yml

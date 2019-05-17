@@ -1,14 +1,20 @@
 ---
 
 - name: "Resize LVM partion"
-  shell: |
-    growpart {{ disk }} {{ partition_number }}
-    resize2fs {{ disk }}{{ partition_number }}
+  shell: growpart {{ disk }} {{ partition_number }}
   when: partition_type == 'growpart'
 
 - name: "Resize Standard partion"
-  shell: |
-    parted {{ disk }} resizepart {{ partition_number }} Y 100%
-    resize2fs {{ disk }}{{ partition_number }}
+  shell: "parted {{ disk }} resizepart {{ partition_number }} Y 100%"
+  #ignore_errors: true
   when: partition_type == 'parted'
+  #register: result
+  #ignore_errors: yes
+
+
+- name: "Resize fs"
+  shell: resize2fs {{ disk }}{{ partition_number }}
+
+#- debug:
+#    msg: "{{ result }}"
 

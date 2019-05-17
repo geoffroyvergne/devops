@@ -51,7 +51,7 @@
   become: false
   loop:
   - localhost
-  - kubernetes-ubuntu
+  #- kubernetes-ubuntu
   changed_when: kube_token is changed
 
 - name: "Dashboard token : "

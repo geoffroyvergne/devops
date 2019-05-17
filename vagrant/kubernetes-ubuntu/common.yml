@@ -1,0 +1,10 @@
+---
+
+- hosts: all
+  remote_user: vagrant
+  vars:
+    partition_type: "parted"
+  roles:
+    - common
+    - disk-utils
+  become: yes

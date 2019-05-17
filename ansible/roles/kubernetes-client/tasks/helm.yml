@@ -1,7 +1,9 @@
 ---
 
 - name: Install helm
-  shell: snap install helm --classic
+  shell: |
+    snap install helm --classic
+    cp /snap/bin/helm /usr/local/bin
 
 #  snap:
 #    name: helm
@@ -11,10 +13,10 @@
   shell: |
     kubectl create serviceaccount --namespace kube-system tiller
     kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-    kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+    #kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
 
-    helm init --service-account tiller
-    #helm init --upgrade --service-account tiller
+    #helm init --service-account tiller
+    helm init --upgrade --service-account tiller
 
     touch $HOME/helm.initialized
   args:

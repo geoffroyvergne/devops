@@ -13,21 +13,6 @@
 
 #       --kubernetes-version=1.5 \
 
-- name: "Init config for user"
-  file:
-    path: /root/.kube
-    state: directory
-    mode: "u=rwx,g=,o="
-
-- name: "Ansible copy files remote to remote"
-  copy:
-    src: /etc/kubernetes/admin.conf
-    dest: /root/.kube/config
-    owner: root
-    group: root
-    mode: "u=rw,g=,o="
-    remote_src: yes
-
 - name: Add master as worker
   shell: |
     kubectl taint nodes --all node-role.kubernetes.io/master-
@@ -53,27 +38,27 @@
     creates: weave.initialized
   when: k8s_network_type == 'weave'
 
-- name: Register config
-  shell : "cat $HOME/.kube/config"
-  register: kube_config
+#- name: Register config
+#  shell : "cat $HOME/.kube/config"
+#  register: kube_config
 
-- name: "Init config for user"
-  file:
-    path: $HOME/.kube
-    state: directory
-    mode: "u=rwx,g=,o="
-  delegate_to: "{{ item }}"
-  become: false
-  loop:
-  - localhost
-  - "{{ k8s_master_node }}"
+#- name: "Init config for user"
+#  file:
+#    path: $HOME/.kube
+#    state: directory
+#    mode: "u=rwx,g=,o="
+#  delegate_to: "{{ item }}"
+#  become: false
+#  loop:
+#  - localhost
+#  - "{{ k8s_master_node }}"
 
-- name: "Copy config and config locally"
-  copy:
-    content: "{{ kube_config.stdout }}"
-    dest: $HOME/.kube/config
-  delegate_to: "{{ item }}"
-  become: false
-  loop:
-  - localhost
-  - "{{ k8s_master_node }}"
+#- name: "Copy config and config locally"
+#  copy:
+#    content: "{{ kube_config.stdout }}"
+#    dest: $HOME/.kube/config
+#  delegate_to: "{{ item }}"
+#  become: false
+#  loop:
+#  - localhost
+#  - "{{ k8s_master_node }}"

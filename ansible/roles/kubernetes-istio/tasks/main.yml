@@ -31,12 +31,16 @@
 # --set certmanager.enabled=true
 # for i in /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 - name: "Install istio init"
-  shell: helm install /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system --set certmanager.enabled=true
+  shell: |
+    helm install /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system --set certmanager.enabled=true
+    touch /root/istio-init
   register: result
   retries: 100
   delay: 10
   until: result is not failed
   #ignore_errors: yes
+  args:
+    creates: "/root/istio-init"
 
 - debug:
     msg: "{{ result }}"
@@ -109,7 +113,7 @@
 - name: "Get kiali secret"
   template:
     src: istio-kiali-secret.yml
-    desc: $HOME/istio-kiali-secret.yml
+    dest: $HOME/istio-kiali-secret.yml
 
 - name: "Create kiali secret"
   shell: kubectl apply -f $HOME/istio-kiali-secret.yml

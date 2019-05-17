@@ -1,0 +1,4 @@
+---
+
+istio_version: 1.1.6
+k8s_ingress_external_ips: 192.168.33.16

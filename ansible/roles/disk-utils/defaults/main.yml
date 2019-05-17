@@ -1,5 +1,5 @@
 ---
 
-partition_type: "standard"
+partition_type: "parted"
 disk: "/dev/sda"
 partition_number: 1
