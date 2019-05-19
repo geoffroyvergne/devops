@@ -1,0 +1,8 @@
+ansible-playbook -i inventory common.yml
+
+Save vm state
+vagrant package --output /data/iso/vagrant-box/ambari.box
+vagrant box add --name kubernetes-ubuntu /data/iso/vagrant-box/ambari.box
+
+
+ansible-playbook -i inventory common.yml

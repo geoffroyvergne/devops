@@ -1,0 +1,8 @@
+
+ambari-server start
+ambari-server start
+ambari-server status
+
+http://192.168.33.17:8080/#/login
+admin / admin
+

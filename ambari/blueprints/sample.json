@@ -1,0 +1,170 @@
+{
+  "Blueprints": {
+    "stack_name": "HDF",
+    "stack_version": "2.0"
+  },
+  "host_groups": [
+    {
+      "name": "host-group-1",
+      "components": [
+        {
+          "name": "METRICS_MONITOR"
+        },
+        {
+          "name": "SUPERVISOR"
+        },
+        {
+          "name": "LOGSEARCH_LOGFEEDER"
+        },
+        {
+          "name": "NIFI_CA"
+        },
+        {
+          "name": "NIMBUS"
+        },
+        {
+          "name": "DRPC_SERVER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "STORM_UI_SERVER"
+        }
+      ]
+    },
+    {
+      "name": "host-group-2",
+      "components": [
+        {
+          "name": "NIFI_MASTER"
+        },
+        {
+          "name": "METRICS_MONITOR"
+        },
+        {
+          "name": "SUPERVISOR"
+        },
+        {
+          "name": "INFRA_SOLR"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "LOGSEARCH_LOGFEEDER"
+        },
+        {
+          "name": "LOGSEARCH_SERVER"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "METRICS_GRAFANA"
+        },
+        {
+          "name": "KAFKA_BROKER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        }
+      ]
+    },
+    {
+      "name": "host-group-3",
+      "components": [
+        {
+          "name": "METRICS_MONITOR"
+        },
+        {
+          "name": "SUPERVISOR"
+        },
+        {
+          "name": "LOGSEARCH_LOGFEEDER"
+        },
+        {
+          "name": "METRICS_COLLECTOR"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        }
+      ]
+    }
+  ],
+  "configurations": [
+    {
+      "nifi-ambari-config": {
+        "nifi.node.protocol.port": "9089",
+        "nifi.internal.dir": "/nifi",
+        "nifi.node.port": "9092",
+        "nifi.provenance.repository.dir.default": "/nifi/provenance_repository",
+        "nifi.content.repository.dir.default": "/nifi/content_repository",
+        "nifi.flowfile.repository.dir": "/nifi/flowfile_repository",
+        "nifi.max_mem": "1g",
+        "nifi.database.dir": "/nifi/database_repository",
+        "nifi.node.ssl.port": "9093"
+      }
+    },
+    {
+      "ams-env": {
+        "metrics_collector_heapsize": "512"
+      }
+    },
+    {
+      "ams-hbase-env": {
+        "hbase_master_heapsize": "512",
+        "hbase_regionserver_heapsize": "768",
+        "hbase_master_xmn_size": "192"
+      }
+    },
+    {
+      "storm-site": {
+        "metrics.reporter.register": "org.apache.hadoop.metrics2.sink.storm.StormTimelineMetricsReporter"
+      }
+    },
+    {
+      "nifi-env": {
+        "nifi_group": "mynifigroup",
+        "nifi_user": "mynifiuser"
+      }
+    },
+    {
+      "ams-hbase-site": {
+        "hbase.regionserver.global.memstore.upperLimit": "0.35",
+        "hbase.regionserver.global.memstore.lowerLimit": "0.3",
+        "hbase.tmp.dir": "/var/lib/ambari-metrics-collector/hbase-tmp",
+        "hbase.hregion.memstore.flush.size": "134217728",
+        "hfile.block.cache.size": "0.3",
+        "hbase.rootdir": "file:///var/lib/ambari-metrics-collector/hbase",
+        "hbase.cluster.distributed": "false",
+        "phoenix.coprocessor.maxMetaDataCacheSize": "20480000",
+        "hbase.zookeeper.property.clientPort": "61181"
+      }
+    },
+    {
+      "logsearch-properties": {}
+    },
+    {
+      "kafka-log4j": {}
+    },
+    {
+      "ams-site": {
+        "timeline.metrics.service.webapp.address": "localhost:6188",
+        "timeline.metrics.cluster.aggregate.splitpoints": "kafka.network.SocketServer.IdlePercent.networkProcessor.0.5MinuteRate",
+        "timeline.metrics.host.aggregate.splitpoints": "kafka.network.SocketServer.IdlePercent.networkProcessor.0.5MinuteRate",
+        "timeline.metrics.host.aggregator.ttl": "86400",
+        "timeline.metrics.service.handler.thread.count": "20",
+        "timeline.metrics.service.watcher.disabled": "false"
+      }
+    },
+    {
+      "kafka-broker": {
+        "kafka.metrics.reporters": "org.apache.hadoop.metrics2.sink.kafka.KafkaTimelineMetricsReporter"
+      }
+    },
+    {
+      "ams-grafana-env": {}
+    }
+  ]
+}

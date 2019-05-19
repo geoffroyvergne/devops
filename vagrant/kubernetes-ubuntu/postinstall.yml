@@ -3,16 +3,17 @@
 - hosts: all
   remote_user: vagrant
   vars:
-    partition_type: "parted"
     k8s_apiserver_advertise_address: "192.168.33.16"
     k8s_apiserver_cert_extra_sans: "192.168.33.16"
     k8s_ingress_external_ips: [ "192.168.33.16" ]
     k8s_dashboard_port: 31223
     docker_insecure_registries: ["registry.192.168.33.16.nip.io"]
   roles:
-    #- docker
-    #- kubernetes-client
-    #- kubernetes-istio
-    - kubernetes-rookio-ceph
+    - docker
+    - kubernetes-client
+
+    - kubernetes-istio
     - kubernetes-modules
+
+    - kubernetes-rookio-ceph
   become: yes

@@ -30,17 +30,30 @@
 # helm install /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system \
 # --set certmanager.enabled=true
 # for i in /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
+
 - name: "Install istio init"
   shell: |
-    helm install /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system --set certmanager.enabled=true
+    kubectl create namespace istio-system
+    for i in /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
     touch /root/istio-init
   register: result
   retries: 100
   delay: 10
   until: result is not failed
-  #ignore_errors: yes
   args:
     creates: "/root/istio-init"
+
+#- name: "Install istio init"
+#  shell: |
+#    helm install /home/vagrant/istio-{{ istio_version }}/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system --set certmanager.enabled=true
+#    touch /root/istio-init
+#  register: result
+#  retries: 100
+#  delay: 10
+#  until: result is not failed
+  #ignore_errors: yes
+  #args:
+  #  creates: "/root/istio-init"
 
 - debug:
     msg: "{{ result }}"
@@ -118,8 +131,8 @@
 - name: "Create kiali secret"
   shell: kubectl apply -f $HOME/istio-kiali-secret.yml
 
-- name: "Restart kiali"
-  shell: kubectl -n istio-system delete pod $(kubectl -n istio-system get pod -l "app=kiali" -o jsonpath='{.items[0].metadata.name}')
+#- name: "Restart kiali"
+#  shell: kubectl -n istio-system delete pod $(kubectl -n istio-system get pod -l "app=kiali" -o jsonpath='{.items[0].metadata.name}')
 
 
 #####

@@ -5,13 +5,11 @@ vagrant up
 vagrant ssh
 
 
-vagrant package --base /data/iso/vagrant-box/ubuntu-budgie/
-vagrant box add --name ubuntu-budgie /data/iso/vagrant-box/ubuntu-budgie/package.box
-
 vagrant provision --provision-with install-ubuntu
 
 Save vm state
 vagrant package --output /data/iso/vagrant-box/freebsd-desktop.box
+vagrant box add --name freebsd-desktop /data/iso/vagrant-box/freebsd-desktop.box
 
 remove all boxes :
 vagrant box list | cut -f 1 -d ' ' | xargs -L 1 vagrant box remove -f

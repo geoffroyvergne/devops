@@ -1,13 +1,31 @@
 ---
 
-- name: Install helm
-  shell: |
-    snap install helm --classic
-    cp /snap/bin/helm /usr/local/bin
+#- name: Install helm
+#  shell: |
+#    snap install helm --classic
+#    cp /snap/bin/helm /usr/local/bin
 
 #  snap:
 #    name: helm
 #    classic: yes
+
+#Linux amd64
+#https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz
+- name: "Download package"
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz
+    dest: /tmp
+
+- name: Extract
+  unarchive:
+    src: /tmp/helm-v2.11.0-linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: Copy bin
+  shell: cp /tmp/linux-amd64/helm /usr/local/bin
+  args:
+    creates: /usr/local/bin/helm
 
 - name: "Configure HELM"
   shell: |

@@ -1,0 +1,10 @@
+---
+
+- hosts: all
+  remote_user: vagrant
+  vars:
+    partition_type: "growpart"
+  roles:
+    #- common
+    - disk-utils
+  become: yes
