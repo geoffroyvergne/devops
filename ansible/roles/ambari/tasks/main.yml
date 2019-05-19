@@ -53,7 +53,7 @@
     enabled: yes
 
 - name: "Ambari setup"
-  shell: ambari-server setup -s > ambari-setup/log
+  shell: ambari-server setup -s > ambari-setup.log
 # ambari-server setup -s
 
 - name: "Ambari start"
