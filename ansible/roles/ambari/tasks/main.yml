@@ -72,7 +72,7 @@
 
 - name: "install mysql driver for hive"
   shell: |
-    cd /var/lib/ambari-server/resources/
+    #cd /var/lib/ambari-server/resources/
     ln -s /usr/share/java/mysql-connector-java.jar /var/lib/ambari-server/resources/mysql-connector-java.jar
 
     ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
