@@ -1,13 +1,30 @@
 ---
 
+- name: "Download repo"
+  template:
+    src: "centos-repo.tpl"
+    dest: "/etc/yum.repos.d/MariaDB.repo"
+  when: ansible_distribution == 'CentOS'
+
 - name: Install Mariadb dependencies
   package:
-    name: {{item}}
+    name: "{{item}}"
     state: present
   with_items:
     - mariadb-client
     - mariadb-server
     - python-mysqldb
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install Mariadb dependencies
+  package:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - MariaDB-server
+    - MariaDB-client
+    - MySQL-python
+  when: ansible_distribution == 'CentOS'
 
 - name: Configuration file
   template:
@@ -16,6 +33,16 @@
   with_items:
     - 50-server.conf
     - 50-server.cnf
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+#- fail:
+#    msg: "stop"
+
+- name: Configuration file
+  template:
+    src: "my.cnf"
+    dest: "/etc/my.cnf"
+  when: ansible_distribution == 'CentOS'
 
 - name: Ensure the Mariadb service is running
   service: name=mariadb state=started enabled=yes
