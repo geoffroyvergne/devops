@@ -71,4 +71,5 @@
 - name: Restart service
   service:
     name: mariadb
+    enabled: yes
     state: restarted
