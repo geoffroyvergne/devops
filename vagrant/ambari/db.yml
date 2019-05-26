@@ -1,0 +1,18 @@
+---
+
+- hosts: db1
+  remote_user: vagrant
+  vars:
+    userslist:
+      - { user_name: user, user_password: user, user_db_name: user }
+      - { user_name: ambari, user_password: ambari, user_db_name: ambari }
+
+      - { user_name: druid, user_password: druid, user_db_name: druid }
+      - { user_name: ranger, user_password: ranger, user_db_name: ranger }
+      - { user_name: rangerkms, user_password: rangerkms, user_db_name: rangerkms }
+      - { user_name: oozie, user_password: oozie, user_db_name: oozie }
+      - { user_name: hive, user_password: hive, user_db_name: hive }
+
+  roles:
+    - mariadb
+  become: yes

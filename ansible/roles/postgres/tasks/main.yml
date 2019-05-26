@@ -2,13 +2,29 @@
 
 - name: Install Postgres dependencies
   package:
-    name: {{item}}
+    name: "{{item}}"
     state: present
   with_items:
     - postgresql
     - postgresql-client
     - libpq-dev
     - python-psycopg2
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install Postgres dependencies
+  package:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - postgresql-server
+    - postgresql-contrib
+  when: ansible_distribution == 'CentOS'
+
+- name: "init db"
+  shell: postgresql-setup initdb
+  args:
+    creates: /var/lib/pgsql/data/PG_VERSION
+  when: ansible_distribution == 'CentOS'
 
 - name: Configuration file
   template:
@@ -16,7 +32,18 @@
     dest: "/etc/postgresql/9.6/main/{{ item }}"
   with_items:
     - pg_hba.conf
-    - postgresql.conf
+    - postgresql-centos.conf
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Configuration file
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: pg_hba.conf, dest: /var/lib/pgsql/data/pg_hba.conf }
+
+    - { src: postgresql-centos.conf, dest: /var/lib/pgsql/data/postgresql.conf }
+  when: ansible_distribution == 'CentOS'
 
 - name: Ensure the PostgreSQL service is running
   service: name=postgresql state=started enabled=yes
@@ -24,7 +51,7 @@
 - name: Create database
   postgresql_db:
     name: "{{ db_database }}"
-    encoding: 'UTF-8'
+    #encoding: 'UTF-8'
     state: present
   become: yes
   become_user: postgres

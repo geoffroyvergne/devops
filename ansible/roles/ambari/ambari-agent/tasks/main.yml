@@ -1,0 +1,14 @@
+---
+
+- name: Install Ambari
+  package:
+    name: [
+      'ambari-agent',
+    ]
+    state: present
+
+- name: "Ambari agent start"
+  shell: ambari-agent start
+  ignore_errors: yes
+
+

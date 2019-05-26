@@ -20,7 +20,7 @@
   package:
     name: "{{item}}"
     state: present
-  with_items:
+  loop:
     - MariaDB-server
     - MariaDB-client
     - MySQL-python
@@ -30,7 +30,7 @@
   template:
     src: "{{ item }}"
     dest: "/etc/mysql/mariadb.conf.d/{{ item }}"
-  with_items:
+  loop:
     - 50-server.conf
     - 50-server.cnf
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
@@ -57,16 +57,19 @@
 
 - name: Create datababse
   mysql_db:
-    name: "{{ user_db_name }}"
+    name: "{{ item.user_db_name }}"
+    encoding: utf8
     state: present
+  loop: "{{ userslist }}"
 
 - name: Create user
   mysql_user:
-    name: "{{ user_name }}"
+    name: "{{ item.user_name }}"
     host: "%"
-    password: "{{ user_password }}"
-    priv: '{{ user_db_name }}.*:ALL'
+    password: "{{ item.user_password }}"
+    priv: '{{ item.user_db_name }}.*:ALL'
     state: present
+  loop: "{{ userslist }}"
 
 - name: Restart service
   service:

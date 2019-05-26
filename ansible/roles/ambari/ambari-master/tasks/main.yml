@@ -1,0 +1,58 @@
+---
+
+- name: Install Ambari
+  package:
+    name: [
+      'ambari-server',
+      'mysql-connector-java*'
+    ]
+    state: present
+
+- name: "Ambari setup"
+  shell: ambari-server setup -s > ambari-setup.log
+# ambari-server setup -s
+
+# /var/lib/ambari-server/ambari-env.sh
+
+- name: "Anbari JVM env conf"
+  template:
+    src: ambari-env.sh
+    dest: /var/lib/ambari-server/ambari-env.sh
+
+- name: "Ambari start"
+  shell: ambari-server start
+  ignore_errors: yes
+# ambari-server start
+# ambari-server status
+
+# http://192.168.33.17:8080/#/login
+# admin / admin
+
+- name: "install mysql driver for hive"
+  shell: |
+    #cd /var/lib/ambari-server/resources/
+    ln -s /usr/share/java/mysql-connector-java.jar /var/lib/ambari-server/resources/mysql-connector-java.jar
+
+    ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+  args:
+    creates: /var/lib/ambari-server/resources/mysql-connector-java.jar
+
+### TODO
+
+# FIX this
+#  Warning	Ambari Metrics	hbase_master_heapsize	768
+#  Value is less than the recommended default of 1024
+
+#  HBase Master Heap Size. In embedded mode, total heap size is
+#  sum of master and regionserver heap sizes.
+
+# Install das ui
+# https://docs.hortonworks.com/HDPDocuments/DAS/DAS-1.2.0/installation/content/das_adding_the_das_service_through_the_ambari_ui.html
+
+
+# fix mariadb cant access self server
+# CREATE USER 'ambari'@'ambari-node1.example.com' IDENTIFIED BY 'ambari';
+# GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'ambari-node1.example.com';
+# FLUSH PRIVILEGES;
+
+# grant all privileges on rangerkms.* to 'rangerkms'@'%' with grant option;

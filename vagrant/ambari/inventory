@@ -1,1 +1,0 @@
-ambari-ubuntu ansible_ssh_host=192.168.33.17 ansible_ssh_private_key_file=~/dev/devops/vagrant/private_key

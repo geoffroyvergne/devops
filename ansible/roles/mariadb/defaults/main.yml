@@ -6,6 +6,9 @@ hosts_to_protect:
   - "%"
 
 # Create user
-user_name: user
-user_password: user
-user_db_name: user
+#user_name: user
+#user_password: user
+#user_db_name: user
+
+userslist:
+  - { user_name: "user", user_password: "user", user_db_name: "user" }

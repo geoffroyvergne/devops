@@ -2,11 +2,18 @@
 
 - hosts: all
   remote_user: vagrant
-  vars:
-    user_name: ambari
-    user_password: ambari
-    user_db_name: ambari
   roles:
-    - ambari
-    - mariadb
+    - ambari/ambari-common
+  become: yes
+
+- hosts: ambari-agent
+  remote_user: vagrant
+  roles:
+    - ambari/ambari-agent
+  become: yes
+
+- hosts: ambari-master
+  remote_user: vagrant
+  roles:
+    - ambari/ambari-master
   become: yes

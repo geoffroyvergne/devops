@@ -1,0 +1,31 @@
+---
+
+# fallocate -l 1G /swapfile
+
+- name: "Allocate swapfile"
+  shell: |
+    fallocate -l {{ swap_size }} /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+
+  args:
+    creates: /swapfile
+
+# dd if=/dev/zero of=/swapfile bs=1024 count=1048576
+
+# chmod 600 /swapfile
+# mkswap /swapfile
+# swapon /swapfile
+
+# /etc/fstab
+# /swapfile swap swap defaults 0 0
+
+- name: "add swap in fstab"
+  lineinfile:
+    path: /etc/fstab
+    state: present
+    line: /swapfile swap swap defaults 0 0
+
+# swapon --show
+

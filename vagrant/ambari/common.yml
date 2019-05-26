@@ -4,7 +4,9 @@
   remote_user: vagrant
   vars:
     partition_type: "growpart"
+    swap_size: 16G
   roles:
     #- common
     - disk-utils
+    - swap
   become: yes
