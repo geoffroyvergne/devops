@@ -1,7 +1,8 @@
 ---
 
 - name: ambari-db.example.com
-  box: ubuntu-18.04-amd64-virtualbox
+  #box: ubuntu-18.04-amd64-virtualbox
+  box: ambari-db-standalone
   cpus: 1
   ram: 512
   ip: 192.168.33.99
@@ -9,7 +10,8 @@
   port: 10022
 
 - name: ambari-node1.example.com
-  box: ambari
+  #box: ambari
+  box: ambari-node1-standalone
   cpus: 2
   ram: 8000
   ip: 192.168.33.101

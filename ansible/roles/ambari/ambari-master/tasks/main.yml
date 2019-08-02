@@ -55,4 +55,4 @@
 # GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'ambari-node1.example.com';
 # FLUSH PRIVILEGES;
 
-# grant all privileges on rangerkms.* to 'rangerkms'@'%' with grant option;
+# To enable Oozie web console install the Ext JS library.

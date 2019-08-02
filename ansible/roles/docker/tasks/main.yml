@@ -35,3 +35,27 @@
     name: docker
     state: restarted
   when: docker_installed is changed
+
+- name: "Download dive"
+  get_url:
+    url: https://github.com/wagoodman/dive/releases/download/v0.7.2/dive_0.7.2_linux_amd64.deb
+    dest: /tmp
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: "Install dive"
+  apt:
+    deb: /tmp/dive_0.7.2_linux_amd64.deb
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+# groupadd docker
+# usermod -aG docker vagrant
+
+- name: "Fix error on docker build"
+  shell: dpkg -r --force-depends golang-docker-credential-helpers
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: "adding vagrant to docker group"
+  user:
+    name: 'vagrant'
+    groups: docker
+    append: yes

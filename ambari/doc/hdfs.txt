@@ -1,0 +1,8 @@
+hdfs dfs -ls /
+
+hdfs dfs -mkdir /test
+
+hdfs dfs -chmod 777 -R /test
+
+hdfs dfs -chmod 777 /test
+

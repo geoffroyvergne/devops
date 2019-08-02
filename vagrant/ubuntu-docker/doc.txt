@@ -1,0 +1,5 @@
+ansible-playbook -i inventory playbook.yml
+
+Save vm state
+vagrant package --output /data/iso/vagrant-box/ubuntu-docker.box
+vagrant box add --name kubernetes-ubuntu /data/iso/vagrant-box/ubuntu-docker.box

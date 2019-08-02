@@ -1,0 +1,176 @@
+{
+  "id": "/subscriptions/74927007-32e1-437f-b339-a572b2d2c6f8/resourceGroups/GVER/providers/Microsoft.Resources/deployments/CreateVm-Canonical.UbuntuServer-18.04-LTS-20190618180217",
+  "name": "CreateVm-Canonical.UbuntuServer-18.04-LTS-20190618180217",
+  "properties": {
+    "templateHash": "3006300942460395363",
+    "parameters": {
+      "location": {
+        "type": "String",
+        "value": "francecentral"
+      },
+      "networkInterfaceName": {
+        "type": "String",
+        "value": "test923"
+      },
+      "networkSecurityGroupName": {
+        "type": "String",
+        "value": "test-nsg"
+      },
+      "networkSecurityGroupRules": {
+        "type": "Array",
+        "value": []
+      },
+      "subnetName": {
+        "type": "String",
+        "value": "test"
+      },
+      "virtualNetworkId": {
+        "type": "String",
+        "value": "/subscriptions/74927007-32e1-437f-b339-a572b2d2c6f8/resourceGroups/GVER/providers/Microsoft.Network/virtualNetworks/test"
+      },
+      "publicIpAddressName": {
+        "type": "String",
+        "value": "test-ip"
+      },
+      "publicIpAddressType": {
+        "type": "String",
+        "value": "Dynamic"
+      },
+      "publicIpAddressSku": {
+        "type": "String",
+        "value": "Basic"
+      },
+      "virtualMachineName": {
+        "type": "String",
+        "value": "test"
+      },
+      "virtualMachineRG": {
+        "type": "String",
+        "value": "GVER"
+      },
+      "osDiskType": {
+        "type": "String",
+        "value": "Standard_LRS"
+      },
+      "virtualMachineSize": {
+        "type": "String",
+        "value": "Standard_B1ls"
+      },
+      "adminUsername": {
+        "type": "String",
+        "value": "gv"
+      },
+      "adminPublicKey": {
+        "type": "SecureString"
+      },
+      "diagnosticsStorageAccountName": {
+        "type": "String",
+        "value": "gverdiag"
+      },
+      "diagnosticsStorageAccountId": {
+        "type": "String",
+        "value": "Microsoft.Storage/storageAccounts/gverdiag"
+      },
+      "diagnosticsStorageAccountType": {
+        "type": "String",
+        "value": "Standard_LRS"
+      },
+      "diagnosticsStorageAccountKind": {
+        "type": "String",
+        "value": "Storage"
+      }
+    },
+    "mode": "Incremental",
+    "debugSetting": {
+      "detailLevel": "None"
+    },
+    "provisioningState": "Running",
+    "timestamp": "2019-06-18T16:05:37.8305261Z",
+    "duration": "PT1M23.5145605S",
+    "correlationId": "7af00449-a054-44a9-a8f1-3b86c174d9b4",
+    "providers": [
+      {
+        "namespace": "Microsoft.Network",
+        "resourceTypes": [
+          {
+            "resourceType": "networkInterfaces",
+            "locations": [
+              "francecentral"
+            ]
+          },
+          {
+            "resourceType": "networkSecurityGroups",
+            "locations": [
+              "francecentral"
+            ]
+          },
+          {
+            "resourceType": "publicIpAddresses",
+            "locations": [
+              "francecentral"
+            ]
+          }
+        ]
+      },
+      {
+        "namespace": "Microsoft.Compute",
+        "resourceTypes": [
+          {
+            "resourceType": "virtualMachines",
+            "locations": [
+              "francecentral"
+            ]
+          }
+        ]
+      },
+      {
+        "namespace": "Microsoft.Storage",
+        "resourceTypes": [
+          {
+            "resourceType": "storageAccounts",
+            "locations": [
+              "francecentral"
+            ]
+          }
+        ]
+      }
+    ],
+    "dependencies": [
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/74927007-32e1-437f-b339-a572b2d2c6f8/resourceGroups/GVER/providers/Microsoft.Network/networkSecurityGroups/test-nsg",
+            "resourceType": "Microsoft.Network/networkSecurityGroups",
+            "resourceName": "test-nsg"
+          },
+          {
+            "id": "/subscriptions/74927007-32e1-437f-b339-a572b2d2c6f8/resourceGroups/GVER/providers/Microsoft.Network/publicIpAddresses/test-ip",
+            "resourceType": "Microsoft.Network/publicIpAddresses",
+            "resourceName": "test-ip"
+          }
+        ],
+        "id": "/subscriptions/74927007-32e1-437f-b339-a572b2d2c6f8/resourceGroups/GVER/providers/Microsoft.Network/networkInterfaces/test923",
+        "resourceType": "Microsoft.Network/networkInterfaces",
+        "resourceName": "test923"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/74927007-32e1-437f-b339-a572b2d2c6f8/resourceGroups/GVER/providers/Microsoft.Network/networkInterfaces/test923",
+            "resourceType": "Microsoft.Network/networkInterfaces",
+            "resourceName": "test923"
+          },
+          {
+            "id": "/subscriptions/74927007-32e1-437f-b339-a572b2d2c6f8/resourceGroups/GVER/providers/Microsoft.Storage/storageAccounts/gverdiag",
+            "resourceType": "Microsoft.Storage/storageAccounts",
+            "resourceName": "gverdiag"
+          }
+        ],
+        "id": "/subscriptions/74927007-32e1-437f-b339-a572b2d2c6f8/resourceGroups/GVER/providers/Microsoft.Compute/virtualMachines/test",
+        "resourceType": "Microsoft.Compute/virtualMachines",
+        "resourceName": "test"
+      }
+    ],
+    "validationLevel": "Template"
+  }
+}
