@@ -1,0 +1,52 @@
+https://academy.datastax.com/content/docker-tutorial
+
+Pull images :
+docker pull datastax/dse-server
+docker pull datastax/dse-studio
+docker pull datastax/dse-opscenter
+
+Start dse node :
+docker run -e DS_LICENSE=accept --name my-dse -d datastax/dse-server
+
+Wait service start :
+docker logs -f my-dse
+
+Test :
+docker exec -it my-dse bash
+cqlsh
+
+Reset :
+docker stop my-dse
+docker rm /my-dse
+
+Start OpsCenter :
+docker run -e DS_LICENSE=accept --name my-opscenter -d -p 8888:8888 datastax/dse-opscenter
+docker run -e DS_LICENSE=accept --link my-opscenter:opscenter --name my-dse -d datastax/dse-server
+
+Get Ip Address :
+docker inspect my-dse | grep '"IPAddress":'
+
+Test :
+http://localhost:8888
+
+Creating a Studio container
+docker run -e DS_LICENSE=accept --link my-dse --name my-studio -p 9091:9091 -d datastax/dse-studio
+
+Test :
+http://localhost:9091
+
+Docker compose :
+https://github.com/datastax/docker-images/tree/master/example_compose_yamls
+
+docker-compose up -d
+docker-compose scale node=2
+docker-compose logs -f
+docker-compose down
+
+Get ip address :
+docker inspect datastax_seed_node_1 | grep '"IPAddress":'
+docker inspect datastax_node_1 | grep '"IPAddress":'
+
+Admin :
+docker exec -it datastax_node_1 nodetool status
+docker exec -it datastax_node_1 cqlsh
