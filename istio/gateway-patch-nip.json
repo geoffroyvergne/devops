@@ -1,0 +1,20 @@
+[{
+  "op": "add",
+  "path": "/spec/template/spec/containers/0/volumeMounts/0",
+  "value": {
+    "mountPath": "/etc/istio/ingressgateway-nip-certs",
+    "name": "ingressgateway-nip-certs",
+    "readOnly": true
+  }
+},
+  {
+    "op": "add",
+    "path": "/spec/template/spec/volumes/0",
+    "value": {
+      "name": "ingressgateway-nip-certs",
+      "secret": {
+        "secretName": "istio-ingressgateway-nip-certs",
+        "optional": true
+      }
+    }
+  }]
