@@ -11,4 +11,5 @@
 **/.DS_Store
 **/*.retry
 **/app/
+**/data
 **/.DS_Store
