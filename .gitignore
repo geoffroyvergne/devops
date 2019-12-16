@@ -13,3 +13,6 @@
 **/app/
 **/data
 **/.DS_Store
+**/.terraform
+**/*.tfstate.*
+**/*.tfstate
