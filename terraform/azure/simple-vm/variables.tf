@@ -20,7 +20,3 @@ variable "tags" {
     Environment = "Terraform Simple VM"
   }
 }
-
-//"${var.prefix}TFRG"
-
-//"${var.resource_group}"

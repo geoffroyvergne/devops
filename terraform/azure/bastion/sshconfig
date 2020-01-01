@@ -1,0 +1,12 @@
+Host *
+   StrictHostKeyChecking no
+   UserKnownHostsFile=/dev/null
+
+Host bastion-bstn-vm001
+  Hostname gv-bastion.westeurope.cloudapp.azure.com
+  User azureuser
+
+Host bastion-wrkr-vm001
+  ProxyJump bastion-bstn-vm001
+  Hostname bastion-wrkr-vm001
+  User azureuser

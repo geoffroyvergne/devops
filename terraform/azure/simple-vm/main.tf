@@ -1,8 +1,8 @@
-provider "azurerm" {
+/*provider "azurerm" {
   //use_msi = true
-  subscription_id = "9f514960-7f6b-48d8-9038-1b332f45c148"
-  tenant_id       = "b9fec68c-c92d-461e-9a97-3d03a0f18b82"
-}
+  subscription_id = ""
+  tenant_id       = ""
+}*/
 
 /*resource "azurerm_resource_group" "myterraformgroup" {
   name     = "rsg-int-gver"
@@ -11,7 +11,7 @@ provider "azurerm" {
 
 # Create virtual network
 resource "azurerm_virtual_network" "vnet" {
-  name                = "${var.prefix}Vnet"
+  name                = "${var.prefix}-vnet"
   address_space       = ["10.0.0.0/16"]
   location            = var.location
   resource_group_name = var.resource_group
@@ -20,7 +20,7 @@ resource "azurerm_virtual_network" "vnet" {
 
 # Create subnet
 resource "azurerm_subnet" "subnet" {
-  name                 = "${var.prefix}Subnet"
+  name                 = "${var.prefix}-subnet"
   resource_group_name  = var.resource_group
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefix       = "10.0.1.0/24"
@@ -28,7 +28,7 @@ resource "azurerm_subnet" "subnet" {
 
 # Create public IPs
 resource "azurerm_public_ip" "publicip" {
-  name                         = "${var.prefix}PublicIP"
+  name                         = "${var.prefix}publicip"
   location                     = var.location
   resource_group_name          = var.resource_group
   allocation_method            = "Dynamic"
@@ -36,8 +36,8 @@ resource "azurerm_public_ip" "publicip" {
 }
 
 # Create Network Security Group and rule
-resource "azurerm_network_security_group" "nsg" {
-  name                = "${var.prefix}NetworkSecurityGroup"
+resource "azurerm_network_security_group" "nsg-front" {
+  name                = "${var.prefix}-nsg"
   location            = var.location
   resource_group_name = var.resource_group
 
@@ -53,15 +53,39 @@ resource "azurerm_network_security_group" "nsg" {
     destination_address_prefix = "*"
   }
 
+  security_rule {
+    name                       = "HTTP"
+    priority                   = 1002
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "HTTPS"
+    priority                   = 1003
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
   tags                         = var.tags
 }
 
 # Create network interface
-resource "azurerm_network_interface" "nic" {
-  name                      = "${var.prefix}NIC"
+resource "azurerm_network_interface" "nic-vm-1" {
+  name                      = "${var.prefix}-nic"
   location                  = var.location
   resource_group_name       = var.resource_group
-  network_security_group_id = azurerm_network_security_group.nsg.id
+  network_security_group_id = azurerm_network_security_group.nsg-front.id
 
   ip_configuration {
     name                          = "${var.prefix}NicConfiguration"
@@ -76,15 +100,15 @@ resource "azurerm_network_interface" "nic" {
 }
 
 # Create virtual machine
-resource "azurerm_virtual_machine" "vm" {
-  name                  = "${var.prefix}VM"
+resource "azurerm_virtual_machine" "vm-1" {
+  name                  = "${var.prefix}-vm-1"
   location              = var.location
   resource_group_name   = var.resource_group
-  network_interface_ids = [azurerm_network_interface.nic.id]
+  network_interface_ids = [azurerm_network_interface.nic-vm-1.id]
   vm_size               = "Standard_DS1_v2"
 
   storage_os_disk {
-    name              = "${var.prefix}OsDisk"
+    name              = "${var.prefix}-vm-1-os-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
@@ -98,8 +122,9 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   os_profile {
-    computer_name  = "${var.prefix}vm"
+    computer_name  = "${var.prefix}-vm-1"
     admin_username = "azureuser"
+    //custom_data =  CloudInit
   }
 
   os_profile_linux_config {
@@ -110,5 +135,32 @@ resource "azurerm_virtual_machine" "vm" {
     }
   }
 
+  provisioner "local-exec" {
+    command = "echo The server's IP address is ${azurerm_public_ip.publicip.ip_address}"
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "echo 'Destroy-time provisioner'"
+  }
+
   tags                         = var.tags
+}
+
+# Create Managed data disk
+resource "azurerm_managed_disk" "data-disk-1" {
+  name                 = "${var.prefix}-data-disk-1"
+  location             = var.location
+  resource_group_name  = var.resource_group
+  storage_account_type = "Standard_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = 10
+}
+
+# Attach Managed data disk to vm
+resource "azurerm_virtual_machine_data_disk_attachment" "data-disk-1" {
+  managed_disk_id    = azurerm_managed_disk.data-disk-1.id
+  virtual_machine_id = azurerm_virtual_machine.vm-1.id
+  lun                = "10"
+  caching            = "ReadWrite"
 }

@@ -23,5 +23,6 @@ ssh adminuser@ubuntuvm.westeurope.cloudapp.azure.com
 az vm list-ip-addresses -o table
 
 az vm list
+az vm list --query '[].{Name:name}' -o json -o table
 
 az vm list --query '[].{Name:name, admin:osProfile.adminUsername}' -o json -o table
