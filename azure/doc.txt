@@ -8,7 +8,7 @@ az vm create \
   --image UbuntuLTS \
   --admin-username adminuser \
   --size Standard_DS1_v2 \
-  --ssh-key-value @~/.ssh/id_rsa.pub \c
+  --ssh-key-value @~/.ssh/id_rsa.pub \
   --no-wait
 
   --generate-ssh-keys \

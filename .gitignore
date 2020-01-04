@@ -9,10 +9,11 @@
 **/packer_cache
 **/box/
 **/.DS_Store
-**/*.retry
 **/app/
 **/data
-**/.DS_Store
 **/.terraform
 **/*.tfstate.*
 **/*.tfstate
+**/*.tfvars
+**/*.plan
+**/azurek8s

@@ -1,0 +1,118 @@
+---
+# Source: ingress-azure/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-ingress-azure
+  labels:
+    app: ingress-azure
+    chart: ingress-azure-1.0.0
+    heritage: Helm
+    release: RELEASE-NAME
+data:
+  APPGW_VERBOSITY_LEVEL: "3"
+  HTTP_SERVICE_PORT:     "8123"
+  USE_PRIVATE_IP:        "false"
+  APPGW_SUBSCRIPTION_ID: "9f514960-7f6b-48d8-9038-1b332f45c148"
+  APPGW_RESOURCE_GROUP:  "rsg-int-gver"
+  APPGW_NAME:            "ApplicationGateway1"
+  APPGW_SUBNET_NAME: "ApplicationGateway1-subnet"
+  USE_MANAGED_IDENTITY_FOR_POD: "true"
+---
+# Source: ingress-azure/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: ingress-azure
+    chart: ingress-azure-1.0.0
+    heritage: Helm
+    release: RELEASE-NAME
+  name: sa-ingress-azure
+---
+# Source: ingress-azure/templates/deployment.yaml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: ingress-azure
+  labels:
+    app: ingress-azure
+    chart: ingress-azure-1.0.0
+    heritage: Helm
+    release: RELEASE-NAME
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ingress-azure
+      release: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app: ingress-azure
+        release: RELEASE-NAME
+        aadpodidbinding: ingress-azure
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8123"
+    spec:
+      serviceAccountName: sa-ingress-azure
+      containers:
+      - name: ingress-azure
+        image: mcr.microsoft.com/azure-application-gateway/kubernetes-ingress:1.0.0
+        imagePullPolicy: Always
+        #readinessProbe:
+        #  httpGet:
+        #    path: /health/ready
+        #    port: 8123
+        #  initialDelaySeconds: 5
+        #  periodSeconds: 10
+        #livenessProbe:
+        #  httpGet:
+        #    path: /health/alive
+        #    port: 8123
+        #  initialDelaySeconds: 15
+        #  periodSeconds: 20
+        env:
+        - name: AZURE_CONTEXT_LOCATION
+          value: /etc/appgw/azure.json
+        - name: AGIC_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: AGIC_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        envFrom:
+        - configMapRef:
+            name: cm-ingress-azure
+        volumeMounts:
+        - mountPath: /etc/appgw/azure.json
+          name: azure
+      volumes:
+      - name: azure
+        hostPath:
+          path: /etc/kubernetes/azure.json
+          type: File
+---
+# Source: ingress-azure/templates/aadpodidentity.yaml
+# Please see https://github.com/Azure/aad-pod-identity for more information
+apiVersion: "aadpodidentity.k8s.io/v1"
+kind: AzureIdentity
+metadata:
+  name: azid-ingress-azure
+spec:
+  type: 0
+  ResourceID: 01767283-d421-407d-953e-5048eee6e2a3
+  ClientID: /subscriptions/9f514960-7f6b-48d8-9038-1b332f45c148/resourcegroups/rsg-int-gver/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1
+---
+# Source: ingress-azure/templates/aadpodidbinding.yaml
+# Please see https://github.com/Azure/aad-pod-identity for more inromation
+apiVersion: "aadpodidentity.k8s.io/v1"
+kind: AzureIdentityBinding
+metadata:
+  name: azidbinding-ingress-azure
+spec: 
+  AzureIdentity: azid-ingress-azure
+  Selector: ingress-azure

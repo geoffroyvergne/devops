@@ -10,6 +10,11 @@ az account list --query "[].{name:name, subscriptionId:id, tenantId:tenantId, cl
 
 az account list --all --query "[].id"
 
+## get objectid
+
+az ad user show --id geoffroy.vergne@cgi.com | jq -r .objectId
+
+
 ## Get DNS Name and ip
 
 az network public-ip list -g rsg-int-gver --query '[].{ip:ipAddress, FQDN:dnsSettings.fqdn}' -o table
