@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: helloworld-go # The name of the app
   namespace: default # The namespace the app will use
+  labels:
+    app: nip
 spec:
   template:
     spec:

@@ -11,7 +11,7 @@ minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.14.2
 
 ## Set up load balancer
 
-minukube tunnel
+minikube tunnel
 minikube tunnel --cleanup
 
 ## Download the release
@@ -46,7 +46,7 @@ export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressga
 
 export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
 
-echo http://GATEWAY_URL
+echo http://$GATEWAY_URL
 
 ## Dashboard
 
