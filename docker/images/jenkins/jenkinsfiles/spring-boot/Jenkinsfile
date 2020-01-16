@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Fetch') {
+            steps {
+                echo 'Fetching...'
+                git 'https://github.com/geoffroyvergne/spring-boot-samples.git'
+            }
+        }
+        stage('Build base') {
+            steps {
+                echo 'Building...'
+                sh 'mvn install -pl spring-boot-base -am -DskipTests'
+            }
+        }
+        stage('Test base') {
+            steps {
+                echo 'Testing...'
+                sh 'cd spring-boot-base && mvn test'
+            }
+        }
+        stage('Docker') {
+            steps {
+                echo 'Deploying...'
+                sh 'cd spring-boot-base && mvn docker:build'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+            }
+        }
+    }
+}

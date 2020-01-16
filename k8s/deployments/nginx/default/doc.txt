@@ -1,0 +1,5 @@
+kubectl apply -f .
+
+curl $(minikube service nginx-default-service --url)
+
+kubectl delete deployment nginx-default-deployment

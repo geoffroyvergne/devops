@@ -1,0 +1,16 @@
+concurrent = 5
+check_interval = 0
+
+[[runners]]
+  name = "runner-docker"
+  url = "http://gitlab.192.168.99.100.nip.io/"
+  token = "kupoXcYGhj-cn2Z_xoDS"
+  executor = "docker"
+  [runners.docker]
+    tls_verify = false
+    image = "docker:latest"
+    privileged = true
+    disable_cache = false
+    volumes = ["/cache"]
+    shm_size = 0
+  [runners.cache]

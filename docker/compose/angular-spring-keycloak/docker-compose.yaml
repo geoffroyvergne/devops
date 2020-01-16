@@ -1,0 +1,51 @@
+version: '2'
+
+services:
+  # Postgres Keycloak
+  postgres-keycloak:
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+      - POSTGRES_DB=keycloak
+      - POSTGRES_ROOT_PASSWORD=postgres
+    volumes:
+      - /data/db/docker/angular-spring-keycloak/postgresql:/var/lib/postgresql/data
+
+  # Keycloak
+  keycloak:
+    image: custom-keycloak
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - POSTGRES_DATABASE=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+      - POSTGRES_PORT_5432_TCP_ADDR=postgres
+      - POSTGRES_PORT_5432_TCP_PORT=5432
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+    depends_on:
+      - postgres-keycloak
+    links:
+      - postgres-keycloak:postgres
+
+  # spring boot keycloak client
+  spring-boot-keycloak-client:
+    image: spring-boot-keycloak-client
+    ports:
+      - "8181:8181"
+    depends_on:
+      - keycloak
+
+  # angular keycloak
+  test-service:
+    image: spring-boot-keycloak-client
+    ports:
+      - "80:80"
+    depends_on:
+      - spring-boot-keycloak-client

@@ -1,0 +1,22 @@
+
+kubectl apply -f .
+
+kubectl delete deployment,configmap -n gitlab -l app=gitlab-runner
+
+kubectl delete deployment gitlab-runner -n gitlab
+kubectl delete configmap gitlab-runner -n gitlab
+
+gitlab-runner register --non-interactive --config docker.toml
+
+gitlab-runner register -n \
+  --url http://gitlab.192.168.99.100.nip.io/ \
+  --registration-token kupoXcYGhj-cn2Z_xoDS \
+  --executor docker \
+  --docker-image docker:latest \
+  --description "runner-docker"
+
+gitlab-runner register -n \
+  --url http://gitlab.192.168.99.100.nip.io/ \
+  --registration-token kupoXcYGhj-cn2Z_xoDS \
+  --executor shell \
+  --description "runner-shell"

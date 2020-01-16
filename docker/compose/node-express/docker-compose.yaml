@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  node:
+    image: node:alpine
+    ports:
+      - 3000:3000
+    volumes:
+      - /Users/gv/dev/docker/images/node-express/app:/usr/src/app:ro
+    command: ["node", "/usr/src/app/app.js"]
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      labels: [APP=node-express]
+      restart_policy:
+        condition: on-failure
+      
+          

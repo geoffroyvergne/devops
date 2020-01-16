@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  nexus:
+    image: sonatype/docker-nexus3
+    ports:
+      - "8081:8081"
+    environment:
+      - JAVA_MAX_MEM=768m
+    volumes:
+      - /data/db/docker/nexus:/nexus-data

@@ -1,0 +1,28 @@
+# mongodb.yaml
+
+# Where to store the data.
+#dbpath=/var/lib/mongodb
+
+storage:
+    dbPath: "/var/lib/mongodb"
+
+#where to log
+#logpath=/var/log/mongodb/mongodb.log
+#logappend=true
+
+#systemLog:
+#    destination: file
+#    path: "/var/log/mongodb/mongodb.log"
+#    logAppend: true
+#    timeStampFormat: iso8601-utc
+
+#bind_ip = 127.0.0.1
+#port = 27017
+
+net:
+    bindIp: "127.0.0.1"
+
+#sharding:
+#  clusterRole: configsvr
+#replication:
+#  replSetName: <setname>

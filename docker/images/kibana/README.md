@@ -1,0 +1,1 @@
+# Docker Kibana base image

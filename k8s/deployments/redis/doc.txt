@@ -1,0 +1,35 @@
+
+----
+
+https://github.com/helm/charts/tree/master/stable/redis-ha
+
+Helm :
+helm install stable/redis-ha --name redis --namespace redis
+
+helm install app/redis-ha \
+    -f redis-ha-values.yml \
+    --name redis \
+    --namespace redis
+
+
+helm delete redis --purge
+
+Upgrade and / or Scale :
+
+helm upgrade redis-ha app/redis-ha -f redis-ha-values.yml
+
+---
+
+kubectl get pod -n redis-ha -w
+
+Delete statefulset :
+kubectl delete statefulset redis-ha-server-n redis
+
+Force pod delete :
+kubectl delete pod redis-redis-ha-server-0 --grace-period=0 --force
+
+Client (last replica read write) :
+kubectl exec -ti redis-redis-ha-server-0 -n redis redis-cli
+
+
+

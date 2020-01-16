@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "postgres.fullname" . }}
+  #namespace: postgres
+  labels:
+    app: {{ template "postgres.name" . }}
+spec:
+  accessModes:
+    - {{ .Values.volume.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.volume.resourcesRequestsStorage }}

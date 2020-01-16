@@ -1,0 +1,111 @@
+mariadb galera :
+docker build -t mariadb ./mariadb
+
+docker run -it --entrypoint=bash mariadb
+docker run -it --entrypoint=bash -v /Users/gv/dev/docker/mariadb/data:/var/lib/mysql mariadb
+
+docker exec -it mariadb-container bash
+
+Standalone :
+Private IP :
+SERVER :
+docker run --rm -it \
+-e MYSQL_ROOT_PASSWORD=root \
+--name mariadb-container \
+mariadb
+
+CLIENT :
+docker run --rm -it --entrypoint=bash mariadb -c \
+"mysql -h $(docker inspect -f '{{ .NetworkSettings.IPAddress }}' mariadb-container) \
+-u root -proot"
+
+Public IP :
+SERVER :
+docker run --rm -it -u mysql --net=host \
+--name mariadb \
+-e MYSQL_ROOT_PASSWORD=root \
+-e MYSQL_BIND_ADDRESS=192.168.99.1 \
+-p 3306:3306 \
+mariadb
+
+mysql --host 192.168.99.1  --user root -proot
+
+----------------------------------
+
+CLIENT :
+docker run -u mysql --rm -it --entrypoint=bash mariadb -c \
+"mysql -h 192.168.99.100 -u root -proot"
+
+------------------
+
+Clear data :
+docker run --rm --volumes-from mariadb-data \
+-v /Users/gv/dev/docker/backup/mariadb/standalone/linux:/backup \
+gvergne/debian:latest \
+sh -c "rm -Rf /var/lib/mariadb/*"
+
+Test data :
+docker run --rm --volumes-from mariadb-data \
+-v /Users/gv/dev/docker/backup/mariadb/standalone/linux:/backup \
+gvergne/debian:latest \
+sh -c "ls -la /var/lib/mariadb"
+
+Backup:
+
+docker run --rm --volumes-from mariadb-data \
+-v /mnt/dev/docker/backup/mysql/standalone/linux:/backup \
+gvergne/debian:latest \
+sh -c "cd /var/lib && tar cvf /backup/mysql.tar mysql"
+
+Restore :
+
+docker run --rm --volumes-from mariadb-data \
+-v /mnt/dev/docker/backup/mysql/standalone/linux:/backup \
+gvergne/debian:latest \
+sh -c "cd /var/lib/mysql && tar xvf /backup/mysql.tar --strip 1"
+
+Cluster :
+docker network create --subnet=172.18.0.0/16 mariadb
+
+Node 1 :
+docker run --rm -it -u mysql --name mariadb-node-1 --net=mariadb-galera --ip 172.18.10.1 \
+-p 3301:3301 \
+mariadb \
+--port=3301 --bind-address=0.0.0.0 \
+--wsrep-new-cluster --wsrep_node_name="node1" --wsrep_cluster_name="galera_cluster" \
+--wsrep_cluster_address="gcomm://"
+
+Node 2 :
+docker run --rm -it -u mysql --name mariadb-node-2 --net=mariadb-galera --ip 172.18.10.2 \
+-p 3302:3302 \
+mariadb \
+--port=3302 --bind-address=0.0.0.0 \
+--wsrep_node_name="node2" --wsrep_cluster_name="galera_cluster" \
+--wsrep-cluster-address=gcomm://172.18.10.1
+
+Node 3 :
+docker run --rm -it -u mysql --name mariadb-node-3 --net=mariadb --ip 172.18.10.3 \
+-p 3303:3303 \
+mariadb \
+--port=3303 --wsrep_node_name="node3" --wsrep_cluster_name="galera_cluster" \
+--wsrep-cluster-address=gcomm://172.18.10.1,172.18.10.2,172.18.10.3
+
+Node 4 :
+docker run --rm -it -u mysql --name mariadb-node-4 --net=mariadb --ip 172.18.10.4 \
+-p 3304:3304 \
+mariadb \
+--port=3304 --wsrep_node_name="node4" --wsrep_cluster_name="galera_cluster" \
+--wsrep-cluster-address=gcomm://172.18.10.1,172.18.10.2,172.18.10.3,172.18.10.4
+
+Client :
+docker exec -it -u mysql mariadb-node-1 mysql -u root -proot -e 'show status like "wsrep_cluster_size"'
+
+mysql --host 192.168.99.1 --port 3306  --user root -proot
+
+docker exec -it maria-galera-node-1 mysql -u root -proot
+
+SHOW STATUS LIKE 'wsrep%';
+show status like "wsrep_cluster_size";
+SHOW VARIABLES LIKE "%version%";
+show variables where Variable_name like '%hostname%';
+show databases;

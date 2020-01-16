@@ -1,0 +1,45 @@
+wildfly :
+docker build -t wildfly ./wildfly
+docker run -it --entrypoint=bash wildfly
+
+docker exec -it wildfly-container bash
+
+docker run --rm -it \
+--name wildfly-container \
+-p 8081:8081 -p 9991:9991 \
+--link postgresql-container \
+-e WILDFLY_DATASOURCE_CONNECTION_HOST="postgresql-container" \
+-e WILDFLY_DATASOURCE_CONNECTION_PORT="5432" \
+-e WILDFLY_DATASOURCE_CONNECTION_SCHEMA="wildfly" \
+-v /Users/gv/dev/workspace-jee/jee-base/jee-base-ear/target/jee-base-ear.ear:/tmp/jee-base-ear.ear \
+wildfly \
+-Djboss.socket.binding.port-offset=1  \
+-b 0.0.0.0 \
+-bmanagement 0.0.0.0
+
+docker run --rm -it \
+--name wildfly-container \
+-p 8081:8081 -p 9991:9991 \
+--link postgresql-container \
+-v /Users/gv/dev/workspace-jee/jee-base/jee-base-ear/target/jee-base-ear.ear:/tmp/jee-base-ear.ear \
+wildfly \
+-Djboss.socket.binding.port-offset=1  \
+-b 0.0.0.0 \
+-bmanagement 0.0.0.0
+
+docker run --rm -it \
+--name wildfly-container \
+wildfly
+
+--link postgresql-container \
+
+
+docker run -it --entrypoint=["/opt/jboss/wildfly/bin/add-user.sh", "admin", "lol", "--silent"] wildfly
+--link mariadb-container:mariadb-container \
+
+/opt/jboss/wildfly/bin/jboss-cli.sh --connect -u=admin -p=admin --file=/tmp/dbscript.cli
+/opt/jboss/wildfly/bin/add-user.sh -g admin -p admin -u admin
+
+
+http://www.nailedtothex.org/roller/kyle/entry/registering-postgresql-jdbc-driver-datasource
+

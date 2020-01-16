@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  selector:
+    matchLabels:
+      app: gitlab
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gitlab
+    spec:
+      containers:
+      - name: gitlab
+        image: gitlab/gitlab-ce:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GITLAB_OMNIBUS_CONFIG
+          value: |
+            external_url 'http://gitlab.192.168.99.100.nip.io'
+            registry_external_url 'http://gitlab.192.168.99.100.nip.io'
+            gitlab_rails['gitlab_shell_ssh_port'] = 31022
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        - containerPort: 22
+        volumeMounts:
+        - name: gitlabetc
+          mountPath: /etc/gitlab
+          subPath: gitlabetc
+        - name: gitlablog
+          mountPath: /var/log/gitlab
+          subPath: gitlablog
+        - name: gitlabopt
+          mountPath: /var/opt/gitlab
+          subPath: gitlabopt
+      volumes:
+      - name: gitlabetc
+        persistentVolumeClaim:
+          claimName: gitlabetc
+      - name: gitlablog
+        persistentVolumeClaim:
+          claimName: gitlablog
+      - name: gitlabopt
+        persistentVolumeClaim:
+          claimName: gitlabopt

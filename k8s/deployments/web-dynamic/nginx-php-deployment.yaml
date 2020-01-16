@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-dynamic
+  namespace: web-dynamic
+spec:
+  selector:
+    matchLabels:
+      app: web-dynamic
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web-dynamic
+    spec:
+      containers:
+      - name: nginx-php
+        image: nginx-php
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80

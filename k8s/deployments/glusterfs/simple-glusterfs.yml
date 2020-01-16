@@ -1,0 +1,34 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: pod-using-glusterfs
+spec:
+
+  volumes:
+    - name: glusterfs-volume
+      glusterfs:
+        endpoints: glusterfs-endpoint
+        path: testvol
+
+  containers:
+    - name: app
+      image: alpine
+
+      volumeMounts:
+        - name: glusterfs-volume
+          mountPath: /mnt/glusterfs/shared
+
+      command: ["/bin/sh"]
+      args: ["-c", "while true; do date; sleep 5; done"]
+
+---
+
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: glusterfs-endpoint
+subsets:
+  - addresses:
+      - ip: 192.168.99.50
+    ports:
+      - port: 1

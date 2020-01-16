@@ -1,0 +1,16 @@
+minikube start
+
+eval $(minikube docker-env)
+
+kubectl run hello-minikube --image=k8s.gcr.io/echoserver:1.10 --port=8080
+kubectl expose deployment hello-minikube --type=NodePort
+kubectl get pod
+
+minikube service hello-minikube --url
+
+kubectl delete services hello-minikube
+kubectl delete deployment hello-minikube
+
+minikube stop
+minikube delete
+

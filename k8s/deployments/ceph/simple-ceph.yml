@@ -1,0 +1,36 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: pod-using-cephfs
+spec:
+  volumes:
+    - name: cephfs-volume
+      cephfs:
+        monitors:
+        - 192.168.99.50:6789
+        path: /
+        user: admin
+        secretFile: "/etc/ceph/admin.secret"
+        #secretRef:
+        #  name: ceph-secret
+        readOnly: false
+
+  containers:
+    - name: app
+      image: alpine
+
+      volumeMounts:
+        - name: cephfs-volume
+          mountPath: /mnt/cephfs
+
+      command: ["/bin/sh"]
+      args: ["-c", "while true; do date; sleep 5; done"]
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret
+data:
+  key: AQC6Jjtc9rv0KhAA4MFRVON3yz1NNmOKRRyL+Q==

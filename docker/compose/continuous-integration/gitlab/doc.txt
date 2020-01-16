@@ -1,0 +1,33 @@
+eval $(docker-machine env -u)
+eval "$(docker-machine env default)"
+
+docker-machine create gitlab --virtualbox-memory "2048" --virtualbox-cpu-count "2" --virtualbox-share-folder /Users/gv/dev/docker:/docker
+eval "$(docker-machine env gitlab)"
+
+sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo chmod 777 /usr/local/bin/docker-compose
+
+docker exec -ti gitlab_gitlab_1 bash
+docker exec -ti gitlab_gitlab_1 gitlab-ctl reconfigure
+docker exec -ti gitlab_gitlab_1 gitlab-ctl restart
+docker exec -it gitlab_gitlab_1 update-permissions
+
+docker run --privileged -d --name gitlab-runner-container \
+  --restart unless-stopped \
+  -v /srv/gitlab-runner/config:/etc/gitlab-runner \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  gitlab/gitlab-runner:latest
+
+docker exec -ti --privileged gitlab_gitlab-runner_1 gitlab-runner register -n --locked=false \
+  --request-concurrency 5 \
+  --name "runner-docker" \
+  --url http://gitlab.192.168.33.10.nip.io/ \
+  --registration-token Mvcrxz7P-CgjuTV1W1re \
+  --executor docker \
+  --docker-image docker:latest \
+  --docker-privileged true \
+  --docker-network-mode gitlab_default
+
+docker exec -ti gitlab_gitlab-runner_1 gitlab-runner list
+docker exec -ti gitlab_gitlab-runner_1 gitlab-runner verify --delete
+docker exec -ti gitlab_gitlab-runner_1 bash

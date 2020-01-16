@@ -1,0 +1,8 @@
+brew install minimesos
+
+docker-machine create -d virtualbox --virtualbox-memory 4096 --virtualbox-cpu-count 2 --engine-opt dns=8.8.8.8 minimesos
+eval $(docker-machine env minimesos)
+
+minimesos init
+minimesos up
+minimesos state

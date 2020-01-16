@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  apiman:
+    image: apiman/on-wildfly10:1.3.1.Final
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "8443:8443"

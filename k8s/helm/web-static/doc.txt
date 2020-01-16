@@ -1,0 +1,20 @@
+helm create web-static
+
+helm lint ./web-static/
+
+helm install --debug --dry-run ./web-static
+
+helm install ./web-static --name web-static --namespace web-static
+
+helm upgrade web-static ./web-static/
+
+curl $(minikube service -n web-static web-static --url)
+
+helm delete web-static --purge
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./web-static/tls/tls.key -out ./web-static/tls/tls.crt -subj "/CN=web-static.com"
+
+kubectl create secret tls tls-secret --key ./web-static/tls/tls.key --cert ./web-static/tls/tls.crt --namespace web-static
+
+curl -kv -H "X-Forwarded-Proto: https" http://web-static.com
+curl -k https://web-static.com

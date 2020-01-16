@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: web-dynamic
+  namespace: web-dynamic
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: web-dynamic.com
+      http:
+        paths:
+        - backend:
+            serviceName: web-dynamic
+            servicePort: 80

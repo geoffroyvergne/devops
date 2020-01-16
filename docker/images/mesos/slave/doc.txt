@@ -1,0 +1,28 @@
+Mesos slave :
+docker build -t mesos-slave ./mesos/slave
+docker run -it --entrypoint=bash mesos-slave
+docker run -it --entrypoint=bash -v /sys/fs/cgroup:/sys/fs/cgroup:ro mesos-slave
+
+docker run -d --net=host --privileged \
+--name mesos-slave-container \
+-e MESOS_MASTER=zk://192.168.99.100:2181/mesos \
+-e ip=192.168.99.100 \
+-e port=5052 \
+-e log_dir=/var/log/mesos \
+-e containerizers=docker,mesos \
+-e MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so \
+-v "$(pwd)/log/mesos:/var/log/mesos" \
+-v "$(pwd)/tmp/mesos:/var/tmp/mesos" \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v /cgroup:/cgroup \
+-v /sys:/sys \
+-v /usr/local/bin/docker:/usr/local/bin/docker \
+-p 5052:5052 \
+mesos-slave
+
+mesos-slave \
+--master=zk://192.168.99.100:2181/mesos \
+--port=5052 \
+--work_dir=/var/lib/mesos/slave \
+--log_dir=/var/log/mesos \
+--mesos-agent --containerizers=docker,mesos

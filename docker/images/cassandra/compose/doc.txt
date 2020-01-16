@@ -1,0 +1,16 @@
+# Cassandra
+docker-compose -f ./cassandra/compose/docker-compose.yaml up
+docker-compose -f ./cassandra/compose/docker-compose.yaml ps
+docker-compose -f ./cassandra/compose/docker-compose.yaml rm -f
+
+# Cassandra cluster
+docker-compose -f ./cassandra/compose/cassandra-cluster.yaml up
+docker-compose -f ./cassandra/compose/cassandra-cluster.yaml ps
+docker-compose -f ./cassandra/compose/cassandra-cluster.yaml rm -f
+
+docker-compose -f ./cassandra/compose/cassandra-cluster.yaml scale cassandra-node=2
+
+--------------------
+
+docker exec -it compose_cassandra-seeds_1 cqlsh compose_cassandra-seeds_1
+docker exec -it compose_cassandra-seeds_1 nodetool -h localhost -p 7199 status

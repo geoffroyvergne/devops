@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+  postgres:
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+      - POSTGRES_DB=keycloak
+      - POSTGRES_ROOT_PASSWORD=postgres
+    volumes:
+      - /data/db/docker/keycloak/postgresql:/var/lib/postgresql/data
+
+  keycloak:
+    image: jboss/keycloak-ha-postgres
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - POSTGRES_DATABASE=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+      - POSTGRES_PORT_5432_TCP_ADDR=postgres
+      - POSTGRES_PORT_5432_TCP_PORT=5432
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres

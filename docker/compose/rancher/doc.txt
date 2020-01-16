@@ -1,0 +1,30 @@
+
+docker-machine create manager-1
+docker-machine create worker-1
+docker-machine create worker-2
+
+192.168.99.111
+192.168.99.112
+192.168.99.113
+
+docker-machine ssh manager-1 "sudo docker run -d --restart=unless-stopped -p 8080:8080 rancher/server:stable"
+
+docker-machine ssh worker-1 "sudo docker run -e CATTLE_AGENT_IP="192.168.99.117"  --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.2 http://192.168.99.116:8080/v1/scripts/81F9287AC3FFA151B9BB:1483142400000:YqfFk9QT5UW4TE3gYylB0WyA0E"
+
+192.168.99.114
+192.168.99.115
+
+docker-machine ssh worker-3 "sudo docker run -e CATTLE_AGENT_IP="192.168.99.114"  --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.2 http://192.168.99.111:8080/v1/scripts/C81F9CA9A253182F613F:1483142400000:HEaGrn6RamGnXCgIZz1oM4An5w"
+docker-machine ssh worker-4 "sudo docker run -e CATTLE_AGENT_IP="192.168.99.115"  --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.2 http://192.168.99.111:8080/v1/scripts/C81F9CA9A253182F613F:1483142400000:HEaGrn6RamGnXCgIZz1oM4An5w"
+
+sudo docker run -d --restart=unless-stopped -p 8080:8080 rancher/server:stable
+
+docker logs -f <CONTAINER_ID>
+
+docker run --rm --privileged \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /var/lib/rancher:/var/lib/rancher \
+    rancher/agent:v1.2.2 \
+    http://self.rancher.com:8080/v1/scripts/BDE5B96E646A9D435662:1483142400000:itoQjYO8X6arWLJnRcXHy1VEg
+
+

@@ -1,0 +1,35 @@
+
+#mariadb-data :
+docker create -v /var/lib/mysql --name mariadb-data gvergne/debian:latest /bin/true
+
+#postgresql-data :
+docker create -v /var/lib/postgresql/9.4/main --name postgresql-data gvergne/debian:latest /bin/true
+
+#mongodb-data :
+docker create -v /var/lib/mongodb --name mongodb-data gvergne/debian:latest /bin/true
+
+#redis-data :
+docker create -v /var/lib/redis --name redis-data gvergne/debian:latest /bin/true
+
+#cassandra-data :
+docker create -v /var/lib/cassandra --name cassandra-data gvergne/debian:latest /bin/true
+
+#elasticsearch-data :
+docker create -v /var/lib/elasticsearch --name elasticsearch-data gvergne/debian:latest /bin/true
+
+----------------------------------------------
+
+web-data :
+
+linux :
+docker create \
+-v /mnt/www:/var/www/html \
+--name web-data \
+gvergne/debian-server:latest /bin/true
+
+mac :
+docker create \
+-v /Users/gv/www:/var/www/html \
+--name web-data \
+gvergne/debian-server:latest /bin/true
+

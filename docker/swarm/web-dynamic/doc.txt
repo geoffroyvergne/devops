@@ -1,0 +1,53 @@
+
+docker network create \
+  --driver overlay \
+  --opt encrypted \
+  nginx-php-mariadb
+
+docker volume create mariadb
+
+MariaDB
+
+docker service create --replicas 1 \
+    --env MYSQL_ROOT_PASSWORD=root \
+    --constraint node.hostname=="manager1" \
+    --mount type=volume,source=mariadb,target=/var/lib/registry,volume-driver=local \
+    --network nginx-php-mariadb \
+	--name mariadb mariadb
+
+PHP-FPM
+
+docker service create --replicas 1 \
+    --mount type=bind,src=/Users/gv/www,dst=/var/www/html \
+	--mount type=bind,src=/Users/gv/dev/docker/compose/nginx-php-mariadb/php-fpm/conf/php.ini,dst=/usr/local/etc/php/php.ini \
+	--network nginx-php-mariadb \
+    --name php-fpm gvergne/php-fpm
+
+docker tag php-fpm-mysql localhost:5000/php-fpm-mysql
+docker push localhost:5000/php-fpm-mysql
+
+
+Nginx
+
+docker service create --replicas 1 \
+	--mount type=bind,src=/Users/gv/www,dst=/usr/share/nginx/html \
+	--mount type=bind,src=/Users/gv/dev/docker/compose/nginx-php-mariadb/nginx/default.conf,dst=/etc/nginx/conf.d/default.conf \
+	--publish 81:80 \
+	--network nginx-php-mariadb \
+	--name nginx-php gvergne/nginx-phpe
+
+-----------------
+
+docker push manager1.docker.swarm.com:5000/php-fpm
+docker push manager1.docker.swarm.com:5000/nginx-php
+
+docker service create --replicas 1 --name mariadb --env MYSQL_ROOT_PASSWORD=root --constraint node.hostname=="manager1" --network nginx-php-mariadb mariadb
+docker service create --replicas 1 --name php-fpm --publish mode=host,target=9000,published=9000 --network nginx-php-mariadb gvergne/php-fpm-mysql
+docker service create --replicas 1 --name nginx-php --publish 81:80 --network nginx-php-mariadb gvergne/nginx-php
+
+docker service scale nginx-php=5
+docker service scale php-fpm=3
+
+------------------
+
+docker deploy --compose-file docker-compose.yaml web-dynamic

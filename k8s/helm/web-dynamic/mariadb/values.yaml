@@ -1,0 +1,6 @@
+
+image.repository: mariadb:latest
+mariadbRootPassword: root
+mariadbUser: mariadb
+mariadbPassword: mariadb
+mariadbDatabase: mariadb

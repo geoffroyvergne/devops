@@ -1,0 +1,105 @@
+Pgpool :
+http://www.pgpool.net/docs/latest/tutorial-en.html
+
+docker build -t pgpool ./pgpool
+docker run --rm -it --net="postgresql" --entrypoint=bash pgpool
+docker exec -it pgpool-container-1 bash
+
+docker run -it --rm --entrypoint=bash pgpool \
+-c "cat /dev/null > /etc/pgpool2/pool_passwd && cd /etc/pgpool2 && pg_md5 -m -u postgres postgres && cat /etc/pgpool2/pool_passwd"
+
+docker run -it --rm --entrypoint=bash pgpool \
+-c "cat /dev/null > /etc/pgpool2/pool_passwd && cd /etc/pgpool2 && pg_md5 -m -u testuser pass && cat /etc/pgpool2/pool_passwd"
+
+docker exec pgpool-container bash -c "psql -h 172.19.0.30 -p 9999  -U postgres -c 'show pool_nodes;'"
+
+docker exec pgpool-container bash -c \
+"psql -h 172.19.0.30 -p 9999  -U postgres -c 'show pool_nodes;'" \
+| grep master | cut -d \| -f 2 | sed 's/ //g'
+
+docker network create --subnet=172.19.0.0/16 postgresql
+
+docker run --rm -it \
+--net="postgresql" --ip 172.19.0.30 \
+--privileged --cap-add=NET_ADMIN \
+--name pgpool-container \
+-p 9999:9999 \
+-v /Users/gv/pgpool/conf/backends.conf:/tmp/backends.conf \
+pgpool
+
+docker run --rm -it \
+--net="postgresql" --ip 172.19.0.30 \
+--privileged --cap-add=NET_ADMIN \
+--name pgpool-container-1 \
+-p 9999:9999 \
+-e PGPOOL_PCP_LISTEN_ADDRESS="*" \
+-e PGPOOL_LISTEN_ADDRESS="*" \
+-e PGPOOL_USE_WATCHDOG="on" \
+-e PGPOOL_TRUSTED_SERVRERS="172.19.0.30,172.19.0.31" \
+-e PGPOOL_WD_HOSTNAME="172.19.0.30" \
+-e PGPOOL_DELEGATE_IP="172.19.0.100" \
+-e PGPOOL_HEARTBEAT_DEVICE0="eth0" \
+-e PGPOOL_OTHER_PGPOOL_HOSTNAME0="172.19.0.30" \
+pgpool
+
+docker run --rm -it \
+--net="host" --net="postgresql" \
+--privileged --cap-add=NET_ADMIN \
+--name pgpool-container \
+-v /Users/gv/pgpool/conf/pgpool.conf:/etc/pgpool2/pgpool.conf \
+-v /Users/gv/pgpool/conf/pool_hba.conf:/etc/pgpool2/pgpool_hba.conf \
+-v /Users/gv/pgpool/conf/pcp.conf:/etc/pgpool2/pcp.conf \
+-v /Users/gv/pgpool/conf/pool_password:/etc/pgpool2/pool_password \
+-p 9999:9999 \
+pgpool
+
+Client :
+docker exec -it pgpool-container bash
+
+psql -h 192.168.99.1 -p 9999 -U postgres
+
+docker run -it --rm --entrypoint=bash postgresql -c "psql -h 192.168.99.1 -U postgres"
+
+/etc/pgpool2# pg_md5 -m -u postgres postgres
+/etc/pgpool2# cat pool_password
+
+show pool_status;
+show pool_nodes;
+show pool_processes;
+show pool_pools;
+show pool_version;
+show pool_cache;
+
+psql -h 172.19.0.30 -p 9999 -U postgres
+psql -h 172.19.0.30 -p 9999 -U testuser -d testdatabase
+
+
+
+-------------------------------------------------
+
+listen_addresses = '*'
+port = 9999
+socket_dir = '/var/run/postgresql'
+
+enable_pool_hba = on
+pool_passwd = 'pool_password'
+authentication_timeout = 10
+
+ssl = on
+
+# - Backend Connection Settings -
+
+backend_hostname0 = '172.19.0.21'
+backend_port0 = 5432
+backend_weight0 = 1
+backend_flag0 = 'ALLOW_TO_FAILOVER'
+
+backend_hostname1 = '172.19.0.22'
+backend_port1 = 5432
+backend_weight1 = 1
+backend_flag1 = 'ALLOW_TO_FAILOVER'
+
+backend_hostname2 = '172.19.0.23'
+backend_port2 = 5432
+backend_weight2 = 1
+backend_flag0 = 'ALLOW_TO_FAILOVER'

@@ -1,0 +1,17 @@
+docker pull swarm
+docker run --rm swarm create
+
+docker daemon -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock &
+
+docker run -d swarm join --addr=172.31.40.100:2375 token://7f5593ee0e49a78de7bbef4f4d49e19b
+
+docker run -d -p 2374:2375 swarm manage token://7f5593ee0e49a78de7bbef4f4d49e19b
+
+docker -H tcp://0.0.0.0:2375 info
+
+docker -H tcp://0.0.0.0:2375 info
+docker -H tcp://0.0.0.0:2375 run ...
+docker -H tcp://0.0.0.0:2375 ps
+docker -H tcp://0.0.0.0:2375 logs ...
+
+docker run --rm swarm list token://7f5593ee0e49a78de7bbef4f4d49e19b

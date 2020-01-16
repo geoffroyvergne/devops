@@ -1,0 +1,8 @@
+helm repo add gitlab https://charts.gitlab.io/
+helm repo update
+helm upgrade --install gitlab gitlab/gitlab \
+  --namespace gitlab \
+  --timeout 600 \
+  --set global.hosts.domain=gitlab.192.168.33.15.nip.io \
+  --set global.hosts.externalIP=10.0.4.100 \
+  --set certmanager-issuer.email=email@example.com

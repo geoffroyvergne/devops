@@ -1,0 +1,15 @@
+
+docker-compose up
+
+http://localhost:8983/solr/#
+
+docker-compose --scale solr-slave=3
+
+docker exec -it solr_solr-master_1 bash
+/opt/solr/bin/solr create_collection -c collection1 -shards 2 replicas 2 -p 8983
+
+curl 'http://localhost:8983/solr/admin/collections?action=CREATE&name=collection1&numShards=2&replicationFactor=2&maxShardsPerNode=2&collection.configName=collection1'
+
+curl 'http://localhost:8983/solr/admin/collections?action=CREATESHARD&shard=shar3&collection=collection1'
+
+curl 'http://localhost:8983/solr/admin/collections?action=DELETE&name=collection1'

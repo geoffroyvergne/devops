@@ -1,0 +1,61 @@
+docker : 
+192.168.99.100
+
+/etc/default/docker
+DOCKER_OPTS="-g /data/docker"
+
+vi /lib/systemd/system/docker.service
+ExecStart=/usr/bin/dockerd -g /data/docker -H fd://
+
+docker environment
+docker-machine create --driver virtualbox default
+eval "$(docker-machine env default)"
+
+docker-machine create --driver virtualbox local-docker
+eval "$(docker-machine env local-docker)"
+
+docker images
+
+docker run docker/whalesay cowsay boo-boo
+docker build -t docker-whale .
+docker tag 7aa441ffae57 gvergne/docker-whale:latest
+docker push gvergne/docker-whale
+
+docker commit -m "Updated" <container-id> gvergne/docker-whale:latest
+
+docker run gvergne/docker-whale cowsay boo-boo
+
+Remove unused volumes
+docker volume rm $(docker volume ls -qf dangling=true)
+
+Remove all volumes
+docker volume rm $(docker volume ls)
+
+Start all
+docker start $(docker ps -q -f status=exited)
+
+Kill all running containers
+docker kill $(docker ps -q)
+
+Delete all stopped containers (including data-only containers)
+docker rm $(docker ps -a -q)
+
+docker rm $(docker ps -q -f status=exited)
+
+Delete all 'untagged/dangling' (<none>) images
+docker rmi $(docker images -q -f dangling=true)
+
+Delete ALL images
+docker rmi $(docker images -q)
+
+Delete all networks :
+docker network rm $(docker network ls -q)
+
+https://www.calazan.com/docker-cleanup-commands/
+http://docs.docker.com/engine/extend/plugins/
+
+eval $(docker-machine env -u)
+eval "$(docker-machine env default)"
+
+docker-machine create machine --virtualbox-memory "2048" --virtualbox-cpu-count "2"
+eval "$(docker-machine env machine)"

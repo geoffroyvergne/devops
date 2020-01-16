@@ -1,0 +1,194 @@
+MongoDb :
+docker build -t mongodb ./mongodb
+docker run --rm -it --entrypoint=bash mongodb
+docker exec -it mongodb-container bash
+
+docker exec -it mongodb-container mongo --host $(docker inspect -f '{{ .NetworkSettings.IPAddress }}' mongodb-container)
+
+docker exec -it compose_mongodb_1 mongo
+
+https://docs.mongodb.com/manual/reference/program/mongod/
+
+Standalone :
+
+Public IP :
+Server :
+
+docker run --rm -it \
+--name mongodb-container \
+mongodb \
+--bind_ip 0.0.0.0 \
+--port 27017
+
+--volumes-from mongodb-data-standalone \
+
+
+Client :
+docker run -u mongodb --rm -it --entrypoint=bash mongodb -c "mongo --host 192.168.99.100"
+
+Private IP :
+Server :
+
+docker run --rm -it -u mongodb \
+--name mongodb-container \
+-p 27017:27017 \
+mongodb
+
+Client :
+docker run -u mongodb --rm -it --entrypoint=bash mongodb -c "mongo --host $(docker inspect -f '{{ .NetworkSettings.IPAddress }}' mongodb-container)"
+
+Backup:
+
+docker run --rm --volumes-from mongodb-data-standalone \
+-v /Users/gv/dev/docker/backup/mongodb/standalone/mac:/backup \
+gvergne/debian:latest \
+sh -c "cd /var/lib && tar cvf /backup/mongodb.tar mongodb"
+
+Restore :
+
+docker run --rm --volumes-from mongodb-data-standalone \
+-v /Users/gv/dev/docker/backup/mongodb/standalone/mac:/backup \
+gvergne/debian:latest \
+sh -c "cd /var/lib/mongodb && tar xvf /backup/mongodb.tar --strip 1"
+
+Cluster :
+
+Replica Set :
+https://docs.mongodb.com/manual/tutorial/deploy-replica-set/
+https://docs.mongodb.com/manual/tutorial/deploy-replica-set-for-testing/
+
+docker run -u mongodb -d --net=host \
+--name mongodb-node-1 \
+mongodb \
+--replSet "rs0" \
+--bind_ip 192.168.99.100 \
+--port 27001
+
+docker run -u mongodb -d --net=host \
+--name mongodb-node-2 \
+mongodb \
+--replSet "rs0" \
+--bind_ip 192.168.99.100 \
+--port 27002
+
+docker run -u mongodb -d --net=host \
+--name mongodb-node-3 \
+mongodb \
+--replSet "rs0" \
+--bind_ip 192.168.99.100 \
+--port 27003
+
+docker run -u mongodb --rm -it --entrypoint=bash mongodb -c "mongo --host 192.168.99.100 --port 27001"
+
+rs.initiate()
+
+rs.conf()
+
+rs.add("192.168.99.100:27002")
+rs.add("192.168.99.100:27003")
+
+rs.status()
+
+--------------------------------------------
+
+Shared cluster :
+https://docs.mongodb.com/v3.0/tutorial/deploy-shard-cluster/
+
+docker run -u mongodb --rm -it --entrypoint=bash mongodb -c "mongo --host 192.168.99.100 --port 27100"
+
+Config :
+mongod --configsvr --replSet "rs-config-0"
+
+docker run -u mongodb -d --net=host \
+--name mongodb-config-0 \
+mongodb \
+--configsvr \
+--replSet "rs-config-0" \
+--bind_ip 192.168.99.100 \
+--port 27100
+
+docker run -u mongodb -d --net=host \
+--name mongodb-config-1 \
+mongodb \
+--configsvr \
+--replSet "rs-config-0" \
+--bind_ip 192.168.99.100 \
+--port 27101
+
+docker run -u mongodb -d --net=host \
+--name mongodb-config-2 \
+mongodb \
+--configsvr \
+--replSet "rs-config-0" \
+--bind_ip 192.168.99.100 \
+--port 27102
+
+log primary config
+rs.initiate();
+rs.add("192.168.99.100:27101");
+rs.add("192.168.99.100:27102");
+rs.status();
+
+Router :
+mongos --configdb 192.168.99.100:27100
+
+docker run -u mongodb -d --name mongodb-router-0 --net=host --entrypoint=bash mongodb -c " \
+mongos --configdb "rs-config-0/192.168.99.100:27100,192.168.99.100:27101,192.168.99.100:27102" \
+--bind_ip 192.168.99.100 --port 27200"
+
+docker run -u mongodb -d --name mongodb-router-1 --net=host --entrypoint=bash mongodb -c " \
+mongos --configdb "rs-config-0/192.168.99.100:27100,192.168.99.100:27101,192.168.99.100:27102" \
+--bind_ip 192.168.99.100 --port 27201"
+
+docker run -u mongodb -d --name mongodb-router-2 --net=host --entrypoint=bash mongodb -c " \
+mongos --configdb "rs-config-0/192.168.99.100:27100,192.168.99.100:27101,192.168.99.100:27102" \
+--bind_ip 192.168.99.100 --port 27202"
+
+Shards :
+docker run -u mongodb -d --net=host \
+--name mongodb-shard-1 \
+mongodb \
+--replSet "rs-shards-0" \
+--bind_ip 192.168.99.100 \
+--port 27001
+
+docker run -u mongodb -d --net=host \
+--name mongodb-shard-2 \
+mongodb \
+--replSet "rs-shards-0" \
+--bind_ip 192.168.99.100 \
+--port 27002
+
+docker run -u mongodb -d --net=host \
+--name mongodb-shard-3 \
+mongodb \
+--replSet "rs-shards-0" \
+--bind_ip 192.168.99.100 \
+--port 27003
+
+docker run -u mongodb -d --net=host \
+--name mongodb-shard-4 \
+mongodb \
+--replSet "rs-shards-0" \
+--bind_ip 192.168.99.100 \
+--port 27004
+
+log primary
+rs.initiate();
+rs.add("192.168.99.100:27002");
+rs.add("192.168.99.100:27003");
+rs.status();
+
+connect shards to routers
+mongo --host 192.168.99.100 --port 27200
+
+sh.addShard( "rs-shards-0/192.168.99.100:27001" )
+all shards added
+
+Shard database :
+
+connect to one of mongos
+
+use auth
+sh.enableSharding("auth")
+

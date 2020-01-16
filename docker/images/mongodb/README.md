@@ -1,0 +1,1 @@
+# Docker Mongodb base image

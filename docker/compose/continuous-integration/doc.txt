@@ -1,0 +1,12 @@
+
+Sonarqube :
+
+Nexus :
+
+Gitlab :
+
+Jenkins :
+external_url 'http://localhost:9090'
+gitlab_rails['gitlab_shell_ssh_port'] = 2224
+nginx['listen_port'] = 9090
+nginx['listen_https'] = true

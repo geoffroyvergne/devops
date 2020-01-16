@@ -1,0 +1,13 @@
+# Keycloak
+
+helm create keycloak
+
+helm lint ./keycloak
+
+helm install --debug --dry-run ./keycloak
+
+helm install ./keycloak --name keycloak --namespace keycloak
+
+helm upgrade keycloak ./keycloak
+
+helm delete keycloak --purge

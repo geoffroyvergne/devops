@@ -1,0 +1,26 @@
+docker exec -it gitlab bash
+
+sudo docker run -it \
+    --hostname localhost \
+    --publish 443:443 --publish 80:80 --publish 2222:22 \
+    --name gitlab \
+    --volume /data/db/docker/gitlab/config:/etc/gitlab \
+    --volume /data/db/docker/gitlab/logs:/var/log/gitlab \
+    --volume /data/db/docker/gitlab/data:/var/opt/gitlab \
+    gitlab/gitlab-ce:latest
+
+sudo docker run -it \
+    --hostname gitlab.example.com \
+    --publish 443:443 --publish 80:80 --publish 2222:22 \
+    --name gitlab \
+    --volume /srv/gitlab/config:/etc/gitlab \
+    --volume /srv/gitlab/logs:/var/log/gitlab \
+    --volume /srv/gitlab/data:/var/opt/gitlab \
+    gitlab/gitlab-ce:latest
+
+docker exec -it gitlab_gitlab_1 update-permissions
+docker exec -it gitlab_gitlab_1 gitlab-ctl reconfigure
+docker restart gitlab
+
+docker exec -it gitlab_gitlab_1 vi /etc/gitlab/gitlab.rb
+docker restart gitlab_gitlab_1

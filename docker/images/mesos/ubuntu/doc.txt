@@ -1,0 +1,114 @@
+Mesos :
+docker build -t mesos-ubuntu ./mesos/ubuntu
+docker build -t mesos-ubuntu-master ./mesos/ubuntu/master
+docker build -t mesos-ubuntu-slave ./mesos/ubuntu/slave
+
+docker run -it --entrypoint=bash mesos-ubuntu-master
+
+
+
+https://github.com/mesosphere/docker-containers/tree/master/mesos
+
+ubuntu:14.04
+
+docker run -it --entrypoint=bash \
+ ubuntu:14.04
+
+https://mesosphere.com/blog/2014/07/17/mesosphere-package-repositories/
+
+echo $(lsb_release -is | tr '[:upper:]' '[:lower:]')
+DISTRO=ubuntu
+
+CODENAME=$(lsb_release -cs)
+CODENAME=trusty
+
+MESOS MASTER :
+docker run -d --privileged \
+  --name mesos-master \
+  -e MESOS_PORT=5050 \
+  -e MESOS_QUORUM=1 \
+  -e MESOS_REGISTRY=in_memory \
+  -e MESOS_CONTAINERIZERS=docker,mesos \
+  -e MESOS_LOG_DIR=/var/log/mesos \
+  -e MESOS_WORK_DIR=/var/tmp/mesos \
+  -e MESOS_ZK=zk://zookeeper-container:2181/mesos \
+  --link zookeeper-container:zookeeper-container \
+  -p 5050:5050 \
+  mesos-ubuntu-master
+
+-e MESOS_ZK=zk://192.168.99.100:2181/mesos \
+--link zookeeper-container:zookeeper-container \
+--net=host
+-v "$(pwd)/log/mesos/master:/var/log/mesos" \
+-v "$(pwd)/tmp/mesos/master:/var/tmp/mesos" \
+
+MESOS slave 1
+docker run -d --privileged \
+  --name mesos-slave-1 \
+  -e MESOS_PORT=5051 \
+  -e MESOS_MASTER=zk://zookeeper-container:2181/mesos \
+  -e MESOS_SWITCH_USER=0 \
+  -e MESOS_CONTAINERIZERS=docker,mesos \
+  -e MESOS_LOG_DIR=/var/log/mesos \
+  -e MESOS_WORK_DIR=/var/tmp/mesos \
+  --link zookeeper-container:zookeeper-container \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -p 5051:5051 \
+  mesos-ubuntu-slave
+
+-e MESOS_MASTER=zk://192.168.99.100:2181/mesos \
+--link zookeeper-container:zookeeper-container \
+--net=host
+-v "$(pwd)/log/mesos/slave1:/var/log/mesos" \
+-v "$(pwd)/tmp/mesos/slave1:/var/tmp/mesos" \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v /cgroup:/cgroup \
+-v /sys:/sys \
+-v /usr/local/bin/docker:/usr/local/bin/docker \
+
+MESOS slave 2
+docker run -d --privileged \
+  --name mesos-slave-2 \
+  -e MESOS_PORT=5052 \
+  -e MESOS_MASTER=zk://zookeeper-container:2181/mesos \
+  -e MESOS_SWITCH_USER=0 \
+  -e MESOS_CONTAINERIZERS=docker,mesos \
+  -e MESOS_LOG_DIR=/var/log/mesos \
+  -e MESOS_WORK_DIR=/var/tmp/mesos \
+  --link zookeeper-container:zookeeper-container \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -p 5052:5052 \
+  mesos-ubuntu-slave
+
+MESOS slave 3
+docker run -d --privileged \
+  --name mesos-slave-3 \
+  -e MESOS_PORT=5052 \
+  -e MESOS_MASTER=zk://192.168.99.100:2181/mesos \
+  -e MESOS_SWITCH_USER=0 \
+  -e MESOS_CONTAINERIZERS=docker,mesos \
+  -e MESOS_LOG_DIR=/var/log/mesos \
+  -e MESOS_WORK_DIR=/var/tmp/mesos \
+  -p 5053:5053 \
+  mesos-ubuntu-slave
+
+MESOS slave 4
+docker run -d --privileged \
+  --name mesos-slave-4 \
+  -e MESOS_PORT=5052 \
+  -e MESOS_MASTER=zk://192.168.99.100:2181/mesos \
+  -e MESOS_SWITCH_USER=0 \
+  -e MESOS_CONTAINERIZERS=docker,mesos \
+  -e MESOS_LOG_DIR=/var/log/mesos \
+  -e MESOS_WORK_DIR=/var/tmp/mesos \
+  -p 5054:5054 \
+  mesos-ubuntu-slave
+
+--link zookeeper-container:zookeeper-container \
+--net=host
+-v "$(pwd)/log/mesos/slave2:/var/log/mesos" \
+-v "$(pwd)/tmp/mesos/slave2:/var/tmp/mesos" \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v /cgroup:/cgroup \
+-v /sys:/sys \
+-v /usr/local/bin/docker:/usr/local/bin/docker \

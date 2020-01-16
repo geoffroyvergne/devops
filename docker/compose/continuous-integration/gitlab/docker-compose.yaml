@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    #network_mode: "host"
+    #restart: unless-stopped
+    hostname: 'gitlab.192.168.33.10.nip.io'
+    #external_links:
+    #- "registry:registry.192.168.33.10.nip.io"
+    #command: update-permissions
+    #command: gitlab-ctl reconfigure
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.192.168.33.10.nip.io'
+        registry_external_url 'http://registry.192.168.33.10.nip.io'
+        gitlab_rails['gitlab_shell_ssh_port'] = 30022
+    ports:
+      - '80:80'
+      - '443:443'
+      - '30022:22'
+    volumes:
+      - /srv/gitlab/config:/etc/gitlab
+      - /srv/gitlab/logs:/var/log/gitlab
+      - /srv/gitlab/data:/var/opt/gitlab
+
+  gitlab-runner:
+    image: gitlab/gitlab-runner:latest
+    privileged: true
+    #restart: unless-stopped
+    volumes:
+      - /srv/gitlab-runner/config/config.toml:/etc/gitlab-runner/config.toml
+      - /var/run/docker.sock:/var/run/docker.sock

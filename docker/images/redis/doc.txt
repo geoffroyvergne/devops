@@ -1,0 +1,112 @@
+Redis :
+docker build -t redis ./redis
+docker run --rm -it --entrypoint=bash redis
+docker exec -it redis-node-1 bash
+
+docker exec -it redis-master-1 redis-cli -h $(docker inspect -f '{{ .NetworkSettings.Networks.compose_default.IPAddress }}' compose_redis-cluster_1)
+
+docker exec -it redis-node-1 redis-cli -h 192.168.99.1 -p 7000
+
+docker run -it --rm --entrypoint=bash --link redis-node-1 redis -c "redis-cli -h redis-node-1"
+
+redis-cli -h 192.168.99.1 -p 7000
+
+Standalone :
+docker run --rm -it \
+--name redis-container \
+redis
+
+--volumes-from redis-data-standalone \
+
+
+Client :
+docker run -it --rm --entrypoint=bash --link redis-container redis -c "redis-cli -h redis-container"
+
+Backup:
+
+docker run --rm --volumes-from redis-data-standalone \
+-v /Users/gv/dev/docker/backup/redis/standalone/mac:/backup \
+gvergne/debian:latest \
+sh -c "cd /var/lib && tar cvf /backup/redis.tar redis"
+
+Restore :
+
+docker run --rm --volumes-from redis-data-standalone \
+-v /Users/gv/dev/docker/backup/redis/standalone/mac:/redis \
+gvergne/debian:latest \
+sh -c "cd /var/lib/redis && tar xvf /backup/redis.tar --strip 1"
+
+Replication :
+docker run -u redis -d \
+--name redis-master-1 \
+redis
+
+docker run -u redis -d \
+--name redis-slave-1 \
+--link redis-master-1 \
+redis --slaveof redis-master-1 6379
+
+docker run -u redis -d \
+--name redis-slave-2 \
+--link redis-master-1 \
+redis --slaveof redis-master-1 6379
+
+Sharding :
+redis-cli -c -p 7000 -h 192.168.99.1 cluster nodes
+docker exec -it redis-node-1 redis-cli -c -h 192.168.99.1 -p 7000
+
+docker run -u redis -d --net=host \
+-e REDIS_LISTEN_ADDRESS=192.168.99.1 \
+-p 7000:7000 \
+--name redis-node-0 \
+redis --cluster-enabled yes --port 7000 --appendonly yes
+
+docker run -u redis -d --net=host \
+-e REDIS_LISTEN_ADDRESS=192.168.99.1 \
+-p 7001:7001 \
+--name redis-node-1 \
+redis --cluster-enabled yes --port 7001 --appendonly yes
+
+docker run -u redis -d --net=host \
+-e REDIS_LISTEN_ADDRESS=192.168.99.1 \
+-p 7002:7002 \
+--name redis-node-2 \
+redis --cluster-enabled yes --port 7002 --appendonly yes
+
+docker run -u redis -d --net=host \
+-e REDIS_LISTEN_ADDRESS=192.168.99.1 \
+-p 7003:7003 \
+--name redis-node-3 \
+redis --cluster-enabled yes --port 7003 --appendonly yes
+
+docker run -u redis -d --net=host \
+-e REDIS_LISTEN_ADDRESS=192.168.99.1 \
+-p 7004:7004 \
+--name redis-node-4 \
+redis --cluster-enabled yes --port 7004 --appendonly yes
+
+docker run -u redis -d --net=host \
+-e REDIS_LISTEN_ADDRESS=192.168.99.1 \
+-p 7005:7005 \
+--name redis-node-5 \
+redis --cluster-enabled yes --port 7005 --appendonly yes
+
+docker run -it --rm --link compose_redis-cluster_1 --entrypoint=bash redis -c "redis-cli -h compose_redis-cluster_4 -p 7000"
+
+docker run -it --rm --entrypoint=bash redis -c "
+redis-trib.rb"
+
+docker exec -it compose_redis-trib_1 \
+redis-cli -h $(docker inspect -f '{{ .NetworkSettings.Networks.bridge.IPAddress }}' compose_redis-cluster_1) -p 6379
+
+docker exec -it compose_redis-trib_1 redis-trib.rb create \
+--replicas 1 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.bridge.IPAddress }}' compose_redis-cluster_1):6379 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.bridge.IPAddress }}' compose_redis-cluster_2):6379 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.bridge.IPAddress }}' compose_redis-cluster_3):6379 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.bridge.IPAddress }}' compose_redis-cluster_4):6379 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.bridge.IPAddress }}' compose_redis-cluster_5):6379 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.bridge.IPAddress }}' compose_redis-cluster_6):6379
+
+cluster nodes
+

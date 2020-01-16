@@ -1,0 +1,12 @@
+{
+  "id": "/nginx",
+  "cpus": 0.1,
+  "instances": 1,
+  "mem": 128,
+  "container": {
+    "type": "MESOS",
+    "docker": {
+      "image": "library/nginx"
+    }
+  }
+}

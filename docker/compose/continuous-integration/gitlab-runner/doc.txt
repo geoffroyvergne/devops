@@ -1,0 +1,39 @@
+sudo gitlab-runner register -n \
+  --url http://gitlab.192.168.99.100.nip.io/ \
+  --registration-token kupoXcYGhj-cn2Z_xoDS \
+  --executor shell \
+  --description "runner"
+
+gitlab/gitlab-runner:latest
+docker run --rm -t -i gitlab/gitlab-runner --help
+docker run --rm -t -i gitlab/gitlab-runner register --help
+
+docker run -d --name gitlab-runner-docker --restart always \
+  gitlab/gitlab-runner register -n \
+  --url http://gitlab.192.168.99.100.nip.io/ \
+  --registration-token kupoXcYGhj-cn2Z_xoDS \
+  --executor docker \
+  --docker-image docker:latest \
+  --description "runner-docker"
+
+kubectl exec -ti gitlab-runner-64f8db89c6-hznz6 -n gitlab -- gitlab-runner list
+
+kubectl exec -ti gitlab-runner-64f8db89c6-hznz6 -n gitlab -- gitlab-runner register -n \
+  --url http://gitlab.192.168.99.100.nip.io/ \
+  --registration-token kupoXcYGhj-cn2Z_xoDS \
+  --executor docker \
+  --docker-image docker:latest \
+  --description "runner-docker"
+
+gitlab-runner register -n \
+  --url http://gitlab.192.168.99.100.nip.io/ \
+  --registration-token kupoXcYGhj-cn2Z_xoDS \
+  --executor shell \
+  --description "runner-shell"
+
+docker run --rm -t -i gitlab/gitlab-runner register --non-interactive --config docker.toml
+
+docker run --rm -t -i \
+-v $(pwd)/docker.toml:/etc/gitlab-runner/config.toml \
+-v /var/run/docker.sock:/var/run/docker.sock \
+gitlab/gitlab-runner

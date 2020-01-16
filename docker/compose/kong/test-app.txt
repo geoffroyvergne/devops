@@ -1,0 +1,22 @@
+www.test.com
+
+curl -i -X POST \
+  --url http://localhost:8001/apis/ \
+  --data 'name=www-test-api' \
+  --data 'hosts=www.test.com' \
+  --data 'upstream_url=http://localhost:4200'
+
+curl -i -X PATCH \
+    --url http://localhost:8001/apis/www-test-api \
+    --data 'upstream_url=http://localhost:4200' \
+    --data 'uris=/'
+
+curl -i -X GET \
+  --url http://localhost:8000/ \
+  --header 'Host: www.test.com'
+
+curl -i -X GET http://www.test.com
+
+api.test.com
+
+auth.test.com

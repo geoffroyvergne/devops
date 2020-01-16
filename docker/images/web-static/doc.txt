@@ -1,0 +1,8 @@
+docker build -t web-static ./
+
+docker run --rm -it --entrypoint=sh web-static
+
+docker run --rm -it \
+--name web-static \
+-p 80:80 \
+web-static

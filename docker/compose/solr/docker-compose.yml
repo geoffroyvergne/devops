@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  zookeeper:
+    image: zookeeper:3.4.10
+    restart: unless-stopped
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+    volumes:
+      - /data/db/docker/zookeeper/data:/data
+      - /data/db/docker/zookeeper/datalog:/datalog
+
+  solr-master:
+    image: solr:6.6.0-alpine
+    restart: unless-stopped
+    ports:
+     - "8983:8983"
+    links:
+      - "zookeeper:ZK"
+    command: "bash -c '/opt/solr/bin/solr start -f -z ZK:2181'"
+
+  solr-slave:
+    image: solr:6.6.0-alpine
+    restart: unless-stopped
+    links:
+      - "zookeeper:ZK"
+    command: "bash -c '/opt/solr/bin/solr start -f -z ZK:2181'"
+  

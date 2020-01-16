@@ -1,0 +1,13 @@
+Kibana :
+docker build -t kibana ./kibana
+docker run --rm -it --entrypoint=bash kibana
+
+Kibana :
+docker run --rm -it \
+--name kibana \
+-p 5601:5601 \
+kibana \
+-e http://192.168.99.100:9200
+
+https://www.elastic.co/guide/en/kibana/current/getting-started.html
+

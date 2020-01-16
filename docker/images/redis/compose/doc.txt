@@ -1,0 +1,36 @@
+# Redis
+docker-compose -f ./redis/compose/docker-compose.yaml up
+docker-compose -f ./redis/compose/docker-compose.yaml ps
+docker-compose -f ./redis/compose/docker-compose.yaml rm -f
+
+# Redis replication
+docker-compose -f ./redis/compose/docker-compose-replication.yaml up
+docker-compose -f ./redis/compose/docker-compose-replication.yaml ps
+docker-compose -f ./redis/compose/docker-compose-replication.yaml rm -f
+
+docker-compose -f ./redis/compose/docker-compose-replication.yaml scale redis-slave=4
+
+# Redis cluster
+docker-compose -f ./redis/compose/docker-compose-cluster.yaml up
+docker-compose -f ./redis/compose/docker-compose-cluster.yaml ps
+docker-compose -f ./redis/compose/docker-compose-cluster.yaml rm -f
+
+docker-compose -f ./redis/compose/docker-compose-cluster.yaml scale redis-cluster=6
+
+docker exec -it compose_redis-cluster_1 \
+redis-cli -c -h $(docker inspect -f '{{ .NetworkSettings.Networks.compose_default.IPAddress }}' compose_redis-cluster_1) -p 6379
+
+docker exec -it compose_redis-cluster_1 redis-trib.rb create \
+--replicas 1 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.compose_default.IPAddress }}' compose_redis-cluster_1):6379 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.compose_default.IPAddress }}' compose_redis-cluster_2):6379 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.compose_default.IPAddress }}' compose_redis-cluster_3):6379 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.compose_default.IPAddress }}' compose_redis-cluster_4):6379 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.compose_default.IPAddress }}' compose_redis-cluster_5):6379 \
+$(docker inspect -f '{{ .NetworkSettings.Networks.compose_default.IPAddress }}' compose_redis-cluster_6):6379
+
+docker exec -it compose_redis-trib_1 redis-trib.rb \
+check $(docker inspect -f '{{ .NetworkSettings.Networks.compose_default.IPAddress }}' compose_redis-cluster_1):6379
+
+cluster nodes
+

@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  redis:
+    image: redis
+    ports:
+      - "7000:7000"
+    command: --port 7000

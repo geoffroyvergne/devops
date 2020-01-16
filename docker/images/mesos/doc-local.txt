@@ -1,0 +1,72 @@
+VM :
+vb.memory = "2048"
+vb.cpus = "2"
+
+ZOOKEEPER :
+conf/zoo.cfg
+tickTime=2000
+dataDir=/var/lib/zookeeper
+clientPort=2181
+
+initLimit=5
+syncLimit=2
+server.1=zoo1:2888:3888
+server.2=zoo2:2888:3888
+server.3=zoo3:2888:3888
+
+bin/zkServer.sh start
+
+spark.deploy.zookeeper.url=192.168.1.100:2181,192.168.1.101:2181
+
+SPARK_DAEMON_JAVA_OPTS="-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url=localhost:2181 -Dspark.deploy.zookeeper.dir=/spark"
+
+spark://host1:port1,host2:port2
+
+Local :
+
+Start Mesos master :
+nohup mesos-master \
+--registry=in_memory \
+--ip=192.168.56.22 \
+--zk=zk://192.168.56.22:2181/mesos \
+--log_dir=/var/log/mesos \
+--cluster=mesos-cluster \
+> /dev/null &
+
+Start slaves
+
+nohup mesos-slave \
+--master=zk://192.168.99.100:2181/mesos \
+--ip=192.168.56.22 \
+--port=5052 \
+--work_dir=/data/db/mesos/slave1 \
+--log_dir=/var/log/mesos \
+--containerizers=docker,mesos \
+> /dev/null &
+
+nohup mesos-slave \
+--master=zk://192.168.56.22:2181/mesos \
+--ip=192.168.56.22 \
+--port=5053 \
+--work_dir=/data/db/mesos/slave2 \
+--log_dir=/var/log/mesos \
+--containerizers=docker,mesos \
+> /dev/null &
+
+nohup mesos-slave \
+--master=zk://192.168.56.22:2181/mesos \
+--ip=192.168.56.22 \
+--port=5054 \
+--work_dir=/data/db/mesos/slave3 \
+--log_dir=/var/log/mesos \
+--containerizers=docker,mesos \
+> /dev/null &
+
+http://192.168.56.22:5050/#/
+http://192.168.56.22:5050/#/slaves
+
+Marathon : 
+
+./start --master zk://192.168.56.22:2181/mesos --zk zk://192.168.56.21:2181/marathon
+
+http://192.168.56.22:8080/ui/#/apps

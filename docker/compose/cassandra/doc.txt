@@ -1,0 +1,4 @@
+
+Client :
+docker run -it --rm --network=cassandra_default --link cassandra_cassandra_1:cassandra_1 cassandra:3.9 cqlsh cassandra_1
+

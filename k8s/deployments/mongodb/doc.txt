@@ -1,0 +1,30 @@
+HELM :
+
+helm install --name my-release mongodb-replicaset
+
+helm install app/mongodb-replicaset \
+    -f mongo-replicaset-values.yml \
+    --name mongodb \
+    --namespace mongodb
+
+Upgrade and / or Scale :
+
+helm upgrade mongodb app/mongodb-replicaset -f mongo-replicaset-values.yml
+
+helm delete mongodb --purge
+
+---
+
+delete statefulset
+kubectl delete statefulset mongo -n mongo
+
+force pod delete :
+kubectl delete pod mongo-0 --grace-period=0 --force
+
+Client :
+kubectl exec -ti mongodb-mongodb-replicaset-0 -n mongodb mongo
+
+Slave
+rs.slaveOk();
+
+kubectl exec -ti mongodb-mongodb-replicaset-2 -n mongodb -- mongo --eval="rs.slaveOk(); db.test.find();"

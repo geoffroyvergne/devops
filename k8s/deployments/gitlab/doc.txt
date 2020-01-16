@@ -1,0 +1,8 @@
+kubectl create namespace gitlab
+
+kubectl apply -f .
+
+kubectl delete service,deployment,ing,pvc -n gitlab -l app=gitlab
+
+kubectl delete service,deployment,ing -n gitlab -l app=gitlab
+kubectl delete pvc -n gitlab -l folder=opt

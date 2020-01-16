@@ -1,0 +1,56 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: mariadb-nfs
+spec:
+
+  volumes:
+    - name: nfs-volume
+      nfs:
+        server: 192.168.99.50
+        path: /var/nfs/mariadb
+      #persistentVolumeClaim:
+      #  claimName: mariadb-pv-claim
+
+  containers:
+    - image: mariadb
+      name: mariadb
+      securityContext:
+        runAsUser: 65534
+      #  privileged: true
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: MYSQL_DATABASE
+          value: mariadb
+        - name: MYSQL_USER
+          value: mariadb
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb
+              key: userpassword
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb
+              key: rootpassword
+      ports:
+        - containerPort: 3306
+          name: mariadb
+      volumeMounts:
+        - name: nfs-volume
+          mountPath: /var/lib/mysql
+          #subPath: mysql
+          readOnly: false
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mariadb
+data:
+  # echo -n "root" | base64
+  rootpassword: cm9vdA==
+  # echo -n "mariadb" | base64
+  userpassword: bWFyaWFkYg==

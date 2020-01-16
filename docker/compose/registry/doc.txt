@@ -1,0 +1,11 @@
+docker-compose up
+docker search localhost:5000
+docker push localhost:5000/image
+docker pull localhost:5000/image
+
+
+
+curl registry.127.0.0.1.nip.io:5000/v2/_catalog
+curl registry.127.0.0.1.nip.io:5000/v2/web-static/tags/list
+
+docker search registry.127.0.0.1.nip.io:5000/library

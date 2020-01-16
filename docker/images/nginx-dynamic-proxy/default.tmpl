@@ -1,0 +1,17 @@
+server {
+  listen       ${NGINX_PORT};
+  server_name  ${NGINX_SERVER_NAME};
+
+  #charset koi8-r;
+  #access_log  /var/log/nginx/log/host.access.log  main;
+
+  location / {
+    root   /usr/share/nginx/html;
+    index  index.html index.htm;
+    autoindex ${NGINX_AUTO_INDENT};
+  }
+
+  location /api/test/ {
+    proxy_pass         ${NGINX_BACKEND_API_TEST};
+  }
+}

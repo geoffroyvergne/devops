@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  jenkins:
+    image: jenkins:alpine
+    environment:
+      - JENKINS_OPTS='--httpPort=8082'
+    ports:
+      - "8082:8082"
+      - "50000:50000"
+    volumes:
+      - /data/db/docker/jenkins:/var/jenkins_home
+

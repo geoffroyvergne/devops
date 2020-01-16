@@ -1,0 +1,20 @@
+kubectl apply -f deployment.yaml
+
+kubectl describe deployment nginx-deployment
+kubectl get pod
+kubectl get pods -l app=nginx
+
+kubectl describe pod nginx-deployment-6c54bd5869-spzf5
+
+kubectl apply -f deployment-update.yaml
+kubectl apply -f deployment-scale.yaml
+
+kubectl get pods -l app=nginx
+
+kubectl expose deployment nginx-deployment --type=LoadBalancer
+kubectl expose deployment nginx-deployment --type=NodePort
+
+curl $(minikube service nginx-deployment --url)
+
+kubectl delete deployment nginx-deployment
+

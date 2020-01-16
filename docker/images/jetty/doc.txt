@@ -1,0 +1,24 @@
+Jetty :
+docker build -t jetty ./jetty
+docker run --rm -it --entrypoint=bash jetty
+
+docker exec -it jetty-container curl -Isk localhost:8181/default
+docker run --rm -it --entrypoint=bash jetty -c "curl -Isk 192.168.99.100:8181/default"
+curl -Isk 192.168.99.100:8181/default
+
+docker run --rm -it \
+--name jetty-container \
+-v /Users/gv/dev/workspace-jee/maven-projects/default/target/default.war:/opt/jetty/webapps/default.war:ro \
+-p 8080:8080 \
+jetty
+
+docker run -d \
+--name jetty-container \
+-v /Users/gv/dev/workspace-jee/maven-projects/default/target/default.war:/opt/jetty/webapps/default.war:ro \
+-p 8181:8181 \
+jetty \
+--exec -DSERVER="localhost" \
+-Djetty.http.host=0.0.0.0 \
+-Djetty.http.port=8181
+
+-v /mnt/dev/workspace-jee/maven-projects/default/target/default.war:/opt/jetty/webapps/default.war:ro \

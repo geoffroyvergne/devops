@@ -1,0 +1,7 @@
+docker-compose up
+
+https://portus.127.0.0.1.nip.io
+
+docker login portus.127.0.0.1.nip.io:5000 -u user
+docker build -t portus.127.0.0.1.nip.io:5000/user/web-static:latest .
+docker push portus.127.0.0.1.nip.io:5000/user/web-static:latest

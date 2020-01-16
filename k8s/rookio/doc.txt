@@ -1,0 +1,107 @@
+https://rook.io/docs/rook/v1.0/ceph-quickstart.html
+https://github.com/rook/rook/tree/release-1.0/cluster/examples/kubernetes/ceph
+
+kubectl create -f common.yaml
+kubectl create -f operator.yaml
+
+kubectl create -f cluster-test.yaml
+
+kubectl create -f storageclass-test.yaml
+
+kubectl -n rook-ceph get pod
+
+Dashboard :
+https://192.168.33.16:31176/#/login
+
+Expose dashboard :
+kubectl create -f dashboard-external-https.yaml
+
+Get password
+kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o yaml | grep "password:" | awk '{print $2}' | base64 --decode
+
+Change password :
+kubectl apply -f rook-ceph-dashboard-password.yml
+
+Restart dashboard :
+kubectl delete pod $(kubectl -n rook-ceph get pod -l app='rook-ceph-mgr' -o jsonpath='{.items[0].metadata.name}') -n rook-ceph
+
+
+Toolbox :
+kubectl apply -f toolbox.yaml
+
+kubectl -n rook-ceph exec -it $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') bash
+
+ceph osd lspools
+
+ceph status
+ceph osd status
+ceph df
+rados df
+
+Fix bug ceph dashboard rook 1.0 :
+
+ceph dashboard ac-role-create admin-no-iscsi
+
+for scope in dashboard-settings log rgw prometheus grafana nfs-ganesha manager hosts rbd-image config-opt rbd-mirroring cephfs user osd pool monitor; do
+    ceph dashboard ac-role-add-scope-perms admin-no-iscsi ${scope} create delete read update;
+done
+
+ceph dashboard ac-user-set-roles admin admin-no-iscsi
+
+
+
+-----
+
+
+
+Prerequists :
+Install xfs fs in host
+apt install xfsprogs
+
+
+HELM :
+helm repo add rook-stable https://charts.rook.io/stable
+helm install --namespace rook-ceph --name rook-ceph rook-stable/rook-ceph
+
+helm delete rook-ceph --purge
+
+Install cluster :
+kubectl create -f cluster.yaml
+
+Install Service block
+kubectl apply -f service-block.yaml
+
+Dashboard :
+
+https://192.168.33.16:31176/#/login
+
+Get password
+kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o yaml | grep "password:" | awk '{print $2}' | base64 --decode
+
+echo -n "admin" | base64
+YWRtaW4=
+
+Rook toolbox
+
+kubectl -n rook-ceph exec -it $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') bash
+
+
+ceph osd pool create replicapool 128
+ceph osd lspools
+
+
+-------
+https://github.com/rook/rook/tree/master/cluster/examples/kubernetes/ceph
+https://github.com/rook/rook/blob/master/Documentation/ceph-quickstart.md
+
+kubectl create -f common.yaml
+kubectl create -f operator.yaml
+
+kubectl -n rook-ceph get pod
+
+# wait rook-ceph-operator, rook-ceph-agent, and rook-discover pods are in the `Running` state
+
+kubectl create -f cluster.yaml
+
+kubectl create -f storageclass.yaml
+kubectl create -f toolbox.yaml

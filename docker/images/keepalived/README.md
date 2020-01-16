@@ -1,0 +1,2 @@
+# Docker Keepalived base image
+

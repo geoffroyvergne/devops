@@ -1,0 +1,13 @@
+
+kubectl create namespace web-dynamic
+
+kubectl apply -f .
+
+curl $(minikube service -n web-dynamic web-dynamic --url)
+
+kubectl get service,deployment,ing,pvc,secret -n web-dynamic,mariadb
+
+kubectl delete service,deployment,ing,secret,pvc -n web-dynamic -l app=web-dynamic
+kubectl delete service,deployment,ing,secret,pvc -n web-dynamic web-dynamic mariadb
+
+kubectl run -it --rm --image=mariadb --namespace=web-dynamic --restart=Never mysql-client -- mysql -h mariadb -u mariadb -pmariadb

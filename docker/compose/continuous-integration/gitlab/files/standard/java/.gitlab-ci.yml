@@ -1,0 +1,31 @@
+stages:
+  - build
+  - package
+  - deploy
+
+before_script:
+
+maven-build:
+  image: maven:3-jdk-8-slim
+  stage: build
+  script:
+  - "mvn clean package"
+  tags: [docker]
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - target/*
+
+docker-build:
+  stage: package
+  script:
+  - docker build -t java .
+  - docker tag java registry.192.168.33.10.nip.io/gvergne/java:latest
+  tags: [shell]
+
+deploy:
+  stage: deploy
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.192.168.33.10.nip.io
+  - docker push registry.192.168.33.10.nip.io/gvergne/java:latest
+  tags: [shell]

@@ -1,0 +1,9 @@
+
+docker-compose -f ./elasticsearch/compose/compose-elasticsearch.yaml up
+docker-compose -f ./elasticsearch/compose/compose-elasticsearch.yaml ps
+
+docker-compose -f ./elasticsearch/compose/compose-elasticsearch.yaml scale elasticsearch-slave=3
+
+--------------------
+
+docker exec -it elasticsearch-master curl localhost:9200

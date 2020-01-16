@@ -1,0 +1,38 @@
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: rook-dashboard-gateway
+  namespace: rook-ceph
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+    - port:
+        number: 8443
+        name: http
+        protocol: HTTP
+      hosts:
+        - "rook.192.168.33.16.nip.io"
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: rook-dashboard
+  namespace: rook-ceph
+spec:
+  hosts:
+    - "rook.192.168.33.16.nip.io"
+  gateways:
+    - rook-dashboard-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: rook-ceph-mgr
+            port:
+              number: 8443

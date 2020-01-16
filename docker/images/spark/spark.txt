@@ -1,0 +1,89 @@
+
+rhelcenter98.unix-int.intra-int.bdf-int.local
+
+- TEST :
+sc.parallelize(1 to 1000).count()
+
+http://spark.apache.org/docs/latest/spark-standalone.html
+- LOCAL :
+./bin/spark-shell --master local[2]
+
+- STANDALONE CLUSTER :
+./sbin/start-master.sh --host <host> --port <port> --webui-port<webui-port>
+./sbin/start-master.sh --port 7077 --webui-port 8585
+
+export SPARK_MASTER_OPTS=""
+export SPARK_WORKER_OPTS=""
+
+SPARK_MASTER_IP
+SPARK_MASTER_PORT
+SPARK_MASTER_WEBUI_PORT
+
+SPARK_LOCAL_DIRS
+
+SPARK_WORKER_CORES
+SPARK_WORKER_MEMORY
+SPARK_WORKER_PORT
+SPARK_WORKER_WEBUI_PORT
+SPARK_WORKER_INSTANCES
+SPARK_WORKER_DIR
+
+SPARK_DAEMON_MEMORY
+
+spark://rhelcenter98:7077
+
+./sbin/start-slave.sh --cores 1 --memory 256M --host <host> --port <port> --webui-port <webui-port> <master-spark-URL>
+./sbin/start-slave.sh --port 7078 --webui-port 8686 spark://rhelcenter98:7077
+./sbin/start-slave.sh --port 7079 --webui-port 8787 spark://rhelcenter98:7077
+
+FOREGROUND :
+export SPARK_DAEMON_JAVA_OPTS="-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url=192.168.56.22:2181 -Dspark.deploy.zookeeper.dir=/spark"
+./bin/spark-class org.apache.spark.deploy.master.Master --port 7077 --webui-port 8585 &
+./bin/spark-class org.apache.spark.deploy.worker.Worker --port 7078 --webui-port 8686  spark://192.168.56.22:7077 &
+./bin/spark-class org.apache.spark.deploy.worker.Worker --port 7079 --webui-port 8787  spark://192.168.56.22:7077 &
+./bin/spark-class org.apache.spark.deploy.worker.Worker --port 7080 --webui-port 8888  spark://192.168.56.22:7077 &
+
+http://rhelcenter98.unix-int.intra-int.bdf-int.local:8585
+http://rhelcenter98.unix-int.intra-int.bdf-int.local:4040
+
+./bin/spark-shell --total-executor-cores <numCores> --master spark://<host>:<port>
+./bin/spark-shell --master spark://192.168.56.22:7077
+
+./bin/spark-shell --master spark://192.168.56.22:7077 \
+--driver-memory 512M \
+--executor-memory 512M \
+--executor-cores 1
+
+sc.parallelize(1 to 1000).count()
+
+FOLESYSTEM RECOVERY :
+SPARK_DAEMON_JAVA_OPTS="-Dspark.deploy.recoveryMode=FILESYSTEM, -Dspark.deploy.recoveryDirectory=/tmp"
+
+ZOOKEEPER :
+conf/zoo.cfg
+tickTime=2000
+dataDir=/var/lib/zookeeper
+clientPort=2181
+
+initLimit=5
+syncLimit=2
+server.1=zoo1:2888:3888
+server.2=zoo2:2888:3888
+server.3=zoo3:2888:3888
+
+bin/zkServer.sh start
+
+spark.deploy.zookeeper.url=192.168.1.100:2181,192.168.1.101:2181
+
+SPARK_DAEMON_JAVA_OPTS="-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url=rhelcenter98:2181 -Dspark.deploy.zookeeper.dir=/spark"
+
+spark://host1:port1,host2:port2
+
+MESOS :
+spark-env.sh
+
+export MESOS_NATIVE_JAVA_LIBRARY=<path to libmesos.so>
+export SPARK_EXECUTOR_URI=<URL of spark-1.6.2.tar.gz uploaded above>.
+
+./bin/spark-shell --master mesos://zk://host:2181 --spark.mesos.coarse false --spark.driver.memory 512m
+

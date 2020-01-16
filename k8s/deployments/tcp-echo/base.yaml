@@ -1,0 +1,8 @@
+---
+
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: tcp-echo
+  labels:
+    name: tcp-echo

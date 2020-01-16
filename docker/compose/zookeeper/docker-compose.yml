@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  zookeeper:
+    image: zookeeper:3.4.9
+    restart: unless-stopped
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+    volumes:
+      - /data/db/docker/zookeeper/data:/data
+      - /data/db/docker/zookeeper/datalog:/datalog

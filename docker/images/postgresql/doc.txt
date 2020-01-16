@@ -1,0 +1,192 @@
+Postgresql :
+docker build -t postgresql ./postgresql
+docker run --rm -it --entrypoint=bash postgresql
+docker run --rm -it --net="postgresql" --entrypoint=bash postgresql
+docker exec -it postgresql-container bash
+
+Standalone server :
+docker run --rm -it \
+--name postgresql-container \
+-p 5432:5432 \
+-e POSTGRES_INIT_DB="true" \
+-e POSTGRES_ADDUSER="wildfly" \
+-e POSTGRES_ADDPASSWORD="wildfly" \
+postgresql -p 5432
+
+docker run --rm -it \
+--name postgresql-container \
+-p 5432:5432 \
+-e POSTGRES_INIT_DB="true" \
+-e POSTGRES_ADDUSER="wildfly" \
+-e POSTGRES_ADDPASSWORD="wildfly" \
+-e POSTGRESQL_CHANGE_CONFIG="false" \
+-v /Users/gv/pgpool/conf/postgresql.conf:/tmp/postgresql.conf \
+-v /Users/gv/pgpool/conf/pg_hba.conf:/tmp/pg_hba.conf \
+-v /Users/gv/pgpool/conf/pg_pass_file:/tmp/pg_pass_file \
+postgresql -p 5432
+
+docker run -d \
+--name postgresql-container \
+--volumes-from postgresql-data \
+-p 5432:5432 \
+postgresql
+
+docker run -d \
+--name postgresql-container \
+-p 5432:5432 \
+-v /data/db/postgresql/9.4/main:/var/lib/postgresql/9.4/main \
+postgresql
+
+-e POSTGRES_PASSWORD="postgres" \
+--volumes-from postgresql-data \
+-c config_file=/etc/postgresql/9.4/main/postgresql.conf
+--volumes-from postgresql-data-standalone \
+-v "/etc/postgresql" -v "/var/log/postgresql" -v "/var/lib/postgresql" \
+
+Client :
+psql -h 192.168.99.1 -U postgres
+
+
+psql -c "ALTER USER postgres PASSWORD 'postgres';"
+
+docker exec -it postgresql-container bash
+
+docker exec -it postgresql-container psql
+docker exec -it -u postgres postgresql-container psql -c "ALTER USER postgres PASSWORD 'postgres';"
+docker exec -it -u postgres postgresql-container psql -c "CREATE EXTENSION adminpack;"
+
+docker run -it --rm --entrypoint=bash --link postgresql-container postgresql -c "psql -h postgresql-container -U postgres"
+
+-------------
+
+Clear data :
+docker run --rm --volumes-from postgresql-data \
+-v /Users/gv/dev/docker/backup/postgresql/standalone/linux:/backup \
+gvergne/debian:latest \
+sh -c "rm -Rf /var/lib/postgresql/9.4/main/*"
+
+Test data :
+docker run --rm --volumes-from postgresql-data-slave \
+-v /Users/gv/dev/docker/backup/postgresql/standalone/linux:/backup \
+gvergne/debian:latest \
+sh -c "ls -la /var/lib/postgresql/9.4/main"
+
+Backup:
+
+docker run --rm --volumes-from postgresql-data \
+-v /mnt/dev/docker/backup/postgresql/standalone/linux:/backup \
+gvergne/debian:latest \
+sh -c "cd /var/lib && tar cvf /backup/postgresql.tar postgresql"
+
+Restore :
+
+docker run --rm --volumes-from postgresql-data \
+-v /mnt/dev/docker/backup/postgresql/standalone/linux:/backup \
+gvergne/debian:latest \
+sh -c "cd /var/lib/postgresql && tar xvf /backup/postgresql.tar --strip 1"
+
+Replication :
+
+docker network create --subnet=172.19.0.0/16 postgresql
+
+Master :
+docker run --rm -it --net="postgresql" --ip 172.19.0.21 \
+-p 5432:5432 \
+--name postgresql-master \
+-e POSTGRES_INIT_DB="true" \
+-e POSTGRES_REPLICATION_NETWORK="172.19.0.0/16" \
+-e POSTGRES_WAL_LEVEL="hot_standby" \
+-e POSTGRES_MAX_WAL_SENDERS="3" \
+-e POSTGRES_CHECKPOINT_SEGMENTS="8" \
+-e POSTGRES_WAL_KEEP_SEGMENTS="8" \
+-e POSTGRES_SLAVE_IP="172.19.0.0" \
+-e POSTGRES_REPLICATION_TYPE="master" \
+postgresql
+
+Slave :
+docker run --rm -it --net="postgresql" --ip 172.19.0.22 \
+--name postgresql-slave-1 \
+-e POSTGRES_WAL_LEVEL="hot_standby" \
+-e POSTGRES_MAX_WAL_SENDERS="3" \
+-e POSTGRES_CHECKPOINT_SEGMENTS="8" \
+-e POSTGRES_WAL_KEEP_SEGMENTS="8" \
+-e POSTGRES_HOT_STANDBY="on" \
+-e POSTGRES_REPLICATE_FROM_IP="172.19.0.21" \
+-e POSTGRES_REPLICATE_FROM_PORT="5432" \
+-e POSTGRES_REPLICATION_TYPE="slave" \
+-e POSTGRES_REPLICATOR_USER="replicator" \
+-e POSTGRES_REPLICATOR_PASSWORD="replicator" \
+postgresql
+
+docker run --rm -it --net="postgresql" --ip 172.19.0.23 \
+--name postgresql-slave-2 \
+-e POSTGRES_WAL_LEVEL="hot_standby" \
+-e POSTGRES_MAX_WAL_SENDERS="3" \
+-e POSTGRES_CHECKPOINT_SEGMENTS="8" \
+-e POSTGRES_WAL_KEEP_SEGMENTS="8" \
+-e POSTGRES_HOT_STANDBY="on" \
+-e POSTGRES_REPLICATE_FROM_IP="172.19.0.21" \
+-e POSTGRES_REPLICATE_FROM_PORT="5432" \
+-e POSTGRES_REPLICATION_TYPE="slave" \
+-e POSTGRES_REPLICATOR_USER="replicator" \
+-e POSTGRES_REPLICATOR_PASSWORD="replicator" \
+postgresql
+
+-e POSTGRES_REPLICATE_FROM="172.19.0.11" \
+-e POSTGRES_REPLICATE_FROM_PORT="5432" \
+
+docker exec -it -u postgres postgresql-master psql -h 172.19.0.12 -U postgres
+docker exec -it -u postgres postgresql-master psql -h 172.19.0.12 -U testuser -d testdatabase
+
+docker exec -it -u postgres postgresql-slave psql -h 172.19.0.11 -U postgres
+docker exec -it -u postgres postgresql-slave psql -h 172.19.0.12 -U testuser -d testdatabase
+
+PgPool :
+
+-e POSTGRES_REPLICATION_NETWORK="172.19.0.0/16" \
+
+Run the first node init db :
+
+docker run --rm -it --net="postgresql" --ip 172.19.0.21 \
+--name postgresql-node-1 \
+-e POSTGRES_INIT_DB="true" \
+-e POSTGRES_REPLICATION_NETWORK="172.19.0.0/16" \
+-e POSTGRES_WAL_LEVEL="hot_standby" \
+-e POSTGRES_MAX_WAL_SENDERS="50" \
+-e POSTGRES_WAL_KEEPSEGMENTS="50" \
+-e POSTGRES_HOT_STANDBY="on" \
+-e POSTGRES_ARCHIVE_MODE="on" \
+postgresql
+
+docker run --rm -it --net="postgresql" --ip 172.19.0.22 \
+--name postgresql-node-2 \
+-e POSTGRES_REPLICATION_NETWORK="172.19.0.0/16" \
+-e POSTGRES_WAL_LEVEL="hot_standby" \
+-e POSTGRES_MAX_WAL_SENDERS="50" \
+-e POSTGRES_WAL_KEEPSEGMENTS="50" \
+-e POSTGRES_HOT_STANDBY="on" \
+-e POSTGRES_ARCHIVE_MODE="on" \
+-e POSTGRES_REPLICATE_FROM_IP="$(pgpool/scripts/get-master-host.sh pgpool-container 9999)" \
+-e POSTGRES_REPLICATE_FROM_PORT="5432" \
+-e POSTGRES_REPLICATION_TYPE="replication" \
+postgresql
+
+docker run --rm -it --net="postgresql" --ip 172.19.0.23 \
+--name postgresql-node-3 \
+-e POSTGRES_REPLICATION_NETWORK="172.19.0.0/16" \
+-e POSTGRES_WAL_LEVEL="hot_standby" \
+-e POSTGRES_MAX_WAL_SENDERS="50" \
+-e POSTGRES_WAL_KEEPSEGMENTS="50" \
+-e POSTGRES_HOT_STANDBY="on" \
+-e POSTGRES_ARCHIVE_MODE="on" \
+-e POSTGRES_REPLICATE_FROM_IP="172.19.0.21" \
+-e POSTGRES_REPLICATE_FROM_PORT="5432" \
+-e POSTGRES_REPLICATION_TYPE="replication" \
+postgresql
+
+listen_addresses = '*'
+wal_level = hot_standby
+max_wal_senders = 2
+wal_keep_segments = 50
+hot_standby = on
+archive_mode = on

@@ -1,0 +1,17 @@
+helm create mariadb
+
+helm lint ./mariadb/
+
+helm install --debug --dry-run ./mariadb/
+
+helm install ./mariadb --name mariadb --namespace mariadb
+
+kubectl run -it --rm --image=mariadb --namespace=mariadb --restart=Never mysql-client -- mysql -h mariadb -u root -proot
+
+kubectl run -it --rm --image=mariadb --namespace=mariadb --restart=Never mysql-client -- mysql -h mariadb -u mariadb -pmariadb
+
+kubectl run -it --rm --image=mariadb --namespace=mariadb --restart=Never mysql-client -- bash
+mysql -h mariadb -u mariadb -pmariadb
+
+helm delete mariadb --purge
+

@@ -1,0 +1,10 @@
+#! /bin/sh
+DATA=$1
+RECOVERY_TARGET=$2
+RECOVERY_DATA=$3
+
+psql -c "select pg_start_backup('pgpool-recovery')" postgres
+echo "restore_command = 'scp $HOSTNAME:/data/archive_log/%f %p'" > /data/recovery.conf
+tar -C /data -zcf pgsql.tar.gz pgsql
+psql -c 'select pg_stop_backup()' postgres
+scp pgsql.tar.gz $RECOVERY_TARGET:$RECOVERY_DATA

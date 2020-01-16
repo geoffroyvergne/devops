@@ -1,0 +1,8 @@
+Mesos :
+docker build -t mesos ./mesos
+
+docker run -it --entrypoint=bash \
+ mesos
+
+https://github.com/mesosphere/docker-containers/tree/master/mesos
+

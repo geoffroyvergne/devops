@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  php:
+    image: php-fpm
+    ports:
+      - "9000"
+    volumes:
+      - /Users/gv/www:/var/www/html
+    environment:
+      - PHP_BIND_HOST=0.0.0.0:9000
+      - PHP_ENABLE_ASP_TAGS=false
+      - PHP_ENABLE_OPEN_TAGS=false
+      - PHP_ENV=dev
+
+  haproxy:
+    image: dockercloud/haproxy
+    environment:
+      - MODE=tcp
+    ports:
+      - "9000:9000"
+    depends_on:
+      - php
+    links:
+      - php
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

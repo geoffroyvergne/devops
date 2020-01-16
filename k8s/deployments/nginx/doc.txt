@@ -1,0 +1,15 @@
+# Fast test
+
+kubectl create namespace nginx
+kubectl run nginx --image nginx --port=80 -n nginx
+kubectl expose deployment nginx --type=NodePort -n nginx
+
+kubectl delete svc,deployment --all -n nginx
+kubectl delete namespace nginx
+
+
+istioctl kube-inject -f nginx.yml | kubectl apply -f -
+
+curl -i -k https://nginx.192.168.33.16.nip.io
+
+curl registry.192.168.33.16.nip.io/v2/_catalog

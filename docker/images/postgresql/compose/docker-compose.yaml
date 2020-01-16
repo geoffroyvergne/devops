@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  postgresql:
+    image: postgresql
+    environment:
+      - POSTGRES_INIT_DB=true
+      - POSTGRES_ADDUSER=wildfly
+      - POSTGRES_ADDPASSWORD=wildfly
+    ports:
+      - "5432:5432"

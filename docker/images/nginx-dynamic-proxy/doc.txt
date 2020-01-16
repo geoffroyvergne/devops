@@ -1,0 +1,14 @@
+docker build -t nginx-dynamic-proxy .
+
+docker run -it --entrypoint=sh nginx-dynamic-proxy
+
+docker run --rm -it \
+--name nginx-dynamic-proxy \
+-p 80:80 \
+nginx-dynamic-proxy
+
+docker run --rm -it \
+--name nginx-dynamic-proxy \
+-p 81:81 \
+-e NGINX_PORT=81 \
+nginx-dynamic-proxy

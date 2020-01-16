@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  mariadb-master:
+    image: mariadb
+    ports:
+      - "3306:3306"
+    command: --wsrep-new-cluster --bind-address=0.0.0.0 --wsrep_cluster_name=galera_cluster --wsrep_cluster_address=gcomm://
+
+  mariadb-slave:
+    image: mariadb
+    #depends_on:
+    #  - mariadb-master
+    links:
+      - mariadb-master
+    command: --bind-address=0.0.0.0 --wsrep_cluster_name=galera_cluster --wsrep_cluster_address=gcomm://mariadb-master

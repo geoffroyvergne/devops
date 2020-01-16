@@ -1,0 +1,5 @@
+
+docker-compose -f ./jetty/compose/docker-compose.yaml up
+docker-compose -f ./jetty/compose/docker-compose.yaml ps
+
+docker-compose -f ./jetty/compose/docker-compose.yaml scale jetty-default=3

@@ -1,0 +1,26 @@
+
+
+batch
+
+module add \
+    --name=org.postgresql \
+    --resources=/tmp/postgresql-9.4.1209.jar \
+    --resource-delimiter=, \
+    --dependencies=javax.api,javax.transaction.api
+
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql, \
+    driver-module-name=org.postgresql, \
+    driver-class-name=org.postgresql.Driver, \
+    driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
+
+data-source add \
+    --name=PostgresqlDS \
+    --driver-name=postgresql \
+    --jndi-name=java:jboss/jdbc/PostgresqlDS \
+    --user-name=wildfly \
+    --password=wildfly \
+    --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker \
+    --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter \
+    --connection-url=jdbc:postgresql://postgresql-container:5432/wildfly
+
+run-batch

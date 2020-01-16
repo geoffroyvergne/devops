@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+  php:
+    build: ./php-fpm
+    volumes:
+      - /Users/gv/www:/var/www/html:ro
+      - /Users/gv/dev/docker/compose/nginx-php-mariadb/conf/php.ini:/usr/local/etc/php/php.ini:ro
+    depends_on:
+      - mariadb
+    links:
+      - mariadb
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - /Users/gv/www:/var/www/html:ro
+      - /Users/gv/dev/docker/compose/nginx-php-mariadb/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+    links:
+      - php
+
+  mariadb:
+    image: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - /data/db/docker/mariadb:/var/lib/mysql

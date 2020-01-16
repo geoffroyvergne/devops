@@ -1,0 +1,66 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: keycloak
+  labels:
+    app: keycloak
+spec:
+  selector:
+    matchLabels:
+      app: keycloak
+      tier: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: keycloak
+        tier: database
+    spec:
+      containers:
+        - image: postgres:alpine
+          name: postgres
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_DB
+              value: keycloak
+            - name: POSTGRES_USER
+              value: keycloak
+            - name: POSTGRES_PASSWORD
+              # value: keycloak
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak
+                  key: postgress-password
+          ports:
+            - containerPort: 5432
+              name: postgres
+          volumeMounts:
+            - name: postgres-keycloak-persistent-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-keycloak-persistent-storage
+          persistentVolumeClaim:
+            claimName: keycloaklocalvolume
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: keycloak
+  labels:
+    app: keycloak
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  selector:
+    app: keycloak
+    tier: database
+  clusterIP: None

@@ -1,0 +1,22 @@
+# NGINX
+
+helm create nginx-php
+
+helm lint ./web-dynamic
+
+helm install --debug --dry-run ./nginx-php/
+
+helm install ./nginx-php --name nginx-php --namespace web-dynamic
+
+helm upgrade nginx-php ./nginx-php
+
+curl $(minikube service -n web-dynamic nginx-php --url)
+
+# MARIADB
+
+helm install stable/mariadb --name mariadb --namespace web-dynamic --values=./mariadb/values.yaml
+helm upgrade stable/mariadb
+
+helm delete mariadb --purge
+
+helm upgrade mariadb ./mariadb/

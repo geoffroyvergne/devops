@@ -1,0 +1,53 @@
+haproxy :
+docker build -t haproxy ./haproxy
+docker exec -it haproxy-web-container bash
+
+
+docker run --rm -it --entrypoint=bash haproxy
+
+haproxy-container :
+
+WEB :
+
+docker run -d \
+--name haproxy-web-container \
+-e HAPROXY_STATS_AUTH="admin:admin" \
+-e HAPROXY_MODE="http" \
+-e HAPROXY_OVERRIDE_CONF="$(cat haproxy/conf/override_default_web.cfg)" \
+-p 80:80 -p 443:443 \
+haproxy
+
+docker run --rm -it \
+--name haproxy-web-container \
+-v /Users/gv/dev/docker/haproxy/conf/override_default_web.cfg:/tmp/override.cfg:ro \
+-e HAPROXY_STATS_AUTH="admin:admin" \
+-e HAPROXY_MODE="http" \
+-p 80:80 -p 443:443 \
+haproxy
+
+docker run --rm -it \
+--name haproxy-web-container \
+-v /Users/gv/dev/docker/haproxy/conf/haproxy-web.cfg:/tmp/default.cfg:ro \
+-e HAPROXY_STATS_AUTH="admin:admin" \
+-e HAPROXY_MODE="http" \
+-p 80:80 -p 443:443 \
+haproxy
+
+http://192.168.99.100/stats
+
+MYSQL :
+docker run -d \
+--name haproxy-mysql-container \
+-e HAPROXY_STATS_AUTH="admin:lol" \
+-e HAPROXY_OVERRIDE_CONF="$(cat haproxy/conf/override_default_mysql.cfg)" \
+-e HAPROXY_MODE="http" \
+-p 3300:3300 -p 3400:3400 \
+haproxy
+
+docker run --rm -it \
+--name haproxy-mysql-container \
+-v /Users/gv/dev/docker/haproxy/conf/haproxy-mysql.cfg:/etc/haproxy/haproxy.cfg:ro \
+-p 3300:3300 -p 3400:3400 \
+haproxy
+
+http://192.168.99.100:3400/stats

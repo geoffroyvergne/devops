@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  mongodb:
+      image: mongodb
+      user: mongodb
+      ports:
+        - 27017
+      command: --bind_ip 0.0.0.0 --port 27017

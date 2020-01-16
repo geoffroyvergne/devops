@@ -1,0 +1,25 @@
+
+# Mariadb
+docker-compose -f ./mariadb/compose/docker-compose.yaml up
+docker-compose -f ./mariadb/compose/docker-compose.yaml ps
+docker-compose -f ./mariadb/compose/docker-compose.yaml rm -f
+
+# Mariadb Galera Cluster
+docker-compose -f ./mariadb/compose/compose-mariadb-galera-cluster.yaml up
+docker-compose -f ./mariadb/compose/compose-mariadb-galera-cluster.yaml ps
+docker-compose -f ./mariadb/compose/compose-mariadb-galera-cluster.yaml rm -f
+
+docker-compose -f ./mariadb/compose/compose-mariadb-galera-cluster.yaml scale mariadb-slave=3
+
+--------------------
+
+docker exec -it -u mysql mariadb-slave-1 mysql -u root -proot -e 'show status like "wsrep_cluster_size"'
+
+docker exec -it mariadb-slave-1 mysql -u root -proot
+
+SHOW STATUS LIKE 'wsrep%';
+show status like "wsrep_cluster_size";
+SHOW VARIABLES LIKE "%version%";
+show variables where Variable_name like '%hostname%';
+show databases;
+

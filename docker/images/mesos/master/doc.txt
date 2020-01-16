@@ -1,0 +1,13 @@
+Mesos master :
+docker build -t mesos-master ./mesos/master
+docker run -it --entrypoint=bash mesos-master
+
+docker run -d \
+--name mesos-master-container \
+-e registry=in_memory \
+-e ip=192.168.99.100 \
+-e zk=zk://192.168.99.100:2181/mesos \
+-e log_dir=/var/log/mesos \
+-e cluster=mesos-cluster \
+-p 5050:5050 \
+mesos-master

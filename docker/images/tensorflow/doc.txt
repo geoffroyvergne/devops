@@ -1,0 +1,9 @@
+
+Start CPU only container
+docker run -it --rm -p 8888:8888 --name tensorflow tensorflow/tensorflow
+
+http://localhost:8888
+
+docker run -it --rm tensorflow/tensorflow python -c "import tensorflow as tf; print(tf.__version__)"
+
+docker run -it --rm -v $PWD:/tmp -w /tmp tensorflow/tensorflow python ./script.py

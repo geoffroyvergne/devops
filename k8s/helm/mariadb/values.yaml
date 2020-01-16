@@ -1,0 +1,42 @@
+# Default values for mariadb.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: mariadb
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3306
+  portName: mariadb
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+volumeMounts:
+  name: mariadb
+  claimName: mariadb
+
+volume:
+  accessModes: ReadWriteOnce
+  resourcesRequestsStorage: 20Gi
+
+secret:
+  data:
+    # echo -n "root" | base64
+    rootpassword: cm9vdA==
+    # echo -n "mariadb" | base64
+    userpassword: bWFyaWFkYg==
+
+env:
+  MYSQL_DATABASE: mariadb
+  MYSQL_USER: mariadb

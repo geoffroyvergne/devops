@@ -1,0 +1,1 @@
+kubectl apply -f <(istioctl kube-inject -f httpbin.yaml)

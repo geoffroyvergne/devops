@@ -1,0 +1,5 @@
+docker build -t chrome .
+
+docker run --rm -it --entrypoint=bash chrome
+
+google-chrome --no-sandbox --headless --disable-gpu --dump-dom https://google.com/

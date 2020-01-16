@@ -1,0 +1,16 @@
+docker run -it --rm --name node-express \
+    -v /Users/gv/dev/docker/swarm/nodejs/app:/usr/src/app:rw -w /usr/src/app \
+    -p 3000:3000 \
+    node:alpine node /usr/src/app/app.js
+
+docker run -it --rm --name node-express \
+    -p 3000:3000 \
+    gvergne/node-express node /usr/src/app/app.js
+
+docker service create --replicas 1 --name node-express --publish 3000:3000 localhost:5000/node-express node /usr/src/app/app.js
+
+docker service scale node-express=5
+
+-----------------
+
+docker deploy --compose-file docker-compose.yaml web-dynamic

@@ -1,0 +1,26 @@
+version: '2'
+
+services:
+  consul:
+    image: consul
+    restart: unless-stopped
+    ports:
+      - "8300:8300"
+      - "8400:8400"
+      - "8500:8500"
+    volumes:
+      - /data/db/docker/consul:/consul/data
+
+  vault:
+    image: vault
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - "8200:8200"
+    links:
+      - consul:consul
+    environment:
+      - VAULT_LOCAL_CONFIG=backend "consul" {address = "consul:8500"path = "vault"}
+    volumes:
+      - /data/db/docker/vault/file:/vault/file

@@ -1,0 +1,17 @@
+helm create postgres
+
+helm lint ./postgres/
+
+helm install --debug --dry-run ./postgres/
+
+helm install ./postgres --name postgres --namespace postgres
+
+kubectl run -it --rm --image=postgres --restart=Never postgres-client -- psql -h postgres -U user
+
+
+kubectl run -it --rm --image=postgres --namespace=postgres --restart=Never postgres-client -- bash
+
+psql -h postgres -U user
+
+helm delete postgres --purge
+

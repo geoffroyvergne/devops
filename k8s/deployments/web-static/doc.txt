@@ -1,0 +1,20 @@
+istioctl kube-inject -f web-static.yml | kubectl apply -f -
+
+curl -i -k https://webstatic.192.168.33.16.nip.io
+
+--------
+
+kubectl create namespace web-static
+
+kubectl apply -f .
+
+curl $(minikube service -n web-static web-static --url)
+
+kubectl get service,deployment,ing -n web-static
+
+kubectl delete service,deployment,ing -n web-static -l app=web-static
+
+kubectl delete service,deployment,ing -n web-static nginx
+
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./ssl/web-static.key -out ./ssl/web-static.crt

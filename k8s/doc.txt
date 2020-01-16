@@ -1,0 +1,67 @@
+Minikube
+
+# Install
+brew install compose2kube
+brew install kubectl
+brew cask install minikube
+
+# Run
+minikube start
+minikube start --memory 8192 --cpus 4 --disk-size 50g
+
+minikube ssh
+
+kubectl cluster-info
+https://192.168.99.100:8443/
+
+# Share docker daemon with minikube
+eval $(minikube docker-env)
+
+# Dashboard
+minikube dashboard
+http://192.168.99.100:30000
+
+# Test
+kubectl run hello-minikube --image=k8s.gcr.io/echoserver:1.4 --port=8080
+kubectl expose deployment hello-minikube --type=NodePort
+kubectl get pod
+curl $(minikube service hello-minikube --url)
+
+# Delete
+kubectl delete services hello-minikube
+kubectl delete deployment hello-minikube
+
+# Stop
+minikube stop
+
+# Restart after delete
+minikube delete
+
+#reset ip so that it keeps 192.168.99.100
+sudo /Library/Application\ Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh restart
+minikube stop
+
+#addon
+minikube addons list
+
+#Heapster
+minikube addons enable heapster
+minikube addons open heapster
+
+http://192.168.99.100:30002/
+
+#EFK
+minikube addons enable efk
+minikube addons open efk
+
+http://192.168.99.100:30003/
+
+# get all service across namespace
+kubectl get service --all-namespaces
+kubectl get po --all-namespaces
+
+kubectl exec -ti hello-minikube-c6c6764d-h4t52 -- bash
+
+kubectl logs -f hello-minikube-c6c6764d-h4t52
+
+

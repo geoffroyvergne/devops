@@ -1,0 +1,37 @@
+Mesos Marathon :
+docker build -t mesos-marathon ./mesos/marathon
+
+docker run -it --entrypoint=bash mesos-marathon
+
+docker run -d --name mesos-marathon --privileged \
+    --link zookeeper-container:zookeeper-container \
+    -p 9090:9090 \
+    mesos-marathon \
+    --master zk://zookeeper-container:2181/mesos --zk zk://zookeeper-container:2181/marathon --http_port 9090
+
+Hello Marathon basic app :
+
+curl -X GET http://192.168.56.1:9090/v2/apps | python -m json.tool
+
+curl -X POST http://192.168.56.1:9090/v2/apps -d @mesos/marathon/app/hello-marathon.json -H "Content-type: application/json"
+curl -X GET http://192.168.56.1:9090/v2/apps/basic-0/tasks
+
+curl -X POST http://192.168.56.1:9090/v2/apps -d @mesos/marathon/app/elasticsearch.json -H "Content-type: application/json"  | python -m json.tool
+curl -X POST http://192.168.56.1:9090/v2/apps -d @mesos/marathon/app/elasticsearch-jar.json -H "Content-type: application/json"  | python -m json.tool
+
+curl -X DELETE http://192.168.56.1:9090/v2/apps/elasticsearch | python -m json.tool
+
+curl 'http://192.168.56.1:9200/_cat/health?v'
+
+
+https://hub.docker.com/r/thefactory/marathon/
+docker run --name mesos-marathon \
+    -p 8080:8080 \
+    thefactory/marathon:latest \
+    --master local --zk zk://192.168.56.1:2181/marathon
+
+docker run \
+    --net=host \
+    -p 8080:8080 \
+    thefactory/marathon:latest \
+    --master local --zk zk://192.168.56.1:2181/marathon

@@ -1,0 +1,23 @@
+SPARK :
+docker build -t spark ./spark
+
+RUN LOCAL :
+docker run --rm -it spark /opt/spark/bin/spark-shell --master local[2]
+
+docker run --rm -it spark bash
+
+RUN SPARK STANDALONE CLUSTER :
+
+docker run --rm -it \
+gettyimages/spark \
+bin/spark-shell --master spark://192.168.99.1:7077
+
+docker run --rm -it \
+spark \
+/opt/spark/bin/spark-shell --master spark://192.168.99.1:7077 \
+--driver-memory 512M \
+--executor-memory 512M \
+--executor-cores 1
+
+sc.parallelize(1 to 1000).count()
+

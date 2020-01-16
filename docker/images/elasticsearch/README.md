@@ -1,0 +1,1 @@
+# Docker Elasticsearch base image

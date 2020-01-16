@@ -1,0 +1,13 @@
+kubectl apply -f base.yml
+kubectl apply -f nginx-statefulset.yml
+
+Scale :
+kubectl scale statefulset nginx --replicas=3 -n statefulset
+
+delete statefulset
+kubectl delete statefulset nginx -n statefulset
+kubectl delete -f nginx-statefulset.yml
+
+
+force pod delete :
+kubectl delete pod nginx-0 -n statefulset --grace-period=0 --force

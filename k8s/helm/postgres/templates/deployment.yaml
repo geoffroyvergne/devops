@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "postgres.fullname" . }}
+  #namespace: postgres
+  labels:
+    app: {{ template "postgres.name" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "postgres.name" . }}
+      tier: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ template "postgres.name" . }}
+        tier: database
+    spec:
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        name: {{ .Chart.Name }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: POSTGRES_DB
+          value: {{ .Values.env.POSTGRES_DB }}
+        - name: POSTGRES_USER
+          value: {{ .Values.env.POSTGRES_USER }}
+        - name: POSTGRES_PASSWORD
+          #value: user
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "postgres.fullname" . }}
+              key: userpassword
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          name: {{ .Values.service.portName }}
+        volumeMounts:
+        - name: {{ .Values.volumeMounts.name }}
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: {{ .Values.volumeMounts.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.volumeMounts.claimName }}

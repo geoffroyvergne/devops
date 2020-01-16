@@ -1,0 +1,15 @@
+
+Static :
+docker-compose -f ./nginx/compose/nginx-static.yaml up
+docker-compose -f ./nginx/compose/nginx-static.yaml ps
+docker-compose -f ./nginx/compose/nginx-static.yaml rm -f
+
+docker-compose -f ./nginx/compose/nginx-static.yaml scale nginx-static=5
+
+PHP :
+docker-compose -f ./nginx/compose/nginx-php.yaml up
+docker-compose -f ./nginx/compose/nginx-php.yaml ps
+docker-compose -f ./nginx/compose/nginx-php.yaml rm -f
+
+docker-compose -f ./nginx/compose/nginx-php.yaml scale nginx=3
+docker-compose -f ./nginx/compose/nginx-php.yaml scale php=3

@@ -1,0 +1,28 @@
+#HELM
+brew install kubernetes-helm
+helm init --history-max 10
+
+helm install ./mychart/ --name test --namespace test --values=./testapi-chart/dev-values.yaml
+helm install --debug --dry-run ./mychart
+
+# delete all deleted
+helm ls --deleted --short | xargs -L1 helm delete --purge
+
+# delete all
+helm ls --short | xargs -L1 helm delete --purge
+
+# upgrade
+helm upgrade test ./testapi-chart
+
+# rollback
+helm rollback test 6
+
+helm history test
+
+# install prerequists
+
+kubectl create serviceaccount --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+helm init --upgrade --service-account tiller
+

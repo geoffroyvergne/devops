@@ -1,0 +1,5 @@
+
+docker-compose -f ./mesos/compose/docker-compose.yaml up
+docker-compose -f ./mesos/compose/docker-compose.yaml ps
+
+docker-compose -f ./mesos/compose/docker-compose.yaml scale mesos-slave=3

@@ -1,0 +1,39 @@
+version: '2'
+
+services:
+  elasticsearch-master:
+    image: elasticsearch
+    user: elasticsearch
+    command: ["-Des.bootstrap.mlockall=true", "-Des.cluster.name=elasticsearch-cluster",
+      "-Des.cluster.routing.allocation.disk.threshold_enabled=false",
+      "-Des.node.master=true", "-Des.node.data=true",
+      "-Des.path.conf=/etc/elasticsearch", "-Des.path.logs=/var/log/elasticsearch", "-Des.path.data=/var/lib/elasticsearch",
+      "-Des.node.name=master-1",
+      "-Des.network.bind_host=0.0.0.0", "-Des.http.port=9200", "-Des.transport.tcp.port=9300",
+      "-Des.discovery.zen.ping.multicast.enabled=false"]
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  elasticsearch-slave:
+      image: elasticsearch
+      user: elasticsearch
+      depends_on:
+        - elasticsearch-master
+      links:
+        - elasticsearch-master
+      command: ["-Des.bootstrap.mlockall=true",
+       "-Des.cluster.name=elasticsearch-cluster",
+       "-Des.cluster.routing.allocation.disk.threshold_enabled=false",
+       "-Des.node.master=false",
+       "-Des.node.data=true",
+       "-Des.path.conf=/etc/elasticsearch",
+       "-Des.path.logs=/var/log/elasticsearch",
+       "-Des.path.data=/var/lib/elasticsearch",
+       "-Des.network.host=_eth0:ipv4_",
+       "-Des.network.bind_host=0.0.0.0",
+       "-Des.discovery.zen.ping.multicast.enabled=false",
+       "-Des.discovery.zen.ping.unicast.hosts=elasticsearch-master"]
+    ports:
+      - "9200"
+      - "9300"

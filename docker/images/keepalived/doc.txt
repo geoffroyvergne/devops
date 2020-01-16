@@ -1,0 +1,35 @@
+Keepalived :
+docker build -t keepalived ./keepalived
+docker run --rm -it --entrypoint=bash keepalived
+
+curl -Isk 192.168.99.100:81
+
+docker exec -it keepalived-container bash
+ip addr show eth0
+
+KEEPALIVED_VIRTUAL_IP:-127.0.0.1
+KEEPALIVED_IP_CHECK:-127.0.0.1
+KEEPALIVED_PORT_CHECK:-1883
+KEEPALIVED_INTERFACE_CHECK:-eth0
+KEEPALIVED_INSTANCE_STATE:-MASTER
+KEEPALIVED_INSTANCE_PRIORITY:-101
+
+docker run --rm -it \
+--name keepalived-container \
+--net=host --privileged --cap-add=NET_ADMIN \
+keepalived
+
+Master :
+docker run --rm -it \
+--name keepalived-master \
+--net=host --privileged --cap-add=NET_ADMIN \
+-e "KEEPALIVED_VIRTUAL_IP=192.168.56.23" -e "KEEPALIVED_IP_CHECK=192.168.99.100" -e "KEEPALIVED_PORT_CHECK=80" -e "KEEPALIVED_INTERFACE_CHECK=eth0" \
+keepalived
+
+Slave :
+docker run --rm -it \
+--name keepalived-slave \
+--net=host --privileged --cap-add=NET_ADMIN \
+-e "KEEPALIVED_VIRTUAL_IP=192.168.0.101" -e "KEEPALIVED_IP_CHECK=192.168.99.100" -e "KEEPALIVED_PORT_CHECK=80" -e "KEEPALIVED_INTERFACE_CHECK=eth0" \
+-e "KEEPALIVED_INSTANCE_PRIORITY=100" -e "KEEPALIVED_INSTANCE_STATE=BACKUP" \
+keepalived

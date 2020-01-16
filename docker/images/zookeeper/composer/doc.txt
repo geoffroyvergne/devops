@@ -1,0 +1,3 @@
+
+docker-compose -f ./zookeeper/composer/docker-compose.yaml up
+docker-compose -f ./zookeeper/composer/docker-compose.yaml ps

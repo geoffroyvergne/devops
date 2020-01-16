@@ -1,0 +1,5 @@
+docker run -p 8080:8080 -p 50000:50000 -v /data/db/jenkins:/var/jenkins_home jenkins/jenkins:lts
+
+docker exec -it jenkins-local bash
+
+docker run --rm -it --entrypoint=bash jenkins-local

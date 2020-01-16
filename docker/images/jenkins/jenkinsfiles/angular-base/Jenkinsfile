@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Fetch') {
+            steps {
+                echo 'Fetching...'
+                git 'https://github.com/geoffroyvergne/angular-starter.git'
+            }
+        }
+        stage('Dependencies') {
+            steps {
+                echo 'Dependencies...'
+                sh 'npm install'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                sh 'ng build'
+            }
+        }
+        stage('Lint') {
+            steps {
+                echo 'Lint...'
+                sh 'ng lint'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                sh 'ng test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+            }
+        }
+    }
+}

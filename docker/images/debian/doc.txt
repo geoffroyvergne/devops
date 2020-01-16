@@ -1,0 +1,3 @@
+debian :
+docker build -t debian ./debian
+docker run --rm -it debian bash

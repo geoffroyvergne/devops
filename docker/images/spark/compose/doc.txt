@@ -1,0 +1,5 @@
+
+docker-compose -f ./spark/compose/docker-compose.yaml up
+docker-compose -f ./spark/compose/docker-compose.yaml ps
+
+docker-compose -f ./spark/compose/docker-compose.yaml scale spark-slave=2

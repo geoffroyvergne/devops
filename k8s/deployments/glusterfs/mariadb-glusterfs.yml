@@ -1,0 +1,61 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: mariadb-glusterfs
+spec:
+
+  volumes:
+    - name: glusterfs-volume
+      glusterfs:
+        endpoints: glusterfs-endpoint
+        path: testvol
+
+  containers:
+  - image: mariadb
+    name: mariadb
+    imagePullPolicy: IfNotPresent
+    env:
+      - name: MYSQL_DATABASE
+        value: mariadb
+      - name: MYSQL_USER
+        value: mariadb
+      - name: MYSQL_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: mariadb
+            key: userpassword
+      - name: MYSQL_ROOT_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: mariadb
+            key: rootpassword
+    ports:
+      - containerPort: 3306
+        name: mariadb
+    volumeMounts:
+      - name: glusterfs-volume
+        mountPath: /var/lib/mysql
+
+---
+
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: glusterfs-endpoint
+subsets:
+  - addresses:
+      - ip: 192.168.99.50
+    ports:
+      - port: 1
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mariadb
+data:
+  # echo -n "root" | base64
+  rootpassword: cm9vdA==
+  # echo -n "mariadb" | base64
+  userpassword: bWFyaWFkYg==

@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  cassandra-seeds:
+    image: cassandra
+    user: cassandra
+    ports:
+      - 9042
+      - 9160
+
+  cassandra-node:
+      image: cassandra
+      user: cassandra
+      ports:
+        - 9042
+        - 9160
+      links:
+        - cassandra-seeds
+      environment:
+        - CASSANDRA_SEEDS=cassandra-seeds

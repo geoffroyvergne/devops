@@ -1,0 +1,22 @@
+
+use test;
+db.test.insert({"name":"test"});
+db.test.find();
+
+Accept as slave
+rs.slaveOk();
+
+use auth;
+
+add :
+db.users.insert({"name":"test"});
+
+get :
+db.users.find();
+db.users.find({"name":"test"});
+
+update :
+db.users.update({"name":"test"}, {$set:{"name":"test2"}});
+
+delete :
+db.users.remove({"name":"test2"});

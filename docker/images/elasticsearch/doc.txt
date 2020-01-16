@@ -1,0 +1,118 @@
+Elasticsearch :
+docker build -t elasticsearch ./elasticsearch
+docker run --rm -it --entrypoint=bash elasticsearch
+
+http://192.168.99.1:9200/_plugin/head/
+
+https://github.com/docker-library/elasticsearch/issues/68
+
+--env="ES_HEAP_SIZE=1g" \
+
+Backup:
+
+docker run --rm --volumes-from elasticsearch-data-standalone \
+-v /Users/gv/dev/docker/backup/elasticsearch/elasticsearch/mac:/backup \
+gvergne/debian:latest \
+sh -c "cd /var/lib && tar cvf /backup/elasticsearch.tar elasticsearch"
+
+Restore :
+
+docker run --rm --volumes-from elasticsearch-data-standalone \
+-v /Users/gv/dev/docker/backup/mongodb/elasticsearch/mac:/backup \
+gvergne/debian:latest \
+sh -c "cd /var/lib/elasticsearch && tar xvf /backup/elasticsearch.tar --strip 1"
+
+Standalone :
+
+docker run --rm -it -u elasticsearch \
+--name elasticsearch-master-1 \
+-p 9200:9200 -p 9300:9300 \
+elasticsearch \
+-Des.bootstrap.mlockall=true \
+-Des.cluster.name=elasticsearch-cluster \
+-Des.cluster.routing.allocation.disk.threshold_enabled=false \
+-Des.path.conf=/etc/elasticsearch \
+-Des.path.logs=/var/log/elasticsearch \
+-Des.path.data=/var/lib/elasticsearch \
+-Des.node.name="elasticsearch" \
+-Des.network.host=192.168.99.100 \
+-Des.network.bind_host=0.0.0.0 \
+-Des.http.port=9200 \
+-Des.transport.tcp.port=9300 \
+-Des.discovery.zen.ping.multicast.enabled=false
+
+MASTER 1 :
+docker run --rm \
+--name elasticsearch-master-1 \
+-p 9200:9200 -p 9300:9300 \
+elasticsearch \
+-Des.bootstrap.mlockall=true \
+-Des.cluster.name=elasticsearch-cluster \
+-Des.cluster.routing.allocation.disk.threshold_enabled=false \
+-Des.node.master=true \
+-Des.node.data=true \
+-Des.path.conf=/etc/elasticsearch \
+-Des.path.logs=/var/log/elasticsearch \
+-Des.path.data=/var/lib/elasticsearch \
+-Des.node.name="master-1" \
+-Des.network.host=192.168.99.100 \
+-Des.network.bind_host=0.0.0.0 \
+-Des.http.port=9200 \
+-Des.transport.tcp.port=9300 \
+-Des.discovery.zen.ping.multicast.enabled=false
+
+-v /Users/gv/dev/docker/elasticsearch/data:/var/lib/elasticsearch \
+-Des.node.master=true \
+-Des.node.data=true \
+-Des.discovery.zen.ping.multicast.ttl=30
+-Des.node.name="master-1" \
+
+SLAVE 1 :
+docker run --rm \
+--name elasticsearch-slave-1 \
+-v /Users/gv/dev/docker/elasticsearch/data/slave1:/var/lib/elasticsearch \
+--link elasticsearch-master-1:elasticsearch-master-1 \
+elasticsearch \
+-Des.bootstrap.mlockall=true \
+-Des.cluster.name=elasticsearch-cluster \
+-Des.cluster.routing.allocation.disk.threshold_enabled=false \
+-Des.node.master=false \
+-Des.node.data=true \
+-Des.path.conf=/etc/elasticsearch \
+-Des.path.logs=/var/log/elasticsearch \
+-Des.path.data=/var/lib/elasticsearch \
+-Des.node.name="slave-1" \
+-Des.network.host=_eth0:ipv4_ \
+-Des.network.bind_host=0.0.0.0 \
+-Des.discovery.zen.ping.multicast.enabled=false \
+-Des.discovery.zen.ping.unicast.hosts=elasticsearch-master-1
+
+-Des.node.master=false \
+-Des.node.data=true \
+--link elasticsearch-master-1:elasticsearch-master-1 \
+-Des.network.host=_eth0:ipv4_ \
+-Des.discovery.zen.ping.multicast.enabled=true \
+-Des.discovery.zen.ping.multicast.ttl=30
+
+
+-Des.node.master=false \
+-Des.node.data=true \
+
+SLAVE 2 :
+docker run --rm \
+--name elasticsearch-slave-2 \
+--link elasticsearch-master-1:elasticsearch-master-1 \
+elasticsearch \
+-Des.bootstrap.mlockall=true \
+-Des.cluster.name=elasticsearch-cluster \
+-Des.cluster.routing.allocation.disk.threshold_enabled=false \
+-Des.node.master=false \
+-Des.node.data=true \
+-Des.path.conf=/etc/elasticsearch \
+-Des.path.logs=/var/log/elasticsearch \
+-Des.path.data=/var/lib/elasticsearch \
+-Des.node.name="slave-2" \
+-Des.network.host=_eth0:ipv4_ \
+-Des.network.bind_host=0.0.0.0 \
+-Des.discovery.zen.ping.multicast.enabled=false \
+-Des.discovery.zen.ping.unicast.hosts=elasticsearch-master-1

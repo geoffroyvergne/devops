@@ -1,0 +1,102 @@
+---
+
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: webstatic
+  labels:
+    name: webstatic
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webstatic
+  namespace: webstatic
+spec:
+  selector:
+    matchLabels:
+      app: webstatic
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webstatic
+    spec:
+      containers:
+        - name: webstatic
+          image: registry.192.168.33.16.nip.io/library/web-static
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: webstatic
+  namespace: webstatic
+  labels:
+    app: webstatic
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: webstatic
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: webstatic
+  namespace: webstatic
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      #tls:
+      #  httpsRedirect: true
+      hosts:
+        - "webstatic.192.168.33.16.nip.io"
+    - port:
+        number: 443
+        name: https-webstatic
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+        privateKey: /etc/istio/ingressgateway-certs/tls.key
+      hosts:
+        - "webstatic.192.168.33.16.nip.io"
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: webstatic
+  namespace: webstatic
+spec:
+  hosts:
+    - "webstatic.192.168.33.16.nip.io"
+  gateways:
+    - webstatic
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: webstatic
+            port:
+              number: 80

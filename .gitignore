@@ -17,3 +17,7 @@
 **/*.tfvars
 **/*.plan
 **/azurek8s
+**/compose/continuous-integration/gitlab/applications/*
+**/data/**
+**/old/**
+**/app/**

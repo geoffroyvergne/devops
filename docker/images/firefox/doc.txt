@@ -1,0 +1,5 @@
+docker build -t firefox .
+
+docker run --rm -it --entrypoint=bash firefox
+
+https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=fr

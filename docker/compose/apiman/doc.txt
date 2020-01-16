@@ -1,0 +1,8 @@
+docker run -it -p 8080:8080 -p 8443:8443 apiman/on-wildfly10
+
+apiman ui
+http://localhost:8080/apimanui/
+
+keycloak admin
+http://localhost:8080/auth
+

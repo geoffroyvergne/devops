@@ -1,0 +1,31 @@
+php-fpm :
+docker build -t php-fpm ./php
+docker run -it --entrypoint=bash php-fpm
+
+docker exec -it php-fpm-container bash
+
+
+docker run --rm -it \
+--name php-fpm-container \
+-v /Users/gv/www:/var/www/html \
+-e PHP_BIND_HOST=0.0.0.0:9000 \
+-e PHP_ENABLE_ASP_TAGS=false \
+-e PHP_ENABLE_OPEN_TAGS=false \
+-e PHP_ENV=dev \
+-p 9000:9000 \
+php-fpm
+
+--link mariadb-container:mariadb-container \
+
+
+docker run --rm -it \
+--name php-fpm-container \
+-v /Users/gv/www:/var/www/html \
+--volume /Users/gv/dev/docker/php/conf/www.conf:/tmp/www.conf:ro \
+--volume /Users/gv/dev/docker/php/conf/php.ini:/tmp/php.ini:ro \
+--volume /Users/gv/dev/docker/php/conf/php-fpm.conf:/etc/php5/fpm/php-fpm.conf:ro \
+-p 9000:9000 \
+php-fpm
+
+--link mariadb-container:mariadb-container \
+--volumes-from web-data \

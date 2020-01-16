@@ -1,0 +1,8 @@
+# Pgpool
+docker-compose -f ./pgpool/compose/docker-compose.yaml up
+docker-compose -f ./pgpool/compose/docker-compose.yaml ps
+docker-compose -f ./pgpool/compose/docker-compose.yaml rm -f
+
+docker-compose -f ./pgpool/compose/docker-compose.yaml scale postgresql-slave=1
+
+docker-compose -f ./pgpool/compose/docker-compose.yaml up postgresql-slave

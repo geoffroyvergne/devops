@@ -1,0 +1,36 @@
+docker build -t custom-keycloak ./
+
+docker run -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin custom-keycloak
+
+docker run --rm -it --entrypoint=bash custom-keycloak
+
+Add User
+.keycloak//bin/add-user-keycloak.sh -u admin -p admin
+
+docker exec -it
+
+docker restart custom-keycloak
+
+Import Realms
+./bin/standalone.sh -Dkeycloak.migration.action=import \
+-Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/keycloak-test.json \
+-Dkeycloak.migration.strategy=OVERWRITE_EXISTING
+
+docker run --rm -it --entrypoint=bash custom-keycloak
+
+Postgres
+docker run --name postgres -e POSTGRES_DB=keycloak -e POSTGRES_USER=keycloak -e POSTGRES_PASSWORD=password -d postgres
+
+Run
+docker run --rm -it \
+--name custom-keycloak \
+-p 8080:8080 \
+--link postgres:postgres \
+custom-keycloak
+
+docker run --rm -it \
+--name custom-keycloak \
+-e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin \
+-p 8080:8080 \
+--link postgres:postgres \
+custom-keycloak

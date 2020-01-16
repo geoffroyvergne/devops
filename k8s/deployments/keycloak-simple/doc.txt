@@ -1,0 +1,11 @@
+
+kubectl create namespace keycloak
+
+kubectl apply -f .
+
+curl $(minikube service keycloak --url)
+curl $(minikube service -n keycloak keycloak --url)
+
+kubectl delete service,deployment,ing -n keycloak keycloak
+
+docker run -it --rm -p 8080:8080 jboss/keycloak

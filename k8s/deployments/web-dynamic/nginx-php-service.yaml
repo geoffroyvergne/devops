@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: web-dynamic
+  namespace: web-dynamic
+  labels:
+    app: web-dynamic
+spec:
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+  selector:
+    app: web-dynamic
+  #type: NodePort
+  type: LoadBalancer
+  #sessionAffinity: None
+  sessionAffinity: ClientIP

@@ -1,0 +1,6 @@
+docker build -t nginx-static .
+
+curl localhost:5000/v2/_catalog
+
+docker tag nginx-static localhost:5000/nginx-static
+docker push localhost:5000/nginx-static

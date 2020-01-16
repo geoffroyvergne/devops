@@ -1,0 +1,42 @@
+image: docker:stable
+
+services:
+  - name: docker:dind
+    command: ["--insecure-registry=registry.192.168.33.10.nip.io"]
+
+stages:
+  - build
+  - package
+  - deploy
+
+before_script:
+#  - "npm install"
+#  - "source /etc/profile"
+#  - docker info
+#  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.192.168.33.10.nip.io
+
+ng-build:
+  image: johnpapa/angular-cli
+  stage: build
+  script:
+  - "npm install"
+  - "ng build"
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - dist/*
+  tags: [docker]
+
+docker-build:
+  stage: package
+  script:
+  - docker build -t angular .
+  - docker tag angular registry.192.168.33.10.nip.io/gvergne/angular:latest
+  #tags: [shell]
+
+deploy:
+  stage: deploy
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.192.168.33.10.nip.io
+  - docker push registry.192.168.33.10.nip.io/gvergne/angular:latest
+  #tags: [shell]

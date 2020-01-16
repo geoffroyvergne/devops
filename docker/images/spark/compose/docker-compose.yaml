@@ -1,0 +1,47 @@
+zookeeper:
+  image: zookeeper
+  ports:
+    - "2181:2181"
+
+spark-master:
+  image: spark
+  command: bin/spark-class org.apache.spark.deploy.master.Master -h spark-master --port 7077 --webui-port 8585
+  hostname: spark-master
+  environment:
+    SPARK_DAEMON_JAVA_OPTS: "-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url=zookeeper:2181 -Dspark.deploy.zookeeper.dir=/spark"
+    MASTER: spark://spark-master:7077
+    SPARK_CONF_DIR: /conf
+  links:
+    - zookeeper
+  expose:
+    - 7001
+    - 7002
+    - 7003
+    - 7004
+    - 7005
+    - 7006
+    - 7077
+    - 6066
+  ports:
+    - 4040:4040
+    - 6066:6066
+    - 7077:7077
+    - 8585:8585
+
+spark-slave:
+  image: spark
+  command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077 --port 7077 --webui-port 8686
+  hostname: spark-slave
+  environment:
+    SPARK_CONF_DIR: /conf
+    SPARK_WORKER_CORES: 2
+    SPARK_WORKER_MEMORY: 1g
+  links:
+    - spark-master
+  expose:
+    - 7012
+    - 7013
+    - 7014
+    - 7015
+    - 7016
+    - 7077

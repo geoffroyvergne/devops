@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "mariadb.fullname" . }}
+  #namespace: mariadb
+  labels:
+    app: {{ template "mariadb.name" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "mariadb.name" . }}
+      tier: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ template "mariadb.name" . }}
+        tier: database
+    spec:
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        name: {{ .Chart.Name }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: MYSQL_DATABASE
+          value: {{ .Values.env.MYSQL_DATABASE }}
+        - name: MYSQL_USER
+          value: {{ .Values.env.MYSQL_USER }}
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "mariadb.fullname" . }}
+              key: userpassword
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "mariadb.fullname" . }}
+              key: rootpassword
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          name: {{ .Values.service.portName }}
+        volumeMounts:
+        - name: {{ .Values.volumeMounts.name }}
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: {{ .Values.volumeMounts.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.volumeMounts.claimName }}

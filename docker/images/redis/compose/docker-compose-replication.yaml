@@ -1,0 +1,15 @@
+
+redis-master:
+  image: redis
+  ports:
+    - 6379
+  command: --port 6379
+
+redis-slave:
+    image: redis
+    ports:
+      - 6379
+    command: --port 6379 --slaveof redis-master 6379
+    links:
+      - redis-master
+

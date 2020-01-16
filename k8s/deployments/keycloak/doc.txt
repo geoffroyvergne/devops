@@ -1,0 +1,7 @@
+
+kubectl apply -f local-volume.yml
+kubectl apply -f keycloak-postgres.yml
+
+istioctl kube-inject -f keycloak.yml | kubectl apply -f -
+
+curl -i keycloak.192.168.33.16.nip.io

@@ -1,0 +1,34 @@
+
+https://getkong.org/docs/0.12.x/admin-api/
+
+curl -i http://localhost:8001/
+curl http://localhost:8001/ | jq
+
+curl http://localhost:8001/apis/ | jq
+
+curl -i -X POST \
+  --url http://localhost:8001/apis/ \
+  --data 'name=example-api' \
+  --data 'hosts=localhost.example.com' \
+  --data 'upstream_url=http://mockbin.org' \
+  --data 'uris=/,/example-api'
+
+curl -i -X PATCH \
+    --url http://localhost:8001/apis/example-api \
+    --data 'uris=/,/example-api' \
+    --data 'upstream_url=http://mockbin.com'
+
+curl -i -X GET \
+  --url http://localhost:8000/ \
+  --header 'Host: localhost.example.com'
+
+curl -i -X GET \
+  --url 'http://localhost:8000/request?foo=bar&foo=baz' \
+  --header 'Host: localhost.example.com'
+
+http://mockbin.com/request?foo=bar&foo=baz
+curl http://localhost.example.com:8000/request?foo=bar&foo=baz
+
+
+curl -X DELETE --url http://localhost:8001/apis/example-api
+

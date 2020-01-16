@@ -1,0 +1,23 @@
+# Mongodb
+docker-compose -f ./mongodb/compose/docker-compose.yaml up
+docker-compose -f ./mongodb/compose/docker-compose.yaml ps
+docker-compose -f ./mongodb/compose/docker-compose.yaml rm -f
+
+# Mongodb
+docker-compose -f ./mongodb/compose/mongodb-replicaset.yaml up
+docker-compose -f ./mongodb/compose/mongodb-replicaset.yaml ps
+docker-compose -f ./mongodb/compose/mongodb-replicaset.yaml rm -f
+
+docker-compose -f ./mongodb/compose/mongodb-replicaset.yaml scale mongodb-node=4
+
+docker exec -it compose_mongodb-node_1 mongo --eval "\
+rs.initiate(); \
+rs.conf(); \
+rs.add('compose_mongodb-node_1'); \
+rs.add('compose_mongodb-node_2'); \
+rs.add('compose_mongodb-node_3'); \
+rs.add('compose_mongodb-node_4'); \
+rs.status(); \
+"
+
+docker exec -it compose_mongodb-node_1 mongo --eval "rs.status();"

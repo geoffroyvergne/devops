@@ -1,0 +1,8 @@
+kubectl create namespace mariadb
+
+kubectl apply -f .
+
+kubectl delete service,deployment,pvc,secret -n mariadb mariadb
+
+kubectl run -it --rm --image=mariadb --namespace=mariadb --restart=Never mysql-client -- mysql -h mariadb -u mariadb -pmariadb
+

@@ -1,0 +1,54 @@
+version: '2'
+
+services:
+  zookeeper:
+    image: zookeeper
+    ports:
+      - "2181:2181"
+
+  mesos-master:
+    privileged: true
+    image: mesos-ubuntu-master
+    ports:
+      - "5050:5050"
+    environment:
+      - MESOS_PORT=5050
+      - MESOS_QUORUM=1
+      - MESOS_REGISTRY=in_memory
+      - MESOS_CONTAINERIZERS=docker,mesos
+      - MESOS_LOG_DIR=/var/log/mesos
+      - MESOS_WORK_DIR=/var/tmp/mesos
+      - MESOS_ZK=zk://zookeeper:2181/mesos
+    links:
+      - zookeeper
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  mesos-slave:
+    privileged: true
+    image: mesos-ubuntu-slave
+    environment:
+      - MESOS_PORT=5050
+      - MESOS_MASTER=zk://zookeeper:2181/mesos
+      - MESOS_SWITCH_USER=0
+      - MESOS_CONTAINERIZERS=docker,mesos
+      - MESOS_LOG_DIR=/var/log/mesos
+      - MESOS_WORK_DIR=/var/tmp/mesos
+    links:
+      - zookeeper
+      - mesos-master
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  marathon:
+    privileged: true
+    image: mesos-marathon
+    links:
+      - zookeeper
+    depends_on:
+      - zookeeper
+      - mesos-master
+      - mesos-slave
+    ports:
+      - "9090:9090"
+    command: --master zk://zookeeper:2181/mesos --zk zk://zookeeper:2181/marathon --http_port 9090

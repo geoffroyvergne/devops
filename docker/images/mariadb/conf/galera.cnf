@@ -1,0 +1,10 @@
+[mysqld]
+bind-address=0.0.0.0
+
+[galera]
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so 
+binlog_format=ROW
+wsrep_cluster_address='gcomm://'
+wsrep_cluster_name='galera_cluster'
+wsrep_node_name='node1'

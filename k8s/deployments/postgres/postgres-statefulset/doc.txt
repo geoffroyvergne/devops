@@ -1,0 +1,35 @@
+Configmap
+
+cd config && ./create_configmap.sh
+
+kubectl get configmap -n postgres -o yaml > configmap.yml
+
+Install :
+
+kubectl apply -f base.yml
+kubectl apply -f configmap.yml
+
+kubectl apply -f postgres-statefulset-master.yml
+kubectl apply -f postgres-statefulset-replica.yml
+
+Scale :
+kubectl scale statefulset postgres-replica --replicas=3 -n postgres
+
+kubectl get pod -n postgres -w
+
+delete statefulset
+kubectl delete statefulset postgres -n postgres
+kubectl delete statefulset postgres-replica -n postgres
+
+
+kubectl delete -f postgres-statefulset-master.yml
+kubectl delete -f postgres-statefulset-replica.yml
+
+force pod delete :
+kubectl delete pod postgres-0  -n postgres --grace-period=0 --force
+
+Client :
+kubectl exec -ti postgres-0 -n postgres psql
+
+select application_name, state, sync_priority, sync_state from pg_stat_replication;
+select * from pg_stat_replication;

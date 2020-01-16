@@ -1,0 +1,9 @@
+docker pull richarvey/nginx-php-fpm:latest
+
+docker build -t nginx-php ./
+
+docker run --rm -it --entrypoint=sh nginx-php
+
+docker run -it --rm --name nginx-php \
+    -p 80:80 \
+    nginx-php

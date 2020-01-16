@@ -1,0 +1,57 @@
+version: '2'
+
+services:
+  elasticsearch-master:
+    image: elasticsearch
+    user: elasticsearch
+    command: ["-Des.bootstrap.mlockall=true", "-Des.cluster.name=elasticsearch-cluster",
+      "-Des.cluster.routing.allocation.disk.threshold_enabled=false",
+      "-Des.node.master=true", "-Des.node.data=true",
+      "-Des.path.conf=/etc/elasticsearch", "-Des.path.logs=/var/log/elasticsearch", "-Des.path.data=/var/lib/elasticsearch",
+      "-Des.node.name=master-1",
+      "-Des.network.bind_host=0.0.0.0", "-Des.http.port=9200", "-Des.transport.tcp.port=9300",
+      "-Des.discovery.zen.ping.multicast.enabled=false"]
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  elasticsearch-slave:
+    image: elasticsearch
+    user: elasticsearch
+    depends_on:
+      - elasticsearch-master
+    links:
+      - elasticsearch-master
+    command: ["-Des.bootstrap.mlockall=true",
+     "-Des.cluster.name=elasticsearch-cluster",
+     "-Des.cluster.routing.allocation.disk.threshold_enabled=false",
+     "-Des.node.master=false", "-Des.node.data=true",
+     "-Des.path.conf=/etc/elasticsearch", "-Des.path.logs=/var/log/elasticsearch", "-Des.path.data=/var/lib/elasticsearch",
+     "-Des.node.name=slave-1",
+     "-Des.network.host=_eth0:ipv4_", "-Des.network.bind_host=0.0.0.0",
+     "-Des.discovery.zen.ping.multicast.enabled=false",
+     "-Des.discovery.zen.ping.unicast.hosts=elasticsearch-master"]
+
+  kibana:
+    image: kibana
+    depends_on:
+      - elasticsearch-master
+    links:
+      - elasticsearch-master
+    ports:
+      - "5601"
+    command: -e http://elasticsearch-master:9200 -p 5601
+
+  haproxy:
+    image: dockercloud/haproxy
+    environment:
+      - SSL_CERT=-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEApVkC6wH4MkyXeDroq+UW0b3fXJc2vWXOh7UjeWqps3VbfedO\nLweyzAgG/YSR+Ym8fB0ICQHVcFUMPWSwezqQBX7MV6v614Gr01K78nh+14qp+BK0\nlv3JaFHoOkablTwydD3nniDmiyLUDt2I1/s9LfDPyZ/SJOieNFjcU91RyDm9a9yz\nWItBg4xBy4gd2sNLWy3QzGKrLFVxRO7f5V2VBTN8njPUdhaUUrKeEEjhW77mvWIm\no+GuvchnGhqFqktP1vVGATinQdaZdqiFYcjcksyIFVI3u4q787VymOIWnkmYz/9Q\n60mUWBQdtZ3M655jDHsC7gzKBtMxVp6flkuT+wIDAQABAoIBADJGcVuxmpz4qum0\nx8BUhO67U+ocVFmcVgLvcdzeMMFPQsVyilREe/oLysxU/empFrWKQkIy24ovYexc\n7Ehb0yTInCtgMIJMfEliE6GzP6YcFHhIf76VZiMhHIJzq6Thy9mKZR2wlUjjCyWF\n+LDrRHvuh8+fl87/J/N0vXGGjvJZFv+crSSYn+yyHi57D3CEK/1YobVrkKVpkWwq\nzndWY5xE+cbdQRMsfY9yrXbT2GC7iywiBSf3U0LSO9X1cQHE5H5ac1q5Qg4W48R6\n9UPeIOfgepYyS1tYo101/Bh2aGWh3Nh+cFio3xc6omALvKWJtwsfvyGZjk0E+2c2\nCPzMsYkCgYEAz5MrwLSEoB3QpOYHvuMcABBlfdWy1XTR71M/j/O4LIkOEpMv8Rai\nA+kqJonBLSSjoFzrSsX0x6UJ6GJv+ybAfMP411uZnnnwiGU5LaG0humufvMZNrjR\nHYuOv22pwRNQxO1zUGSNfDGLrx86hrDbChPHMV88YX324/lFZs0RhF8CgYEAy+vw\npVZlJrSZcRS17kEUFoKr3hT571Ist1OJYU+ixnOVJJ7YDixX14VENmXrs5dX9wAB\n4lrREszGK0L2IfNF4ny+DSzkILKCY7UYUjp3ehtv1ra7+IyVyuJ81Ze+fvyFtqDE\nY5z1Al+t7+iKzuQoVFlDKTHlhF3OltIYbrGXteUCgYBqD1qVtibl4RYQi3B9unE+\nHyKcbypXIr95t2GM3gzGxKiqGQav+s6BjQt6cXyA4m2wrImUxRzTPaKYWGO7Qgus\nND3bW/RcIxYhuwbCKBOjs5bzSqchbMF8hShE63WHL6VfWaxH8XjRckdbDWvMEmV4\n+q4WrgCeF8yko2Mwqas/pQKBgEOyr3BkTy5bVHlrE77mEgIrHV2b/yGJWVj/PaN1\nqadSZdgDd9y0sfDVyEB685Xqj4RrlzSLS89+9ecU0tuQhMnc+ccr+Qw11v28+DcM\nO+/ovec9QQgRvATfzeum9dH4iXeIxcoAKILCOt9jhvmKWy0teRNrAjRAZD5Dv2K4\nSJJVAoGAI6loC/VrbHk2wi8erpwZABDXRB0KC8YvHbBSKWQyMAqS/K1wV32nUg8W\n8MluBdnASI/9mqsnV2qFlfQSxk5zAiDyjzo/GEY5JW8QYamZcwAy2OzotF9DdRfE\n7eU38ot50X3frwG35we8YZ7bY2cLIWVGx3l7NTN1pclf/1tvsR0=\n-----END RSA PRIVATE KEY-----\n-----BEGIN CERTIFICATE-----\nMIIDjjCCAnagAwIBAgIJAOkmVorF0CZHMA0GCSqGSIb3DQEBBQUAMDgxCjAIBgNV\nBAMUASoxHTAbBgNVBAoTFE15IENvbXBhbnkgTmFtZSBMVEQuMQswCQYDVQQGEwJV\nUzAeFw0xNjA4MzExNzIzMzRaFw0xOTA4MTYxNzIzMzRaMDgxCjAIBgNVBAMUASox\nHTAbBgNVBAoTFE15IENvbXBhbnkgTmFtZSBMVEQuMQswCQYDVQQGEwJVUzCCASIw\nDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKVZAusB+DJMl3g66KvlFtG931yX\nNr1lzoe1I3lqqbN1W33nTi8HsswIBv2EkfmJvHwdCAkB1XBVDD1ksHs6kAV+zFer\n+teBq9NSu/J4fteKqfgStJb9yWhR6DpGm5U8MnQ9554g5osi1A7diNf7PS3wz8mf\n0iTonjRY3FPdUcg5vWvcs1iLQYOMQcuIHdrDS1st0MxiqyxVcUTu3+VdlQUzfJ4z\n1HYWlFKynhBI4Vu+5r1iJqPhrr3IZxoahapLT9b1RgE4p0HWmXaohWHI3JLMiBVS\nN7uKu/O1cpjiFp5JmM//UOtJlFgUHbWdzOueYwx7Au4MygbTMVaen5ZLk/sCAwEA\nAaOBmjCBlzAdBgNVHQ4EFgQUJxy7hv1Bz3Xou0ODYI+ndJ0iunwwaAYDVR0jBGEw\nX4AUJxy7hv1Bz3Xou0ODYI+ndJ0iunyhPKQ6MDgxCjAIBgNVBAMUASoxHTAbBgNV\nBAoTFE15IENvbXBhbnkgTmFtZSBMVEQuMQswCQYDVQQGEwJVU4IJAOkmVorF0CZH\nMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADggEBAB0ikjpxs5z+uTxYn/IT\nZO6Xv6XhOEBB87nI1lmYRNKB0cl0s4pkLlNKtr00r+LqJJn2v4q1jWtHk+z2s5Zm\nsM3PELmPp6BDFE1IPQj6Ry4C/bicP/tI71PNo0ErQxy380RZjcmSz06D5q4wBm1Z\nx35w1ut9grLUfOZXdxgALMliUeCCs5wumeBaK2pZFp/+4thtasAV5gftBM1+uWQE\nDsMEJaEYT6dNiXmTRffOr7Z2bhFi1TfalExUtAYjhu7Z9I5lCxLGznxonf57cyWc\nVzsZuCPStckk09dnnuAiuAlPIKMrwJbpu8kv+d76OhHNtlbstANt6ISp6y8UAKNi\n7f4=\n-----END CERTIFICATE-----\n
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - kibana
+    links:
+      - kibana
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

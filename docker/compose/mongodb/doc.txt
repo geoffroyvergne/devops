@@ -1,0 +1,6 @@
+https://hub.docker.com/_/mongo/
+
+Client :
+docker run -it --rm --network=mongodb_default --link mongodb_mongodb_1:mongo --rm mongo:3.2.10 sh -c 'exec mongo "mongo:27017/test"'
+
+http://localhost:8081/

@@ -1,0 +1,10 @@
+Logstash :
+docker build -t logstash ./logstash
+docker run --rm -it --entrypoint=bash logstash
+
+Logstash :
+docker run --rm -it \
+logstash \
+/opt/logstash/bin/logstash -e 'input { stdin { } } output { stdout {} }'
+
+

@@ -1,0 +1,15 @@
+version: '2.1'
+
+services:
+  kong-database:
+    image: postgres:9.4
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=kong
+      - POSTGRES_DB=kong
+
+
+
+

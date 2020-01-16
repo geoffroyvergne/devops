@@ -1,0 +1,6 @@
+
+docker-compose -f ./kibana/compose/docker-compose.yaml up
+docker-compose -f ./kibana/compose/docker-compose.yaml ps
+
+docker-compose -f ./kibana/compose/docker-compose.yaml scale elasticsearch-slave=3
+docker-compose -f ./kibana/compose/docker-compose.yaml scale kibana=3

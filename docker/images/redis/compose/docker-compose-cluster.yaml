@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  redis-cluster:
+    image: redis
+    ports:
+      - 6379
+    command: --cluster-enabled yes --port 6379 --appendonly yes

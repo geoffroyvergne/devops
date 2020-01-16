@@ -1,0 +1,59 @@
+version: '2'
+
+services:
+  php:
+    image: php-fpm
+    ports:
+      - "9000"
+    volumes:
+      - /Users/gv/www:/var/www/html
+    environment:
+      - PHP_BIND_HOST=0.0.0.0:9000
+      - PHP_ENABLE_ASP_TAGS=false
+      - PHP_ENABLE_OPEN_TAGS=false
+      - PHP_ENV=dev
+
+  haproxy-php:
+    image: dockercloud/haproxy
+    environment:
+      - MODE=tcp
+    #ports:
+    #  - "9000:80"
+    depends_on:
+      - php
+    links:
+      - php
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  nginx:
+    image: nginx
+    environment:
+      - NGINX_PORT=82
+      - NGINX_SERVER_NAME=localhost debianserver debianserver.com
+      - NGINX_AUTO_INDEX=on
+      - NGINX_INDEX=test.html index.htm index.php
+      - NGINX_ALLOW_STATUS_PING=0.0.0.0
+      - NGINX_PHP_FPM_BIND=haproxy-php:80
+    ports:
+      - "82"
+    depends_on:
+      - haproxy-php
+    links:
+      - haproxy-php
+    volumes:
+      - /Users/gv/www:/var/www/html
+      - /Users/gv/dev/docker/nginx/conf/override_default_php.conf:/tmp/override.conf:ro
+
+  haproxy-nginx:
+    image: dockercloud/haproxy
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - nginx
+    links:
+      - nginx
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+

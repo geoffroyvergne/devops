@@ -1,0 +1,14 @@
+
+# Postgresql
+docker-compose -f ./postgresql/compose/docker-compose.yaml up
+docker-compose -f ./postgresql/compose/docker-compose.yaml ps
+docker-compose -f ./postgresql/compose/docker-compose.yaml rm -f
+
+# Postgresql Cluster
+docker-compose -f ./postgresql/compose/docker-compose-cluster.yaml up
+docker-compose -f ./postgresql/compose/docker-compose-cluster.yaml ps
+docker-compose -f ./postgresql/compose/docker-compose-cluster.yaml rm -f
+
+docker-compose -f ./postgresql/compose/docker-compose-cluster.yaml scale postgresql-slave=1
+
+docker-compose -f ./postgresql/compose/docker-compose-cluster.yaml up postgresql-slave

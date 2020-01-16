@@ -1,0 +1,22 @@
+docker run --name postgres \
+    -e POSTGRES_DATABASE=keycloak \
+    -e POSTGRES_USER=keycloak \
+    -e POSTGRES_PASSWORD=password \
+    -e POSTGRES_ROOT_PASSWORD=password \
+    -d postgres
+
+docker run --name keycloak \
+    --link postgres:postgres \
+    -e POSTGRES_DATABASE=keycloak \
+    -e POSTGRES_USER=keycloak \
+    -e POSTGRES_PASSWORD=password \
+    jboss/keycloak-ha-postgres
+    
+docker logs -f keycloak
+
+
+docker exec <CONTAINER> keycloak/bin/add-user-keycloak.sh -u <USERNAME> -p <PASSWORD>
+
+docker run -e KEYCLOAK_LOGLEVEL=DEBUG jboss/keycloak
+
+docker run -e PROXY_ADDRESS_FORWARDING=true jboss/keycloak

@@ -1,0 +1,16 @@
+# NGINX
+
+docker build -t web-dynamic-nginx ./nginx
+
+docker run --rm -it --entrypoint=sh web-dynamic-nginx
+
+docker run --rm -it \
+--name web-dynamic-nginx \
+-p 80:80 \
+web-dynamic-nginx
+
+# PHP-FPM
+
+docker build -t web-dynamic-php ./php-fpm
+
+docker run --rm -it --entrypoint=sh web-dynamic-php

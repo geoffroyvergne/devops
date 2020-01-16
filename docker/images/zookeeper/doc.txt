@@ -1,0 +1,23 @@
+Zookeeper :
+docker build -t zookeeper ./zookeeper
+docker run -it --entrypoint=bash zookeeper
+
+docker exec -it zookeeper-container bash
+
+docker run -d \
+--name zookeeper-container \
+-e ZOOKEEPER_OVERRIDE_CONF="$(cat zookeeper/conf/zookeeper_override_conf.cfg)" \
+-p 2181:2181 \
+zookeeper
+
+docker run --rm -it \
+--name zookeeper-container \
+--volume /Users/gv/dev/docker/zookeeper/conf/zookeeper_override_conf.conf:/tmp/override.cfg \
+-p 2181:2181 \
+zookeeper
+
+docker run --rm -it \
+--name zookeeper-container \
+--volume /Users/gv/dev/docker/zookeeper/conf/zoo.cfg:/tmp/zoo.cfg \
+-p 2181:2181 \
+zookeeper

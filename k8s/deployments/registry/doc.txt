@@ -1,0 +1,6 @@
+istioctl kube-inject -f registry.yml | kubectl apply -f -
+
+curl registry.192.168.33.16.nip.io/v2/_catalog
+curl registry.192.168.33.16/v2/web-static/tags/list
+
+docker search registry.192.168.33.16/library
