@@ -7,8 +7,14 @@ https://istio.io/docs/setup/getting-started/
 https://istio.io/docs/setup/platform-setup/minikube/
 
 ```
+
+echo "" > /var/db/dhcpd_leases
+
 minikube config set vm-driver hyperkit
-minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.14.2
+minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.14.2  
+--uuid=0
+
+minikube ip
 ```
 
 ## Set up load balancer
@@ -41,7 +47,9 @@ kubectl get pods -n istio-system
 
 ## Enable istio injection
 
-```kubectl label namespace default istio-injection=enabled```
+```
+kubectl label namespace default istio-injection=enabled
+```
 
 ## Uninstall
 

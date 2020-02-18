@@ -4,6 +4,8 @@
 
 ## Usefull commands
 
+`docker system prune -a`
+
 ### docker environment
 
 `eval "$(docker-machine env default)"`

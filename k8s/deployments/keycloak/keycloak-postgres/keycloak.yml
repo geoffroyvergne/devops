@@ -1,0 +1,120 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  selector:
+    matchLabels:
+      app: keycloak
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak-ha-postgres
+          image: jboss/keycloak
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DB_VENDOR
+              value: postgres
+            - name: KEYCLOAK_USER
+              value: admin
+            - name: KEYCLOAK_PASSWORD
+              #value: admin
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak
+                  key: admin-password
+            - name: DB_ADDR
+              value: postgres
+            - name: DB_DATABASE
+              value: keycloak
+            - name: DB_USER
+              value: keycloak
+            - name: DB_PASSWORD
+              #value: keycloak
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak
+                  key: postgress-password
+            - name: POSTGRES_ROOT_PASSWORD
+              #value: keycloak
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak
+                  key: postgress-password
+          ports:
+            - containerPort: 8080
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app: keycloak
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+  selector:
+    app: keycloak
+
+#---
+#
+#apiVersion: networking.istio.io/v1alpha3
+#kind: Gateway
+#metadata:
+#  name: keycloak
+#  namespace: keycloak
+#spec:
+#  selector:
+#    istio: ingressgateway
+#  servers:
+#    - port:
+#        number: 80
+#        name: http-keycloak
+#        protocol: HTTP
+#      hosts:
+#        - "keycloak.192.168.33.16.nip.io"
+#    - port:
+#        number: 443
+#        name: https-keycloak
+#        protocol: HTTPS
+#      tls:
+#        mode: SIMPLE
+#        serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+#        privateKey: /etc/istio/ingressgateway-certs/tls.key
+#      hosts:
+#        - "keycloak.192.168.33.16.nip.io"
+#
+#---
+
+#apiVersion: networking.istio.io/v1alpha3
+#kind: VirtualService
+#metadata:
+#  name: keycloak
+#  namespace: keycloak
+#spec:
+#  hosts:
+#    - "keycloak.192.168.33.16.nip.io"
+#  gateways:
+#    - keycloak
+#  http:
+#    - match:
+#        - uri:
+#            prefix: /
+#      route:
+#        - destination:
+#            host: keycloak
+#            port:
+#              number: 8080
+
