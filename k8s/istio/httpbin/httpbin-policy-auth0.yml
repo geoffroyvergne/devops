@@ -1,0 +1,17 @@
+apiVersion: authentication.istio.io/v1alpha1
+kind: Policy
+metadata:
+  name: ingressgateway
+  namespace: istio-system
+spec:
+  targets:
+    - name: istio-ingressgateway
+  peers:
+    - mtls: {}
+  origins:
+    - jwt:
+        audiences:
+          - "http://httpbin.*.nip.io"
+        issuer: "https://gvergne.eu.auth0.com/"
+        jwksUri: "https://gvergne.eu.auth0.com/.well-known/jwks.json"
+  principalBinding: USE_ORIGIN

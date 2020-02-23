@@ -12,6 +12,7 @@ echo "" > /var/db/dhcpd_leases
 
 minikube config set vm-driver hyperkit
 minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.14.2  
+
 --uuid=0
 
 minikube ip

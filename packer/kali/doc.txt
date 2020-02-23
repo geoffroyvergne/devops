@@ -1,0 +1,6 @@
+packer build -only=virtualbox-iso packer.json
+
+packer build -only=virtualbox-iso packer-vagrant.json
+
+vagrant box add /Users/gv/data/iso/vagrant-box/virtualbox-kali-2020.1.box --name kali-2020.1
+
