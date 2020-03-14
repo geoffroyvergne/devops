@@ -1,8 +1,3 @@
-#!/usr/bin/env bash
-
-PUBLIC_IP=$(minikube ip)
-
-cat <<EOT > ingress-keycloak.yml
 
 ---
 
@@ -16,7 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/service-upstream: "true"
 spec:
   rules:
-    - host: keycloak.$PUBLIC_IP.nip.io
+    - host: keycloak.192.168.64.3.nip.io
       http:
         paths:
           - path: /
@@ -24,6 +19,3 @@ spec:
               serviceName: keycloak
               servicePort: 8080
 
-EOT
-
-cat ingress-keycloak.yml

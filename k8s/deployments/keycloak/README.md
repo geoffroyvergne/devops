@@ -12,12 +12,18 @@ kubectl apply -f namespace.yml
 kubectl apply -f keycloak.yml
 istioctl kube-inject -f keycloak.yml | kubectl apply -f -
 
-## Ingress
+## Ingress (do not use istio)
 
-kubectl apply -f istio-gateway.yml
 ./generate-ingress-minikube.sh
+kubectl apply -f ingress-keycloak.yml
 
-curl $(minikube service keycloak --url -n keycloak)
+## Get pod by name
+
+kubectl get pods -n keycloak -l app=keycloak -o=name
+kubectl get $(kubectl get pods -n keycloak -l app=keycloak -o=name) -n keycloak
+kubectl describe $(kubectl get pods -n keycloak -l app=keycloak -o=name) -n keycloak
+kubectl logs $(kubectl get pods -n keycloak -l app=keycloak -o=name) -n keycloak
+kubectl logs -f $(kubectl get pods -n keycloak -l app=keycloak -o=name) -n keycloak
 
 ## Backup
 
@@ -59,8 +65,6 @@ kubectl delete service,deployment,ing -n keycloak
 ## Run image
 
 docker run -it --rm -p 8080:8080 jboss/keycloak
-
-
 
 ## Keycloak postgres
 

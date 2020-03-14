@@ -1,3 +1,9 @@
+#!/usr/bin/env bash
+
+#PUBLIC_IP=$(minikube ip)
+INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+cat <<EOT > httpbin-simple.yml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -61,7 +67,7 @@ spec:
         protocol: HTTP
       hosts:
         #- "httpbin.example.com"
-        - "httpbin.10.107.196.55.nip.io"
+        - "httpbin.$INGRESS_HOST.nip.io"
 
 ---
 
@@ -72,7 +78,7 @@ metadata:
 spec:
   hosts:
     #- "httpbin.example.com"
-    - "httpbin.10.107.196.55.nip.io"
+    - "httpbin.$INGRESS_HOST.nip.io"
   gateways:
     - httpbin-gateway
   http:
@@ -86,4 +92,8 @@ spec:
             port:
               number: 8000
             host: httpbin
+
+EOT
+
+cat httpbin-simple.yml
 

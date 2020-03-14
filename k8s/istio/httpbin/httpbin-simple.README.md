@@ -2,6 +2,8 @@
 
 ## Deploy 
 kubectl apply -f <(./bin/istioctl kube-inject -f ../../httpbin/httpbin-simple.yml)
+kubectl apply -f <(../data/istio-1.4.5/bin/istioctl kube-inject -f httpbin-simple.yml)
+
 
 ## Test
 
@@ -14,5 +16,5 @@ curl -v httpbin.$INGRESS_HOST.nip.io/status/418
 
 ## CleanUp
 
-kubectl delete --ignore-not-found=true -f ../httpbin/httpbin-simple.yml
+kubectl delete --ignore-not-found=true -f ../../httpbin/httpbin-simple.yml
 
