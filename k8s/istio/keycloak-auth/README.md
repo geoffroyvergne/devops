@@ -23,7 +23,7 @@ curl -v httpbin.$INGRESS_HOST.nip.io/status/200
 
 curl -v --request GET \
   --url http://httpbin.$INGRESS_HOST.nip.io/status/200 \
-  --header 'authorization: Bearer $TOKEN'
+  --header "authorization: Bearer $TOKEN"
   
 curl -H "Authorization: Bearer $TOKEN" http://httpbin.$INGRESS_HOST.nip.io/status/200
 

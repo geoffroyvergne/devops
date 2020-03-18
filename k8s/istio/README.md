@@ -16,6 +16,8 @@ minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.14.2
 --uuid=0
 
 minikube ip
+
+minikube addons enable ingress
 ```
 
 ## Set up load balancer
@@ -23,6 +25,8 @@ minikube ip
 ```
 minikube tunnel
 minikube tunnel --cleanup
+
+minikube tunnel &> /dev/null &
 ```
 
 ## Download the release
@@ -30,17 +34,19 @@ minikube tunnel --cleanup
 ```
 cd data 
 curl -L https://istio.io/downloadIstio | sh -
+
+sudo cp data/istio-<version>/bin/istioctl /usr/local/bin
 ```
 
 ## Install Istio
 
 ```
-bin/istioctl manifest apply --set profile=demo
-bin/istioctl manifest apply
+istioctl manifest apply --set profile=demo
+istioctl manifest apply
 
-bin/istioctl manifest apply --set values.global.disablePolicyChecks=true
+istioctl manifest apply --set values.global.disablePolicyChecks=true
 
-bin/istioctl profile list
+istioctl profile list
 
 kubectl get svc -n istio-system
 kubectl get pods -n istio-system

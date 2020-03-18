@@ -11,9 +11,6 @@ kind: Ingress
 metadata:
   name: ingress
   namespace: keycloak
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/service-upstream: "true"
 spec:
   rules:
     - host: keycloak.$PUBLIC_IP.nip.io
@@ -26,4 +23,4 @@ spec:
 
 EOT
 
-cat ingress-keycloak.yml
+#cat ingress-keycloak.yml

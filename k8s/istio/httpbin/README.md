@@ -4,7 +4,7 @@ https://istio.io/docs/tasks/traffic-management/ingress/ingress-control/
 
 ## Install
 
-kubectl apply -f <(./istio-1.4.2/bin/istioctl kube-inject -f istio-1.4.2/samples/httpbin/httpbin.yaml)
+kubectl apply -f <(istioctl kube-inject -f istio-1.4.2/samples/httpbin/httpbin.yaml)
 
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
@@ -69,3 +69,7 @@ kubectl delete gateway httpbin-gateway
 kubectl delete virtualservice httpbin
 kubectl delete --ignore-not-found=true -f istio-1.4.2/samples/httpbin/httpbin.yaml
 
+## Debug
+
+kubectl logs -f $(kubectl get pods -l app=httpbin -o=name)
+kubectl exec -ti $(kubectl get pods -l app=httpbin -o=name) bash

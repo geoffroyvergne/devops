@@ -13,8 +13,6 @@ spec:
     - mtls: {}
   origins:
     - jwt:
-        audiences:
-          - "istio"
-        issuer: "http://keycloak.192.168.64.3.nip.io/auth/realms/istio"
-        jwksUri: "http://keycloak.192.168.64.3.nip.io/auth/realms/istio/protocol/openid-connect/certs"
+        issuer: "http://keycloak.192.168.64.10.nip.io/auth/realms/istio"
+        jwksUri: "http://keycloak.192.168.64.10.nip.io/auth/realms/istio/protocol/openid-connect/certs"
   principalBinding: USE_ORIGIN

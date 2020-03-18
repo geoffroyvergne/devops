@@ -19,8 +19,6 @@ spec:
     - mtls: {}
   origins:
     - jwt:
-        audiences:
-          - "http://httpbin.*.nip.io"
         issuer: "http://keycloak.$PUBLIC_IP.nip.io/auth/realms/istio"
         jwksUri: "http://keycloak.$PUBLIC_IP.nip.io/auth/realms/istio/protocol/openid-connect/certs"
   principalBinding: USE_ORIGIN

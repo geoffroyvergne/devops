@@ -1,9 +1,9 @@
 # httpbin simple
 
 ## Deploy 
-kubectl apply -f <(./bin/istioctl kube-inject -f ../../httpbin/httpbin-simple.yml)
-kubectl apply -f <(../data/istio-1.4.5/bin/istioctl kube-inject -f httpbin-simple.yml)
 
+kubectl apply -f <(istioctl kube-inject -f httpbin-simple.yml)
+kubectl apply -f httpbin-simple.yml
 
 ## Test
 

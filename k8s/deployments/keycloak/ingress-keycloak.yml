@@ -6,12 +6,15 @@ kind: Ingress
 metadata:
   name: ingress
   namespace: keycloak
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/service-upstream: "true"
+  #annotations:
+    #kubernetes.io/ingress.class: nginx
+    #nginx.ingress.kubernetes.io/service-upstream: "true"
+    #nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
+    #nginx.ingress.kubernetes.io/rewrite-target: /$1
+    #nginx.ingress.kubernetes.io/use-regex: true
 spec:
   rules:
-    - host: keycloak.192.168.64.3.nip.io
+    - host: keycloak.192.168.64.10.nip.io
       http:
         paths:
           - path: /

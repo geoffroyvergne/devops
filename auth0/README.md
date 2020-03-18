@@ -37,7 +37,7 @@ curl --request POST \
 
 curl --request GET \
   --url http://path_to_your_api/ \
-  --header 'authorization: Bearer <TOKEN>'
+  --header "authorization: Bearer <TOKEN>"
 
 ## Istio
 

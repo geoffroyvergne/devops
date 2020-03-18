@@ -17,6 +17,9 @@ export no_proxy="localhost,127.0.0.0/8,::1,$(minikube ip),demoapp"
 minikube addons enable ingress
 
 minikube tunnel
+minikube tunnel &> /dev/null &
+
+minikube tunnel --cleanup
 
 ```
 

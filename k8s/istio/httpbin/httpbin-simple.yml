@@ -61,7 +61,7 @@ spec:
         protocol: HTTP
       hosts:
         #- "httpbin.example.com"
-        - "httpbin.10.107.196.55.nip.io"
+        - "httpbin.10.97.156.54.nip.io"
 
 ---
 
@@ -72,7 +72,7 @@ metadata:
 spec:
   hosts:
     #- "httpbin.example.com"
-    - "httpbin.10.107.196.55.nip.io"
+    - "httpbin.10.97.156.54.nip.io"
   gateways:
     - httpbin-gateway
   http:
