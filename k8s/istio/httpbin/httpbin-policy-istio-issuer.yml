@@ -1,18 +1,39 @@
 
 ---
 
-apiVersion: authentication.istio.io/v1alpha1
-kind: Policy
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
 metadata:
-  name: policy
-  namespace: istio-system
+  name: "httpbin-policy"
 spec:
   targets:
-    - name: istio-ingressgateway
-  peers:
-    - mtls: {}
+    - name: httpbin
+      ports:
+        - number: 8000
+  #peers:
+  #  - mtls: {}
   origins:
     - jwt:
         issuer: "testing@secure.istio.io"
-        jwksUri: "https://raw.githubusercontent.com/istio/istio/release-1.5/security/tools/jwt/samples/jwks.json"
+        jwksUri: "https://raw.githubusercontent.com/istio/istio/master/security/tools/jwt/samples/jwks.json"
+        #triggerRules:
+        #  - excludedPaths:
+        #      - exact: /health_check
   principalBinding: USE_ORIGIN
+
+#apiVersion: authentication.istio.io/v1alpha1
+#kind: Policy
+#metadata:
+#  name: policy
+#  namespace: istio-system
+#spec:
+#  targets:
+#    - name: istio-ingressgateway
+#  peers:
+#    - mtls: {}
+#  origins:
+#    - jwt:
+#        issuer: "testing@secure.istio.io"
+#        jwksUri: "https://raw.githubusercontent.com/istio/istio/release-1.5/security/tools/jwt/samples/jwks.json"
+#  principalBinding: USE_ORIGIN
+

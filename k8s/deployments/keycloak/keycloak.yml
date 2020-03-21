@@ -31,8 +31,8 @@ spec:
 
 ---
 
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: keycloak
   namespace: keycloak
@@ -46,7 +46,21 @@ spec:
       targetPort: 8080
   selector:
     app: keycloak
-  type: NodePort
-  #type: LoadBalancer
-  sessionAffinity: None
-  #sessionAffinity: ClientIP
+
+#kind: Service
+#apiVersion: v1
+#metadata:
+#  name: keycloak
+#  namespace: keycloak
+#  labels:
+#    app: keycloak
+#spec:
+#  ports:
+#    - name: http
+#      protocol: TCP
+#      port: 8080
+#      targetPort: 8080
+#  selector:
+#    app: keycloak
+#  type: NodePort
+#  sessionAffinity: None

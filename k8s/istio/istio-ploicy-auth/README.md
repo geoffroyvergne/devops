@@ -1,5 +1,7 @@
 # Istio policy auth
 
+kubectl apply -f <(istioctl kube-inject -f httpbin-policy-istio-issuer.yml)
+
 TOKEN=$(curl https://raw.githubusercontent.com/istio/istio/release-1.5/security/tools/jwt/samples/demo.jwt -s) && echo $TOKEN | cut -d '.' -f2 - | base64 -d -
 
 ## Test httpbin

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-./generate-ingress-minikube.sh && \
+./generate-ingress-minikube.sh
 
 kubectl create namespace keycloak
 

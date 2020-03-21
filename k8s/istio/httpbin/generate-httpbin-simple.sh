@@ -4,6 +4,9 @@
 INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
 cat <<EOT > httpbin-simple.yml
+
+---
+
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -49,7 +52,7 @@ spec:
           imagePullPolicy: IfNotPresent
           name: httpbin
           ports:
-            - containerPort: 80
+            - containerPort: 8000
 
 ---
 
@@ -66,7 +69,6 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        #- "httpbin.example.com"
         - "httpbin.$INGRESS_HOST.nip.io"
 
 ---
@@ -77,7 +79,6 @@ metadata:
   name: httpbin
 spec:
   hosts:
-    #- "httpbin.example.com"
     - "httpbin.$INGRESS_HOST.nip.io"
   gateways:
     - httpbin-gateway
@@ -96,4 +97,3 @@ spec:
 EOT
 
 cat httpbin-simple.yml
-
