@@ -1,0 +1,27 @@
+---
+
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: httpbin
+  namespace: default
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: httpbin
+  rules:
+    - to:
+        - operation:
+            methods: ["*"]
+            paths: ["status"]
+        when:
+          - key: request.auth.claims[http://testapp/claims/role]
+            values: ["user"]
+    - to:
+        - operation:
+            methods: ["*"]
+            paths: ["*"]
+        when:
+          - key: request.auth.claims[http://testapp/claims/role]
+            values: ["admin"]

@@ -1,8 +1,34 @@
 # Auth0
 
+https://rinormaloku.com/authorization-in-istio/
+
 ## openid connect configuration
 
 https://YOUR_DOMAIN/.well-known/openid-configuration
+
+## Custom claims
+
+Context objects : https://auth0.com/docs/rules/references/context-object?_ga=2.215777872.672994889.1584897562-890361934.1584897562
+
+https://auth0.com/docs/extensions/authorization-extension/v2/rules
+add rule -> custom-claims
+
+```
+function (user, context, callback) {
+  var namespace = 'http://testapp/claims/'; // You can set your own namespace, but do not use an Auth0 domain
+
+  // Add the namespaced tokens. Remove any which is not necessary for your scenario
+  //context.idToken[namespace + "permissions"] = user.permissions;
+  //context.idToken[namespace + "groups"] = user.groups;
+  context.idToken[namespace + "user"] = user;
+  //context.idToken[namespace + "context"] = context;
+  context.idToken[namespace + "roles"] = context.authorization.roles;
+  context.idToken[namespace + "authorization"] = context.authorization;
+  
+  callback(null, user, context);
+}
+}
+```
 
 ## Implicit Flow
 

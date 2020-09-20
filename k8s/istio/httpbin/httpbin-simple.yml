@@ -82,8 +82,10 @@ spec:
        #     prefix: /
         - uri:
             prefix: /status
-        #- uri:
-        #    prefix: /delay
+        - uri:
+            prefix: /delay
+        - uri:
+            prefix: /image
       route:
         - destination:
             port:

@@ -1,0 +1,13 @@
+package_update: true
+
+#runcmd:
+#  - sudo add-apt-repository ppa:gophers/archive
+
+packages:
+  - curl
+  - jq
+  - vim
+  - build-essential
+  - golang
+  - go-dep
+

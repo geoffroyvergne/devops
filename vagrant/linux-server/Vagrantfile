@@ -9,6 +9,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "gvergne/ubuntu-19.10"
 
   config.disksize.size = "50GB"
+  config.vm.box_check_update = false
 
   #config.vm.network "private_network", ip: "192.168.33.10"
   #config.vm.network "public_network"

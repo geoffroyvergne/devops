@@ -1,0 +1,37 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+   #config.vm.box = "ubuntu/focal64"
+   #config.vm.box = "ubuntu/trusty64"
+   #config.vm.box = "ubuntu/bionic64"
+   config.vm.box = "centos/7"
+   config.vm.box_version = "2004.01"
+
+  
+    config.disksize.size = "100GB"
+    config.vm.box_check_update = false
+    config.vbguest.auto_update = false
+  
+    config.vm.network "private_network", ip: "192.168.33.10"
+    #config.vm.network "public_network"
+  
+    config.vm.synced_folder "../", "/vagrant_data"
+    #config.vm.synced_folder "/Users/gv/dev", "/vagrant_data"
+
+    #config.vm.network "forwarded_port", guest: 7180, host: 7180
+
+    config.vm.hostname = 'cloudera'
+  
+    config.vm.provider "virtualbox" do |vb|
+       #vb.gui = true
+       vb.memory = "10000"
+       vb.cpus = "6"
+    end
+  
+    #config.vm.provision "install", run: "never", type: "ansible" do |ansible|
+    #  ansible.playbook = "playbook.yml"
+    #end
+  end
+  

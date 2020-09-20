@@ -1,0 +1,72 @@
+# https://rinormaloku.com/authorization-in-istio/
+
+# Enable RBAC
+---
+
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: RbacConfig
+metadata:
+  name: default
+spec:
+  mode: 'ON_WITH_INCLUSION'
+  inclusion:
+    services:
+      - "httpbin.default.svc.cluster.local"
+
+# Regular User
+---
+
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: regular-user
+  namespace: default
+spec:
+  rules:
+    - services:
+        - "httpbin.default.svc.cluster.local"
+      paths: ["status"]
+      methods: ["*"]
+
+---
+
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: regular-user-binding
+  namespace: default
+spec:
+  subjects:
+    - user: "*"
+  roleRef:
+    kind: ServiceRole
+    name: "regular-user"
+
+# Admin user
+---
+
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: mod-user
+  namespace: default
+spec:
+  rules:
+    - services: ["*"]
+      paths: ["*"]
+      methods: ["*"]
+
+---
+
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: mod-user-binding
+  namespace: default
+spec:
+  subjects:
+    - properties:
+        request.auth.claims[http://testapp/claims/roles]: "admin"
+  roleRef:
+    kind: ServiceRole
+    name: "mod-user"
