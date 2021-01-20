@@ -1,6 +1,9 @@
 https://docs.confluent.io/current/quickstart/ce-docker-quickstart.html#ce-docker-quickstart
 
 https://github.com/confluentinc/examples/tree/5.3.1-post/cp-all-in-one
+https://github.com/confluentinc/cp-all-in-one/tree/6.0.1-post/cp-all-in-one
+
+https://docs.confluent.io/platform/current/quickstart/cos-quickstart.html#
 
 RUN :
 docker-compose up -d
@@ -10,7 +13,7 @@ TEST :
 http://localhost:9021
 
 Use ksql cli :
-docker-compose exec ksql-cli ksql http://ksql-server:8088
+docker-compose exec ksqldb-cli ksql http://ksqldb-server:8088
 SHOW STREAMS;
 SHOW TABLES;
 
