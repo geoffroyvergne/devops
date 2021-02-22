@@ -1,6 +1,4 @@
-brew install azure-cli
-
-az login
+# Azure vm
 
 az vm create \
   --resource-group rsg-int-gver \
