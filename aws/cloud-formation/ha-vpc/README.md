@@ -9,7 +9,7 @@ aws cloudformation create-stack --stack-name ha-vpc --template-body file://templ
 ## test
 
 ### Load Balancer
-http://alb-<ip>.eu-west-1.elb.amazonaws.com/
+http://alb-<id>.eu-west-1.elb.amazonaws.com/
 http://alb-093740592126.eu-west-1.elb.amazonaws.com/
 
 eu-west-1:093740592126
