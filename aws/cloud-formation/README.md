@@ -29,3 +29,6 @@ aws cloudformation delete-stack --stack-name ec2-vpc
 aws cloudformation delete-stack --stack-name web-server
 aws cloudformation delete-stack --stack-name elb
 aws cloudformation delete-stack --stack-name elb-v2
+
+## validate template
+aws cloudformation validate-template --template-url s3://examplebucket/example_template.template
