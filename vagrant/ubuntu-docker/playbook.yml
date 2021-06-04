@@ -5,7 +5,7 @@
   vars:
     partition_type: "parted"
   roles:
-    - common
-    - disk-utils
+    #- common
+    #- disk-utils
     - docker
   become: yes

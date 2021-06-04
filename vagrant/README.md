@@ -1,3 +1,7 @@
+# Vagrant
+
+sudo /Library/Application\ Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh restart 
+
 vagrant init
 
 vagrant up
