@@ -6,6 +6,8 @@
 192.168.1.0/24
 ```nmap -sV 192.168.1.0-254```
 
+```nmap -sC -sV <ip>```
+
 ## Steghide  
 is  a steganography program that is able to hide data in various kinds of image
 
@@ -16,3 +18,19 @@ is  a steganography program that is able to hide data in various kinds of image
 Use with wordlist
 /usr/share/wordlists/rockyou.txt.gz
 
+## Nikto HTTP vulnerability scanner
+```nikto --url <ip>```
+```nikto --url <ip> -C all```
+
+## Dirb Web content scanner
+```dirb <ip>```
+```dirb <ip> <wordlist>```
+
+## Find binaries with SUID permission
+```find / -perm -u=s -type f 2>/dev/null```
+
+## dnsmap Find subdomain
+```dnsmap <host>```
+
+```dnsmap <host> -w <wordlist>```
+```dnsmap <host> -w /usr/share/dnsmap/wordlist_TLAs.txt```
