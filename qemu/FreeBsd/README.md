@@ -6,8 +6,9 @@ https://wiki.gentoo.org/wiki/QEMU/Options
 
 ## Create disk
 qemu-img create -f qcow2 ~/qemu-vms/freebsd-disk.img 50G
-
 qemu-img info ~/qemu-vms/freebsd-disk.img
+
+qemu-img create -f qcow2 ~/qemu-vms/freebsd.qcow2 20G
 
 ## Install
 qemu-system-x86_64 \
@@ -22,7 +23,27 @@ qemu-system-x86_64 \
 
     -display curses \
 
+qemu-system-x86_64 \
+    -m 2048 \
+    -vga virtio \
+    -cdrom ~/Downloads/FreeBSD-12.1-RELEASE-amd64-bootonly.iso \
+    -accel hvf \
+    -display cocoa,show-cursor=on \
+    -usb -device usb-kbd -device usb-tablet \
+    -drive file=/Users/geoffroy.vergne//qemu-vms/freebsd.qcow2,if=virtio \
+    -cpu Penryn,vendor=GenuineIntel \
+    -smp 2
+
 ## Run
+
+qemu-system-x86_64 \
+    -m 2048 \
+    -accel hvf \
+    -display cocoa,show-cursor=on \
+    -usb -device usb-kbd -device usb-tablet \
+    -drive file=/Users/geoffroy.vergne/qemu-vms/freebsd.qcow2,if=virtio \
+    -cpu Penryn,vendor=GenuineIntel \
+    -smp 2
 
 -vga [std|cirrus|vmware|qxl|xenfb|tcx|cg3|virtio|none]
 
@@ -34,3 +55,15 @@ qemu-system-x86_64 \
     -m 1024M \
     -vga std \
     -global VGA.vgamem_mb=128
+
+## Xorg
+
+Xorg -configure
+Xorg -config xorg.conf.new -retro
+
+section device
+driver "scfb"
+
+scfb
+modesetting
+vesa
