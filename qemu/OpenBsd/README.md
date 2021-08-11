@@ -28,19 +28,11 @@ qemu-system-x86_64 \
 qemu-system-x86_64 \
     -m 2048 \
     -vga virtio \
-<<<<<<< HEAD
-    -cdrom /Users/gv/Downloads/install69.iso \
-    -accel hvf \
-    -display cocoa,show-cursor=off \
-    -usb -device usb-kbd -device usb-tablet \
-    -drive file=/Users/gv/qemu-vms/openbsd.qcow2,if=virtio \
-=======
     -cdrom ~/Downloads/install69.iso \
     -accel hvf \
     -display cocoa,show-cursor=off \
     -usb -device usb-kbd -device usb-tablet \
     -drive file=/Users/geoffroy.vergne/qemu-vms/openbsd.qcow2,if=virtio \
->>>>>>> 8ee5adbd3546212469c044f22bdac8e15d72f66b
     -cpu Penryn,vendor=GenuineIntel \
     -smp 2
 
@@ -63,12 +55,6 @@ qemu-system-x86_64 \
     -accel hvf \
     -display cocoa,show-cursor=off \
     -usb -device usb-kbd -device usb-tablet \
-<<<<<<< HEAD
-    -drive file=/Users/gv/qemu-vms/openbsd.qcow2,if=virtio \
-    -cpu Penryn,vendor=GenuineIntel \
-    -smp 2
-=======
     -drive file=/Users/geoffroy.vergne/qemu-vms/openbsd.qcow2,if=virtio \
     -cpu Penryn,vendor=GenuineIntel \
     -smp 2
->>>>>>> 8ee5adbd3546212469c044f22bdac8e15d72f66b
