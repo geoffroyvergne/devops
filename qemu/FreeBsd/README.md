@@ -43,6 +43,7 @@ qemu-system-x86_64 \
     -usb -device usb-kbd -device usb-tablet \
     -drive file=/Users/geoffroy.vergne/qemu-vms/freebsd.qcow2,if=virtio \
     -cpu Penryn,vendor=GenuineIntel \
+    -vga virtio \
     -smp 2
 
 -vga [std|cirrus|vmware|qxl|xenfb|tcx|cg3|virtio|none]
