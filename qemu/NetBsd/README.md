@@ -9,6 +9,8 @@ qemu-img create -f qcow2 ~/qemu-vms/netbsd-disk.img 50G
 
 qemu-img info ~/qemu-vms/netbsd-disk.img
 
+qemu-img create -f qcow2 ~/qemu-vms/netbsd.qcow2 20G
+
 ## Install
 qemu-system-x86_64 \
     -accel hvf \
@@ -20,6 +22,17 @@ qemu-system-x86_64 \
     -display curses \
     -net nic \
     -net user
+
+qemu-system-x86_64 \
+    -m 2048 \
+    -vga std \
+    -cdrom ~/Downloads/NetBSD-9.2-amd64.iso \
+    -accel hvf \
+    -display cocoa,show-cursor=on \
+    -usb -device usb-kbd -device usb-tablet \
+    -drive file=/Users/geoffroy.vergne/qemu-vms/netbsd.qcow2,if=virtio \
+    -cpu Penryn,vendor=GenuineIntel \
+    -smp 2
 
 ## Run
 
@@ -38,3 +51,13 @@ qemu-system-x86_64 \
     -vnc 0.0.0.0:0
 
     -global VGA.vgamem_mb=128
+
+qemu-system-x86_64 \
+    -m 2048 \
+    -vga std \
+    -accel hvf \
+    -display cocoa,show-cursor=off \
+    -usb -device usb-kbd -device usb-tablet \
+    -drive file=/Users/geoffroy.vergne/qemu-vms/netbsd.qcow2,if=virtio \
+    -cpu Penryn,vendor=GenuineIntel \
+    -smp 2
