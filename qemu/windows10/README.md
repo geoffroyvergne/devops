@@ -19,6 +19,11 @@ qemu-system-x86_64 \
     -cpu Penryn,vendor=GenuineIntel \
     -smp 2
 
+qemu-system-x86_64 \
+    -m 2048 \
+    -cdrom /Users/gv/Downloads/Win10_21H1_French_x64.iso \
+    -drive file=/Users/gv/qemu-vms/windows10.qcow2
+
 
 ## Run
 
