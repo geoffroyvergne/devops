@@ -19,7 +19,8 @@ start: create
 	@if [[ -z `netstat -an | grep 6000` ]]; then \
 		open -a XQuartz; \
 	fi;
-	@xhost "+${IP}";
+	@export DISPLAY=:0.0
+	@/usr/X11R6/bin/xhost "+${IP}";
 	@nerdctl start ${NAME};
 
 stop:

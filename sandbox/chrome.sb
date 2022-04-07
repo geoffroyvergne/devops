@@ -1,0 +1,10 @@
+(version 1)
+(deny default)
+
+(import "/System/Library/Sandbox/Profiles/bsd.sb")
+(import "/System/Library/Sandbox/Profiles/system.sb")
+
+(allow file-read-data file-read-metadata
+(regex "^/Applications/Google\ Chrome.app"))
+
+(allow network*)
