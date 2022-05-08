@@ -1,0 +1,40 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build the go binary.
+    cmds:
+      - export GOPATH=~/dev/devops/taskfile
+      - export GOROOT=/opt/homebrew/Cellar/go/1.18.1/libexec
+      - go build -v -o bin/helloworld helloworld/hello-world.go 
+    status:
+      - test -d bin/
+  
+  run:
+    desc: Run the go binary.
+    cmds:
+      - bin/helloworld
+    deps:
+      - build
+
+  run-go:
+    desc: Run the go binary directly.
+    cmds:
+      - go run helloworld/hello-world.go 
+
+  clean-build:    
+    desc: Clean build the go binary.
+    deps:
+      - clean
+      - build
+
+  clean-run:    
+    desc: Clean run the go binary.
+    deps:
+      - clean-build
+      - run
+
+  clean:
+    desc: Clean binary directory.
+    cmds:
+      - rm -Rf bin/

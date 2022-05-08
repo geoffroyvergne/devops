@@ -1,1 +1,0 @@
-https://docs.confluent.io/current/ksql/docs/tutorials/generate-custom-test-data.html

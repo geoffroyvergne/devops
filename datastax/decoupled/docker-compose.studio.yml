@@ -1,8 +1,0 @@
-version: '2'
-services:
-  studio:
-    image: "datastax/dse-studio"
-    environment:
-      - DS_LICENSE=accept
-    ports:
-      - 9091:9091

@@ -1,1 +1,0 @@
-{"blueprint":"ambari","config_recommendation_strategy":"NEVER_APPLY","provision_action":"INSTALL_AND_START","configurations":[],"host_groups":[{"name":"host_group_1","hosts":[{"fqdn":"ambari-01.192.168.33.17.nip.io"}]}],"Clusters":{"cluster_name":"ambari"}}

@@ -1,9 +1,0 @@
-https://docs.confluent.io/current/ksql/docs/tutorials/clickstream-docker.html
-
-Create the Clickstream Data :
-
-docker-compose exec kafkacat \
-        kafkacat -b kafka:29092 -C -c 10 -K: \
-        -f '\nKey  : %k\t\nValue: %s\n' \
-        -t clickstream
-
