@@ -1,0 +1,12 @@
+package_update: true
+
+packages:
+  - curl
+  - vim
+  - build-essential
+  - clang
+  - cmake
+  - git
+
+runcmd:
+  - mkdir /home/ubuntu/dev

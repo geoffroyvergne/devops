@@ -1,0 +1,7 @@
+groups:
+- docker
+snap:
+  commands:
+  - [install, docker]
+runcmd:
+- adduser ubuntu docker

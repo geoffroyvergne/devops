@@ -1,6 +1,0 @@
-package_update: true
-
-packages:
-  - curl
-  - jq
-  - vim

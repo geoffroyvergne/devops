@@ -1,0 +1,40 @@
+version: '3'
+
+vars:
+  NAME: dev
+
+tasks:
+  launch:
+    desc: Create VM
+    cmds:
+      - multipass launch focal --disk 40G --mem 4G --cpus 4 --name {{.NAME}} --cloud-init cloud-config.yaml
+
+  start:
+    desc: Start VM
+    cmds: 
+      - multipass start {{.NAME}}
+
+  stop:
+    desc: Stop VM
+    cmds:
+      - multipass stop {{.NAME}}
+
+  shell:
+    desc: Login Shell
+    cmds:
+      - multipass shell {{.NAME}}
+
+  ssh:
+    desc: Login SSH
+    cmds:
+      - ssh -l ubuntu -- $(multipass info {{.NAME}} | grep 'IPv4' | awk '{print $2}')
+
+  ssh-key:
+    desc: Add ssh key
+    cmds:
+      - cat ~/.ssh/id_rsa.pub  | multipass exec {{.NAME}} -- tee -a .ssh/authorized_keys
+
+  ip:
+    desc: get ip
+    cmds: 
+      - multipass info {{.NAME}} | grep IPv4 | awk '{print $2}'

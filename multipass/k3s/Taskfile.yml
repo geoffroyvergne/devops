@@ -1,0 +1,37 @@
+version: '3'
+
+vars:
+  NAME: k3s
+
+tasks:
+  launch:
+    desc: Create VM
+    cmds: 
+      - multipass launch --name {{.NAME}} --cpus 4 --mem 4g --disk 20g
+      - multipass exec {{.NAME}} -- bash -c "curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -"
+
+  start:
+    desc: Start VM
+    cmds: 
+      - multipass start {{.NAME}}
+
+  stop:
+    desc: Stop VM
+    cmds:
+      - multipass stop {{.NAME}}
+
+  createdata: 
+    cmds:
+      - mkdir data
+    status:
+      - test -d data/
+
+  kubeconfig:
+    desc: add kubeconfig
+    cmds:      
+      - multipass exec {{.NAME}} sudo cat /etc/rancher/k3s/k3s.yaml > data/k3s.yaml
+      - sed -i '' "s/127.0.0.1/$(multipass info {{.NAME}} | grep IPv4 | awk '{print $2}')/" data/k3s.yaml
+      - export KUBECONFIG=data/k3s.yaml
+    deps:
+      - createdata
+

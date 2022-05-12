@@ -1,0 +1,33 @@
+version: '3'
+
+vars:
+  NAME: microk8s
+
+tasks:
+  launch:
+    desc: Create VM
+    cmds: 
+      - multipass launch focal --disk 40G --mem 4G --cpus 4 --name {{.NAME}} --cloud-init cloud-config.yaml      
+
+  start:
+    desc: Start VM
+    cmds: 
+      - multipass start {{.NAME}}
+
+  stop:
+    desc: Stop VM
+    cmds:
+      - multipass stop {{.NAME}}
+
+  ip:
+    desc: get ip
+    cmds: 
+      - multipass info {{.NAME}} | grep IPv4 | awk '{print $2}'
+
+  install:
+    desc: install microk8s
+    cmds:
+      - multipass exec {{.NAME}} -- sudo snap install microk8s --classic --channel=1.18/stable
+      - multipass exec {{.NAME}} -- sudo usermod -a -G microk8s ubuntu
+      - multipass exec {{.NAME}} -- sudo chown -f -R ubuntu ~/.kube
+      - multipass alias microk8s:microk8s

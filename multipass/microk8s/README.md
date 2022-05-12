@@ -19,7 +19,9 @@ multipass exec microk8s -- sudo snap install microk8s --classic --channel=1.18/s
 multipass exec microk8s -- sudo usermod -a -G microk8s ubuntu
 multipass exec microk8s -- sudo chown -f -R ubuntu ~/.kube
 
-# From Shell
+# Microk8s commands
+
+## From Shell
 multipass shell microk8s
 
 microk8s enable --help
@@ -29,7 +31,7 @@ microk8s dashboard-proxy
 microk8s kubectl get nodes
 microk8s kubectl get all -A
 
-# From multipass
+## From multipass
 multipass alias microk8s:microk8s
 
 multipass microk8s kubectl get nodes
