@@ -40,6 +40,7 @@ qemu-system-x86_64 \
 
 -vga [std|cirrus|vmware|qxl|xenfb|tcx|cg3|virtio|none]
 
+
 qemu-system-x86_64 \
     -accel hvf \
     -drive file=/Users/gv/qemu-vms/openbsd-disk.img,index=0,media=disk,format=qcow2 \
